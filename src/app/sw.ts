@@ -32,10 +32,10 @@ self.addEventListener("fetch", (event) => {
     fetch(req).catch(async () => {
       await outbox.pushRequest({ request: clone });
       // Tell the client it was accepted for deferred send.
-      return new Response(
-        JSON.stringify({ queued: true, offline: true }),
-        { status: 202, headers: { "Content-Type": "application/json" } },
-      );
+      return new Response(JSON.stringify({ queued: true, offline: true }), {
+        status: 202,
+        headers: { "Content-Type": "application/json" },
+      });
     }),
   );
 });
@@ -59,18 +59,22 @@ self.addEventListener("push", (event) => {
 
   // `image` and `renotify` are valid at runtime but missing from the TS
   // NotificationOptions lib type — widen it.
-  const options: NotificationOptions & { image?: string; renotify?: boolean } = {
-    body: data.body ?? "",
-    icon: "/icons/icon-192.png",
-    badge: "/icons/icon-96.png",
-    image: data.image,
-    tag: data.tag,
-    renotify: !!data.tag,
-    data: { url: data.url ?? "/notificaciones" },
-  };
+  const options: NotificationOptions & { image?: string; renotify?: boolean } =
+    {
+      body: data.body ?? "",
+      icon: "/icons/icon-192.png",
+      badge: "/icons/icon-96.png",
+      image: data.image,
+      tag: data.tag,
+      renotify: !!data.tag,
+      data: { url: data.url ?? "/notificaciones" },
+    };
 
   event.waitUntil(
-    self.registration.showNotification(data.title ?? "Alerta Patente", options),
+    self.registration.showNotification(
+      data.title ?? process.env.NEXT_PUBLIC_APP_NAME ?? "Alerta Patente",
+      options,
+    ),
   );
 });
 

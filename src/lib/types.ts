@@ -1,36 +1,30 @@
 import type { IncidentTipo, AlertTipo } from "@/lib/incident-types";
 
-export type VehicleTipo = "particular" | "flota";
 export type AlertEstado = "activo" | "resuelto";
 export type NotifOrigen = "report" | "alert";
 export type UserRol = "dueno" | "admin_flota" | "admin_sistema";
 
 export interface Profile {
   id: string;
-  nombre: string | null;
   rol: UserRol;
   created_at: string;
 }
 
+// A vehicle is just a user's personal association to a plate: the patente
+// plus an alias they choose. The same patente can be tracked by many users,
+// each with their own alias. Reports/alerts are keyed by patente, not by
+// this row, so removing it only drops the association.
 export interface Vehicle {
   id: string;
   owner_id: string;
   patente: string;
   alias: string | null;
-  marca: string | null;
-  modelo: string | null;
-  color: string | null;
-  anio: number | null;
-  foto_url: string | null;
-  tipo: VehicleTipo;
-  verificado: boolean;
   created_at: string;
 }
 
 export interface Report {
   id: string;
   patente: string;
-  vehicle_id: string | null;
   reporter_id: string;
   tipo: IncidentTipo;
   descripcion: string | null;
@@ -45,7 +39,6 @@ export interface Report {
 export interface LiveAlert {
   id: string;
   patente: string;
-  vehicle_id: string | null;
   reporter_id: string;
   tipo: AlertTipo;
   descripcion: string | null;
@@ -105,7 +98,12 @@ export interface Database {
     };
     Views: {
       reports_heatmap: {
-        Row: { lat: number; lng: number; tipo: IncidentTipo; ocurrido_en: string };
+        Row: {
+          lat: number;
+          lng: number;
+          tipo: IncidentTipo;
+          ocurrido_en: string;
+        };
         Relationships: [];
       };
     };
@@ -113,7 +111,6 @@ export interface Database {
     Enums: {
       incident_tipo: IncidentTipo;
       alert_tipo: AlertTipo;
-      vehicle_tipo: VehicleTipo;
       alert_estado: AlertEstado;
       notif_origen: NotifOrigen;
     };

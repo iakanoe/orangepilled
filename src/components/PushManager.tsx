@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { pushSupported, subscribeToPush, unsubscribeFromPush } from "@/lib/push-client";
+import { pushSupported, subscribeToPush } from "@/lib/push-client";
 
 type State = "loading" | "unsupported" | "denied" | "off" | "on";
 
@@ -13,8 +13,12 @@ export default function PushManager() {
     (async () => {
       if (!pushSupported()) return setState("unsupported");
       if (Notification.permission === "denied") return setState("denied");
-      const reg = await navigator.serviceWorker.ready.catch(() => null);
-      const sub = await reg?.pushManager.getSubscription();
+      // Use getRegistration() (resolves immediately, undefined if none) instead
+      // of serviceWorker.ready, which never resolves when no SW is registered
+      // (e.g. in dev, where /sw.js isn't emitted).
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (!reg) return setState("unsupported");
+      const sub = await reg.pushManager.getSubscription();
       setState(sub ? "on" : "off");
     })();
   }, []);
@@ -32,56 +36,39 @@ export default function PushManager() {
     }
   }
 
-  async function disable() {
-    setBusy(true);
-    try {
-      await unsubscribeFromPush();
-      setState("off");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  if (state === "loading") return null;
-
-  if (state === "unsupported") {
-    return (
-      <p className="text-sm text-gray-500">
-        Este navegador no soporta notificaciones push.
-      </p>
-    );
-  }
+  // Nothing to show when push is unavailable or already enabled — the user
+  // only needs this prompt when they haven't opted in yet.
+  if (state === "loading" || state === "unsupported" || state === "on")
+    return null;
 
   if (state === "denied") {
     return (
-      <p className="text-sm text-amber-600">
-        Notificaciones bloqueadas. Habilitalas en los ajustes del navegador para
-        recibir avisos sobre tus vehículos.
-      </p>
+      <div className="mx-4 mb-2 rounded-xl border border-gray-200 bg-white p-3">
+        <p className="text-sm text-amber-600">
+          Notificaciones bloqueadas. Habilitalas en los ajustes del navegador
+          para recibir avisos sobre tus vehículos.
+        </p>
+      </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-between gap-3">
-      <div>
-        <p className="font-medium">Notificaciones push</p>
-        <p className="text-sm text-gray-500">
-          {state === "on"
-            ? "Activadas en este dispositivo."
-            : "Recibí un aviso al instante cuando reportan tu vehículo."}
-        </p>
+    <div className="mx-4 mb-2 rounded-xl border border-gray-200 bg-white p-3">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="font-medium">Notificaciones push</p>
+          <p className="text-sm text-gray-500">
+            Recibí un aviso al instante cuando reportan tu vehículo.
+          </p>
+        </div>
+        <button
+          onClick={enable}
+          disabled={busy}
+          className="shrink-0 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+        >
+          {busy ? "…" : "Activar"}
+        </button>
       </div>
-      <button
-        onClick={state === "on" ? disable : enable}
-        disabled={busy}
-        className={`shrink-0 rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-60 ${
-          state === "on"
-            ? "border border-gray-300 text-gray-700"
-            : "bg-brand-600 text-white"
-        }`}
-      >
-        {busy ? "…" : state === "on" ? "Desactivar" : "Activar"}
-      </button>
     </div>
   );
 }

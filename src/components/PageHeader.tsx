@@ -13,7 +13,7 @@ export default function PageHeader({
 }) {
   const router = useRouter();
   return (
-    <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-gray-200 bg-white/90 px-4 py-3 backdrop-blur">
+    <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3">
       {back && (
         <button
           onClick={() => router.back()}

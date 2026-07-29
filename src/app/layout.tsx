@@ -4,7 +4,7 @@ import "./globals.css";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import InstallPrompt from "@/components/InstallPrompt";
 
-const APP_NAME = "Alerta Patente";
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? "Alerta Patente";
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,

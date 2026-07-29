@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Alerta Patente",
+    name: process.env.NEXT_PUBLIC_APP_NAME ?? "Alerta Patente",
     short_name: "Patente",
     description:
       "Reportá incidentes y recibí avisos en vivo sobre vehículos por patente.",

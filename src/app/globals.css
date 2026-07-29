@@ -9,12 +9,14 @@
 html,
 body {
   height: 100%;
+  /* Disable the elastic overscroll / rubber-band so short pages can't be
+     "scrolled" when there is nothing to scroll. Real scrolling still works
+     whenever the content actually overflows the viewport. */
+  overscroll-behavior: none;
 }
 
 body {
   @apply bg-gray-50 text-gray-900 antialiased;
-  /* Room for the fixed bottom nav on small screens. */
-  overscroll-behavior-y: none;
 }
 
 /* Leaflet renders inside a fixed-height container; ensure it fills it. */

@@ -60,10 +60,11 @@ exception when duplicate_object then null; end $$;
 -- ---------------------------------------------------------------------
 create table if not exists public.profiles (
   id          uuid primary key references auth.users (id) on delete cascade,
-  nombre      text,
   rol         user_rol not null default 'dueno',
   created_at  timestamptz not null default now()
 );
+-- Older deployments had a free-text display name; it's no longer used.
+alter table public.profiles drop column if exists nombre;
 
 -- Auto-create a profile row when a new auth user signs up.
 create or replace function public.handle_new_user()
@@ -73,8 +74,8 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.profiles (id, nombre)
-  values (new.id, coalesce(new.raw_user_meta_data ->> 'nombre', split_part(new.email, '@', 1)))
+  insert into public.profiles (id)
+  values (new.id)
   on conflict (id) do nothing;
   return new;
 end;
@@ -86,32 +87,45 @@ create trigger on_auth_user_created
   for each row execute function public.handle_new_user();
 
 -- ---------------------------------------------------------------------
--- vehicles
+-- vehicles  (a per-user association to a plate: patente + personal alias)
+-- A plate is NOT owned globally: any number of users may add the same
+-- patente to their account, each with their own alias. Removing a vehicle
+-- only drops that user's association — it never deletes reports/alerts,
+-- which are keyed by patente and shared across everyone.
 -- ---------------------------------------------------------------------
 create table if not exists public.vehicles (
   id          uuid primary key default gen_random_uuid(),
   owner_id    uuid not null references public.profiles (id) on delete cascade,
   patente     text not null,                 -- normalized (uppercase, no spaces)
   alias       text,
-  marca       text,
-  modelo      text,
-  color       text,
-  anio        smallint,
-  foto_url    text,
-  tipo        vehicle_tipo not null default 'particular',
-  verificado  boolean not null default false,
   created_at  timestamptz not null default now(),
-  unique (patente)
+  unique (owner_id, patente)                 -- one association per user+plate
 );
-create index if not exists vehicles_owner_idx on public.vehicles (owner_id);
+create index if not exists vehicles_owner_idx   on public.vehicles (owner_id);
+create index if not exists vehicles_patente_idx on public.vehicles (patente);
+
+-- Migrate existing installs: strip per-vehicle metadata (now the plate is a
+-- shared entity, not a described car) and switch the plate uniqueness from
+-- global to per-user so several users can track the same patente.
+alter table public.vehicles drop column if exists marca;
+alter table public.vehicles drop column if exists modelo;
+alter table public.vehicles drop column if exists color;
+alter table public.vehicles drop column if exists anio;
+alter table public.vehicles drop column if exists foto_url;
+alter table public.vehicles drop column if exists tipo;
+alter table public.vehicles drop column if exists verificado;
+alter table public.vehicles drop constraint if exists vehicles_patente_key;
+do $$ begin
+  alter table public.vehicles add constraint vehicles_owner_id_patente_key unique (owner_id, patente);
+exception when duplicate_table or duplicate_object then null; end $$;
+create index if not exists vehicles_patente_idx on public.vehicles (patente);
 
 -- ---------------------------------------------------------------------
 -- reports  (incidentes de conducta)
 -- ---------------------------------------------------------------------
 create table if not exists public.reports (
   id          uuid primary key default gen_random_uuid(),
-  patente     text not null,                 -- normalized
-  vehicle_id  uuid references public.vehicles (id) on delete set null,
+  patente     text not null,                 -- normalized; the stable target key
   reporter_id uuid not null references public.profiles (id) on delete cascade,
   tipo        incident_tipo not null,
   descripcion text,
@@ -128,8 +142,12 @@ create table if not exists public.reports (
   ocurrido_en timestamptz not null default now(),
   created_at  timestamptz not null default now()
 );
+-- Reports are keyed by patente, never by a per-user vehicle row. Drop the
+-- old RLS policy first: it references vehicle_id, so the column can't go
+-- until it does. It's recreated (patente-based) in the RLS section below.
+drop policy if exists reports_select_visible on public.reports;
+alter table public.reports drop column if exists vehicle_id;
 create index if not exists reports_patente_idx  on public.reports (patente);
-create index if not exists reports_vehicle_idx  on public.reports (vehicle_id);
 create index if not exists reports_reporter_idx on public.reports (reporter_id);
 create index if not exists reports_geog_idx      on public.reports using gist (geog);
 create index if not exists reports_ocurrido_idx  on public.reports (ocurrido_en desc);
@@ -140,7 +158,6 @@ create index if not exists reports_ocurrido_idx  on public.reports (ocurrido_en 
 create table if not exists public.live_alerts (
   id          uuid primary key default gen_random_uuid(),
   patente     text not null,
-  vehicle_id  uuid references public.vehicles (id) on delete set null,
   reporter_id uuid not null references public.profiles (id) on delete cascade,
   tipo        alert_tipo not null,
   descripcion text,
@@ -155,7 +172,11 @@ create table if not exists public.live_alerts (
   estado      alert_estado not null default 'activo',
   created_at  timestamptz not null default now()
 );
-create index if not exists alerts_vehicle_idx on public.live_alerts (vehicle_id);
+-- Same as reports: drop policies referencing vehicle_id before the column.
+drop policy if exists alerts_select_visible on public.live_alerts;
+drop policy if exists alerts_update_owner on public.live_alerts;
+alter table public.live_alerts drop column if exists vehicle_id;
+create index if not exists alerts_patente_idx on public.live_alerts (patente);
 create index if not exists alerts_geog_idx     on public.live_alerts using gist (geog);
 
 -- ---------------------------------------------------------------------
@@ -233,12 +254,12 @@ drop policy if exists vehicles_all_own on public.vehicles;
 create policy vehicles_all_own on public.vehicles
   for all using (auth.uid() = owner_id) with check (auth.uid() = owner_id);
 
--- reports: visible if you made it OR it targets a vehicle you own
+-- reports: visible if you made it OR it targets a patente you track
 drop policy if exists reports_select_visible on public.reports;
 create policy reports_select_visible on public.reports
   for select using (
     reporter_id = auth.uid()
-    or vehicle_id in (select id from public.vehicles where owner_id = auth.uid())
+    or patente in (select patente from public.vehicles where owner_id = auth.uid())
   );
 -- reporter may delete their own report (basic self-moderation)
 drop policy if exists reports_delete_own on public.reports;
@@ -250,13 +271,13 @@ drop policy if exists alerts_select_visible on public.live_alerts;
 create policy alerts_select_visible on public.live_alerts
   for select using (
     reporter_id = auth.uid()
-    or vehicle_id in (select id from public.vehicles where owner_id = auth.uid())
+    or patente in (select patente from public.vehicles where owner_id = auth.uid())
   );
--- vehicle owner can mark an alert resolved
+-- a user tracking the plate can mark an alert resolved
 drop policy if exists alerts_update_owner on public.live_alerts;
 create policy alerts_update_owner on public.live_alerts
   for update using (
-    vehicle_id in (select id from public.vehicles where owner_id = auth.uid())
+    patente in (select patente from public.vehicles where owner_id = auth.uid())
   );
 
 -- media: visible if the parent report/alert is visible to you
@@ -315,3 +336,37 @@ drop policy if exists media_authenticated_insert on storage.objects;
 create policy media_authenticated_insert on storage.objects
   for insert to authenticated
   with check (bucket_id = 'media');
+
+-- =====================================================================
+-- Auto-deactivate live alerts one hour after they were raised.
+-- Mirrors the app-level active window (ALERT_ACTIVE_WINDOW_MS in
+-- src/lib/alerts.ts = 1 hour): any 'activo' alert older than that flips
+-- to 'resuelto' in the DB, without needing the owner to dismiss it.
+-- =====================================================================
+create or replace function public.deactivate_stale_alerts()
+returns void
+language sql
+security definer
+set search_path = public
+as $$
+  update public.live_alerts
+     set estado = 'resuelto'
+   where estado = 'activo'
+     and created_at < now() - interval '1 hour';
+$$;
+
+-- Schedule the cleanup every minute via pg_cron.
+create extension if not exists pg_cron;
+
+-- Idempotent (re)schedule: drop an existing job with the same name first.
+do $$
+begin
+  perform cron.unschedule('deactivate-stale-alerts');
+exception when others then null;
+end $$;
+
+select cron.schedule(
+  'deactivate-stale-alerts',
+  '* * * * *',
+  $$ select public.deactivate_stale_alerts(); $$
+);

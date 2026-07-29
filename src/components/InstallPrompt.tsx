@@ -8,16 +8,44 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const DISMISS_KEY = "install-dismissed";
+// Keep the dismissal for a long time, but allow it to eventually reappear.
+const DISMISS_MAX_AGE = 60 * 60 * 24 * 180; // 180 days (seconds)
+
+// Persistence helpers. localStorage can throw or silently drop writes in
+// restrictive contexts (Safari Private Browsing, some in-app webviews), which
+// made the banner reappear on every visit. A cookie survives those cases, so
+// we write to both and treat either as "dismissed".
+function isDismissed(): boolean {
+  try {
+    if (localStorage.getItem(DISMISS_KEY)) return true;
+  } catch {
+    // ignore
+  }
+  return document.cookie
+    .split(";")
+    .some((c) => c.trim().startsWith(`${DISMISS_KEY}=`));
+}
+
+function persistDismiss(): void {
+  try {
+    localStorage.setItem(DISMISS_KEY, "1");
+  } catch {
+    // ignore
+  }
+  document.cookie = `${DISMISS_KEY}=1; path=/; max-age=${DISMISS_MAX_AGE}; SameSite=Lax`;
+}
 
 // Android/desktop: handle beforeinstallprompt.
 // iOS Safari: no event — show Add-to-Home-Screen hint instead.
 export default function InstallPrompt() {
-  const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(
+    null,
+  );
   const [show, setShow] = useState(false);
   const [isIos, setIsIos] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem(DISMISS_KEY)) return;
+    if (isDismissed()) return;
 
     const standalone =
       window.matchMedia("(display-mode: standalone)").matches ||
@@ -44,7 +72,7 @@ export default function InstallPrompt() {
 
   function dismiss() {
     setShow(false);
-    localStorage.setItem(DISMISS_KEY, "1");
+    persistDismiss();
   }
 
   async function install() {
@@ -64,7 +92,9 @@ export default function InstallPrompt() {
           🚗
         </div>
         <div className="flex-1 text-sm">
-          <p className="font-semibold">Instalá Alerta Patente</p>
+          <p className="font-semibold">
+            Instalá {process.env.NEXT_PUBLIC_APP_NAME}
+          </p>
           {isIos ? (
             <p className="mt-0.5 text-gray-500">
               Tocá <span className="font-medium">Compartir</span> y luego{" "}

@@ -20,8 +20,15 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0",
-    "recharts": "^2.15.0",
+    "recharts": "^3.10.1",
     "web-push": "^3.6.7"
+  },
+  "overrides": {
+    "eslint-import-resolver-typescript": "3.6.3",
+    "next": {
+      "postcss": "$postcss",
+      "sharp": "$sharp"
+    }
   },
   "devDependencies": {
     "@serwist/next": "^9.0.11",
@@ -35,8 +42,11 @@
     "eslint-config-next": "^15.1.6",
     "postcss": "^8.5.1",
     "serwist": "^9.0.11",
-    "sharp": "^0.33.5",
+    "sharp": "^0.35.3",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3"
+  },
+  "allowScripts": {
+    "fsevents@2.3.3": true
   }
 }

@@ -6,9 +6,8 @@ import { usePathname } from "next/navigation";
 const TABS = [
   { href: "/", label: "Inicio", icon: "🏠" },
   { href: "/vehiculos", label: "Vehículos", icon: "🚗" },
-  { href: "/reportar", label: "Reportar", icon: "➕", center: true },
+  { href: "/consultar", label: "Consultar", icon: "🔎" },
   { href: "/notificaciones", label: "Avisos", icon: "🔔" },
-  { href: "/perfil", label: "Perfil", icon: "👤" },
 ];
 
 export default function BottomNav() {
@@ -20,19 +19,6 @@ export default function BottomNav() {
         {TABS.map((t) => {
           const active =
             t.href === "/" ? pathname === "/" : pathname.startsWith(t.href);
-          if (t.center) {
-            return (
-              <li key={t.href} className="relative -mt-5">
-                <Link
-                  href={t.href}
-                  aria-label={t.label}
-                  className="grid h-14 w-14 place-items-center rounded-full bg-brand-600 text-2xl text-white shadow-lg"
-                >
-                  {t.icon}
-                </Link>
-              </li>
-            );
-          }
           return (
             <li key={t.href} className="flex-1">
               <Link

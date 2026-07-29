@@ -50,7 +50,9 @@ function LoginForm() {
         <div className="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-2xl bg-brand-600 text-3xl">
           🚗
         </div>
-        <h1 className="text-2xl font-bold">Alerta Patente</h1>
+        <h1 className="text-2xl font-bold">
+          {process.env.NEXT_PUBLIC_APP_NAME}
+        </h1>
         <p className="mt-1 text-sm text-gray-500">
           Reportá y recibí avisos sobre patentes.
         </p>
@@ -115,7 +117,9 @@ function LoginForm() {
       )}
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+          {error}
+        </p>
       )}
     </main>
   );

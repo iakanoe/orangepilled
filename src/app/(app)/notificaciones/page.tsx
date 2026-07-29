@@ -1,6 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
-import NotificationList, { type NotifItem } from "@/components/NotificationList";
-import { incidentEmoji, incidentLabel, alertEmoji, alertLabel } from "@/lib/incident-types";
+import NotificationList, {
+  type NotifItem,
+} from "@/components/NotificationList";
+import {
+  incidentEmoji,
+  incidentLabel,
+  alertEmoji,
+  alertLabel,
+} from "@/lib/incident-types";
 import type { NotificationRow, Report, LiveAlert, MediaRow } from "@/lib/types";
 
 export const metadata = { title: "Notificaciones" };
@@ -16,8 +23,12 @@ export default async function NotificacionesPage() {
 
   const notifs = (notifsData ?? []) as NotificationRow[];
 
-  const reportIds = notifs.filter((n) => n.origen === "report").map((n) => n.origen_id);
-  const alertIds = notifs.filter((n) => n.origen === "alert").map((n) => n.origen_id);
+  const reportIds = notifs
+    .filter((n) => n.origen === "report")
+    .map((n) => n.origen_id);
+  const alertIds = notifs
+    .filter((n) => n.origen === "alert")
+    .map((n) => n.origen_id);
 
   const [reportsRes, alertsRes, mediaRes] = await Promise.all([
     reportIds.length
@@ -96,7 +107,7 @@ export default async function NotificacionesPage() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-gray-200 bg-white/90 px-4 py-3 backdrop-blur">
+      <header className="border-b border-gray-200 bg-white px-4 py-3">
         <h1 className="text-lg font-bold">Notificaciones</h1>
       </header>
       <NotificationList initial={items} />

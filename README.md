@@ -36,7 +36,8 @@ npm install
 2. En **SQL Editor**, pegá y ejecutá [`supabase/schema.sql`](supabase/schema.sql).
    Crea las tablas, PostGIS, las políticas RLS, el trigger que arma el perfil al
    registrarse, la vista anonimizada para el heatmap y el bucket de Storage.
-3. En **Project Settings → API** copiá `URL`, `anon key` y `service_role key`.
+3. En **Project Settings → API Keys** copiá `URL`, la `publishable key`
+   (`sb_publishable_…`) y la `secret key` (`sb_secret_…`).
 4. En **Authentication → Providers → Email**, dejá habilitado el login por email
    (OTP). Para desarrollo podés desactivar "Confirm email" si querés.
 

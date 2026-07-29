@@ -7,7 +7,9 @@ type CookieToSet = { name: string; value: string; options: CookieOptions };
 const PUBLIC_PATHS = ["/login", "/auth", "/~offline"];
 
 function isPublic(pathname: string) {
-  return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
+  return PUBLIC_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(p + "/"),
+  );
 }
 
 // Refreshes the Supabase session on every request and gates private routes.
@@ -18,7 +20,7 @@ export async function updateSession(request: NextRequest) {
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
       cookies: {
         getAll() {
