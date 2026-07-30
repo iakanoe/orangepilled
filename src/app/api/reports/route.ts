@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyOwner } from "@/lib/notify";
 import { parsePatente, formatPatente } from "@/lib/patente";
+import { uploadDataUrls } from "@/lib/upload-server";
 import {
   isIncidentTipo,
   incidentLabel,
@@ -32,11 +33,20 @@ export async function POST(request: Request) {
   if (lat === null || lng === null) {
     return NextResponse.json({ error: "ubicación requerida" }, { status: 400 });
   }
-  const fotos: string[] = Array.isArray(body.fotos)
-    ? body.fotos.slice(0, 5)
-    : [];
+  let fotos: string[] = Array.isArray(body.fotos) ? body.fotos.slice(0, 5) : [];
 
   const admin = createAdminClient();
+
+  // Photos captured offline ride along as data URLs; upload them now (this
+  // often runs when the queued request is replayed after reconnecting).
+  if (Array.isArray(body.fotosPendientes) && body.fotosPendientes.length) {
+    const uploaded = await uploadDataUrls(
+      admin,
+      "reports",
+      body.fotosPendientes.slice(0, 5),
+    );
+    fotos = [...fotos, ...uploaded].slice(0, 5);
+  }
 
   const { data: report, error } = await admin
     .from("reports")
@@ -50,11 +60,17 @@ export async function POST(request: Request) {
       lng,
       direccion: body.direccion ?? null,
       ocurrido_en: body.ocurrido_en ?? new Date().toISOString(),
+      client_id: typeof body.clientId === "string" ? body.clientId : null,
     })
     .select("id")
     .single();
 
   if (error || !report) {
+    // Idempotent replay: this exact submission (same clientId) already landed.
+    // Ack it without re-inserting media or re-notifying.
+    if (error?.code === "23505") {
+      return NextResponse.json({ duplicate: true });
+    }
     return NextResponse.json(
       { error: error?.message ?? "no se pudo crear" },
       { status: 500 },

@@ -25,18 +25,48 @@ export async function uploadImage(file: File, folder: string): Promise<string> {
   return data.publicUrl;
 }
 
-/** Upload several images; skips any that fail (best-effort). */
-export async function uploadImages(
+// Downscale + re-encode an image so it's small enough to ride along inside a
+// queued request body (IndexedDB / JSON) when uploaded offline.
+async function fileToCompressedDataUrl(
+  file: File,
+  maxDim = 1280,
+  quality = 0.6,
+): Promise<string> {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
+  const w = Math.max(1, Math.round(bitmap.width * scale));
+  const h = Math.max(1, Math.round(bitmap.height * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("no canvas context");
+  ctx.drawImage(bitmap, 0, 0, w, h);
+  bitmap.close?.();
+  return canvas.toDataURL("image/jpeg", quality);
+}
+
+/**
+ * Upload each image now; if an upload fails (typically offline) keep the bytes
+ * as a compressed data URL so the report request can carry them and the server
+ * uploads them when the queued request finally runs.
+ */
+export async function uploadImagesWithFallback(
   files: File[],
   folder: string,
-): Promise<string[]> {
-  const urls: string[] = [];
+): Promise<{ fotos: string[]; pendientes: string[] }> {
+  const fotos: string[] = [];
+  const pendientes: string[] = [];
   for (const f of files) {
     try {
-      urls.push(await uploadImage(f, folder));
+      fotos.push(await uploadImage(f, folder));
     } catch {
-      // ignore individual failures (e.g. offline)
+      try {
+        pendientes.push(await fileToCompressedDataUrl(f));
+      } catch {
+        // Unreadable image — drop this one photo, keep the report.
+      }
     }
   }
-  return urls;
+  return { fotos, pendientes };
 }

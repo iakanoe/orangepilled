@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyOwner } from "@/lib/notify";
 import { parsePatente, formatPatente } from "@/lib/patente";
+import { uploadDataUrls } from "@/lib/upload-server";
 import { isAlertTipo, alertLabel, alertEmoji } from "@/lib/incident-types";
 
 // Live alert: someone flags a problem on someone else's vehicle
@@ -28,11 +29,20 @@ export async function POST(request: Request) {
 
   const lat = typeof body.lat === "number" ? body.lat : null;
   const lng = typeof body.lng === "number" ? body.lng : null;
-  const fotos: string[] = Array.isArray(body.fotos)
-    ? body.fotos.slice(0, 5)
-    : [];
+  let fotos: string[] = Array.isArray(body.fotos) ? body.fotos.slice(0, 5) : [];
 
   const admin = createAdminClient();
+
+  // Photos captured offline ride along as data URLs; upload them now (this
+  // often runs when the queued request is replayed after reconnecting).
+  if (Array.isArray(body.fotosPendientes) && body.fotosPendientes.length) {
+    const uploaded = await uploadDataUrls(
+      admin,
+      "alerts",
+      body.fotosPendientes.slice(0, 5),
+    );
+    fotos = [...fotos, ...uploaded].slice(0, 5);
+  }
 
   const { data: alert, error } = await admin
     .from("live_alerts")
@@ -44,11 +54,16 @@ export async function POST(request: Request) {
       lat,
       lng,
       direccion: body.direccion ?? null,
+      client_id: typeof body.clientId === "string" ? body.clientId : null,
     })
     .select("id")
     .single();
 
   if (error || !alert) {
+    // Idempotent replay: this exact submission (same clientId) already landed.
+    if (error?.code === "23505") {
+      return NextResponse.json({ duplicate: true });
+    }
     return NextResponse.json(
       { error: error?.message ?? "no se pudo crear" },
       { status: 500 },

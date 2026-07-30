@@ -121,7 +121,11 @@ supabase/schema.sql       # esquema completo + RLS + Storage
   vehículos y su suscripción push directamente.
 - **Offline-first para reportes.** El SW encola los `POST` a `/api/reports` y
   `/api/alerts` cuando no hay conexión (Background Sync) y los reenvía al
-  reconectar. La foto es best-effort (no se sube offline).
+  reconectar. En iOS (sin Background Sync) el cliente dispara el reenvío al
+  volver la conexión o al reabrir la app. Las fotos también se guardan offline:
+  se comprimen y viajan dentro del request, y el server las sube al Storage al
+  procesarlo. Cada envío lleva un `clientId` (UUID) e insert idempotente, así un
+  reintento nunca duplica el reporte y no se pierde ante un 401/5xx.
 - **Login requerido para reportar** (decisión de MVP): mejor anti-abuso y base
   para reputación. Cambiar a anónimo implicaría hacer `reporter_id` nullable y
   rate-limit por IP.

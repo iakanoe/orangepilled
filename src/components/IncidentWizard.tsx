@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import MapField from "@/components/MapField";
 import type { LatLng } from "@/components/MapPicker";
-import { uploadImages } from "@/lib/upload";
+import { uploadImagesWithFallback } from "@/lib/upload";
 import { parsePatente, formatPatente } from "@/lib/patente";
 import {
   INCIDENT_TYPES,
@@ -154,8 +154,14 @@ export default function IncidentWizard({
     setResult(null);
 
     let fotos: string[] = [];
+    let fotosPendientes: string[] = [];
     if (files.length) {
-      fotos = await uploadImages(files, isReport ? "reports" : "alerts");
+      const out = await uploadImagesWithFallback(
+        files,
+        isReport ? "reports" : "alerts",
+      );
+      fotos = out.fotos;
+      fotosPendientes = out.pendientes;
     }
 
     const payload: Record<string, unknown> = {
@@ -166,7 +172,10 @@ export default function IncidentWizard({
       lat: pos?.lat ?? null,
       lng: pos?.lng ?? null,
       direccion,
+      // Idempotency key: makes an offline replay safe (server dedupes on it).
+      clientId: crypto.randomUUID(),
     };
+    if (fotosPendientes.length) payload.fotosPendientes = fotosPendientes;
     if (isReport) {
       payload.severidad = severidad || null;
       payload.ocurrido_en = new Date(
@@ -194,8 +203,21 @@ export default function IncidentWizard({
         setResult({ kind: "error", msg: data.error ?? "Error al enviar" });
       }
     } catch {
-      // Network died before the SW handled it (rare) — treat as queued.
-      setResult({ kind: "queued" });
+      // The fetch threw before any response arrived. If a service worker
+      // controls the page it queued the request in the offline outbox;
+      // otherwise nothing was saved and we must surface a real error instead
+      // of a false "saved" message.
+      if (
+        typeof navigator !== "undefined" &&
+        navigator.serviceWorker?.controller
+      ) {
+        setResult({ kind: "queued" });
+      } else {
+        setResult({
+          kind: "error",
+          msg: "Sin conexión. Reintentá cuando tengas internet.",
+        });
+      }
     } finally {
       setSubmitting(false);
     }

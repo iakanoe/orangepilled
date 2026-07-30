@@ -147,6 +147,10 @@ create table if not exists public.reports (
 -- until it does. It's recreated (patente-based) in the RLS section below.
 drop policy if exists reports_select_visible on public.reports;
 alter table public.reports drop column if exists vehicle_id;
+-- Idempotency key from the client: lets an offline request be replayed safely
+-- (a unique index allows many NULLs, one row per non-null key).
+alter table public.reports add column if not exists client_id uuid;
+create unique index if not exists reports_client_id_key on public.reports (client_id);
 create index if not exists reports_patente_idx  on public.reports (patente);
 create index if not exists reports_reporter_idx on public.reports (reporter_id);
 create index if not exists reports_geog_idx      on public.reports using gist (geog);
@@ -176,6 +180,9 @@ create table if not exists public.live_alerts (
 drop policy if exists alerts_select_visible on public.live_alerts;
 drop policy if exists alerts_update_owner on public.live_alerts;
 alter table public.live_alerts drop column if exists vehicle_id;
+-- Same idempotency key as reports (see above).
+alter table public.live_alerts add column if not exists client_id uuid;
+create unique index if not exists alerts_client_id_key on public.live_alerts (client_id);
 create index if not exists alerts_patente_idx on public.live_alerts (patente);
 create index if not exists alerts_geog_idx     on public.live_alerts using gist (geog);
 

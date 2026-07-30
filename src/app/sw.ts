@@ -14,11 +14,58 @@ declare const self: ServiceWorkerGlobalScope;
 // Offline outbox: queue report / alert POSTs made while offline and
 // replay them automatically when connectivity returns (Background Sync).
 // ---------------------------------------------------------------------
+async function messageClients(msg: unknown) {
+  const clients = await self.clients.matchAll({
+    type: "window",
+    includeUncontrolled: true,
+  });
+  for (const client of clients) client.postMessage(msg);
+}
+
+// Unlike the default replay, a request is only dropped once the server truly
+// accepts it. Transient failures (offline, 401 expired session, 408/429, 5xx)
+// are put back and retried later; only a terminal 4xx is dropped, and the UI
+// is told so it isn't a silent loss. Idempotency (clientId) makes retries safe.
+async function replayOutbox({ queue }: { queue: BackgroundSyncQueue }) {
+  let entry: Awaited<ReturnType<BackgroundSyncQueue["shiftRequest"]>>;
+  while ((entry = await queue.shiftRequest())) {
+    try {
+      const res = await fetch(entry.request.clone());
+      if (!res.ok) {
+        const transient =
+          res.status === 401 ||
+          res.status === 408 ||
+          res.status === 429 ||
+          res.status >= 500;
+        if (transient) {
+          await queue.unshiftRequest(entry);
+          return; // stop; retry on the next online / sync trigger
+        }
+        await messageClients({ type: "OUTBOX_DROPPED", status: res.status });
+      }
+    } catch {
+      // Network still unavailable: put it back and stop.
+      await queue.unshiftRequest(entry);
+      return;
+    }
+  }
+}
+
 const outbox = new BackgroundSyncQueue("outbox", {
   maxRetentionTime: 24 * 60, // minutes -> keep for 24h
+  onSync: replayOutbox,
 });
 
 const OFFLINE_QUEUEABLE = ["/api/reports", "/api/alerts"];
+
+// iOS/WebKit lacks the Background Sync API, so Serwist only replays the queue
+// on SW startup. The client pings us (on `online`/app-resume) to flush the
+// outbox explicitly — the reliable cross-platform trigger.
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "REPLAY_OUTBOX") {
+    event.waitUntil(replayOutbox({ queue: outbox }).catch(() => {}));
+  }
+});
 
 self.addEventListener("fetch", (event) => {
   const req = event.request;
