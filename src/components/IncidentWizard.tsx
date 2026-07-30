@@ -458,16 +458,28 @@ function CuandoStep({
           { label: "Hace 30 min", m: 30 },
           { label: "Hace 1 h", m: 60 },
           { label: "Hace 2 h", m: 120 },
-        ].map((q) => (
-          <button
-            key={q.label}
-            type="button"
-            onClick={() => onQuick(q.m)}
-            className="pressable rounded-full border border-gray-300 px-3 py-1.5 text-sm transition-colors hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
-          >
-            {q.label}
-          </button>
-        ))}
+        ].map((q) => {
+          const d = new Date(Date.now() - q.m * 60000);
+          const qDate = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+          const active =
+            date === qDate &&
+            hour === d.getHours() &&
+            minute === Math.floor(d.getMinutes() / 5) * 5;
+          return (
+            <button
+              key={q.label}
+              type="button"
+              onClick={() => onQuick(q.m)}
+              className={`pressable rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                active
+                  ? "border-brand-500 bg-brand-500 text-white"
+                  : "border-gray-300 hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
+              }`}
+            >
+              {q.label}
+            </button>
+          );
+        })}
       </div>
 
       <div>
