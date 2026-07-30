@@ -257,6 +257,12 @@ supabase/schema.sql       # esquema completo + RLS + Storage
 - **Login requerido para reportar** (decisión de MVP): mejor anti-abuso y base
   para reputación. Cambiar a anónimo implicaría hacer `reporter_id` nullable y
   rate-limit por IP.
+- **Los datos públicos sobreviven al borrado de cuenta.** Reportes y avisos
+  están keyeados por patente y son de dominio compartido: al borrar la cuenta
+  (`/api/account/delete`) solo se elimina lo personal (perfil, vehículos
+  suscritos, notificaciones y suscripciones push). El `reporter_id` de reportes
+  y avisos es `on delete set null`, así que la historia pública se mantiene, solo
+  se desvincula al autor. El borrado exige reconfirmar escribiendo el email.
 
 ## Seguridad y privacidad
 

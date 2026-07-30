@@ -126,7 +126,9 @@ create index if not exists vehicles_patente_idx on public.vehicles (patente);
 create table if not exists public.reports (
   id          uuid primary key default gen_random_uuid(),
   patente     text not null,                 -- normalized; the stable target key
-  reporter_id uuid not null references public.profiles (id) on delete cascade,
+  -- Reports are public and shared by patente; keep them when the author's
+  -- account is deleted, just detach the author (see migration below).
+  reporter_id uuid references public.profiles (id) on delete set null,
   tipo        incident_tipo not null,
   descripcion text,
   severidad   smallint check (severidad between 1 and 5),
@@ -151,6 +153,12 @@ alter table public.reports drop column if exists vehicle_id;
 -- (a unique index allows many NULLs, one row per non-null key).
 alter table public.reports add column if not exists client_id uuid;
 create unique index if not exists reports_client_id_key on public.reports (client_id);
+-- Existing installs: detach author on delete instead of cascading, so a
+-- user deleting their account never removes the public report history.
+alter table public.reports alter column reporter_id drop not null;
+alter table public.reports drop constraint if exists reports_reporter_id_fkey;
+alter table public.reports add constraint reports_reporter_id_fkey
+  foreign key (reporter_id) references public.profiles (id) on delete set null;
 create index if not exists reports_patente_idx  on public.reports (patente);
 create index if not exists reports_reporter_idx on public.reports (reporter_id);
 create index if not exists reports_geog_idx      on public.reports using gist (geog);
@@ -162,7 +170,8 @@ create index if not exists reports_ocurrido_idx  on public.reports (ocurrido_en 
 create table if not exists public.live_alerts (
   id          uuid primary key default gen_random_uuid(),
   patente     text not null,
-  reporter_id uuid not null references public.profiles (id) on delete cascade,
+  -- Same as reports: public and shared by patente, so keep on account delete.
+  reporter_id uuid references public.profiles (id) on delete set null,
   tipo        alert_tipo not null,
   descripcion text,
   lat         double precision,
@@ -183,6 +192,11 @@ alter table public.live_alerts drop column if exists vehicle_id;
 -- Same idempotency key as reports (see above).
 alter table public.live_alerts add column if not exists client_id uuid;
 create unique index if not exists alerts_client_id_key on public.live_alerts (client_id);
+-- Existing installs: detach author on delete instead of cascading (see reports).
+alter table public.live_alerts alter column reporter_id drop not null;
+alter table public.live_alerts drop constraint if exists live_alerts_reporter_id_fkey;
+alter table public.live_alerts add constraint live_alerts_reporter_id_fkey
+  foreign key (reporter_id) references public.profiles (id) on delete set null;
 create index if not exists alerts_patente_idx on public.live_alerts (patente);
 create index if not exists alerts_geog_idx     on public.live_alerts using gist (geog);
 

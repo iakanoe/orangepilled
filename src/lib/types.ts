@@ -25,7 +25,7 @@ export interface Vehicle {
 export interface Report {
   id: string;
   patente: string;
-  reporter_id: string;
+  reporter_id: string | null;
   tipo: IncidentTipo;
   descripcion: string | null;
   severidad: number | null;
@@ -39,7 +39,7 @@ export interface Report {
 export interface LiveAlert {
   id: string;
   patente: string;
-  reporter_id: string;
+  reporter_id: string | null;
   tipo: AlertTipo;
   descripcion: string | null;
   lat: number | null;

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import PushManager from "@/components/PushManager";
 import ThemeToggle from "@/components/ThemeToggle";
+import DeleteAccountButton from "@/components/DeleteAccountButton";
 
 export const metadata = { title: "Configuración" };
 
@@ -50,6 +51,8 @@ export default async function ConfiguracionPage() {
             Cerrar sesión
           </button>
         </form>
+
+        {user?.email && <DeleteAccountButton email={user.email} />}
       </div>
     </>
   );
