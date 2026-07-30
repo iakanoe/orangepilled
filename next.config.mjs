@@ -5,11 +5,38 @@ import withSerwistInit from "@serwist/next";
 // Not a git repo by default, so we use a random per-build revision.
 const revision = randomUUID();
 
+// Leaflet's marker images are emitted twice — once via the JS `import`s in
+// leaflet-icon.ts (revision: null) and once via the `url(...)` refs inside
+// leaflet.css. Same output file, two cache keys, which makes Serwist throw
+// "add-to-cache-list-conflicting-entries" at SW evaluation time. Collapse
+// duplicate URLs, keeping a revisioned entry over a revision-less one.
+// Leaflet's marker images end up in the precache manifest twice: once via the
+// JS `import`s in leaflet-icon.ts and once via the `url(...)` refs in
+// leaflet.css. The two entries carry the same file but different URLs — one is
+// `/_next/static/...`, the other `/_next//static/...` (a stray double slash)
+// with a different revision. Serwist later collapses `//` -> `/`, leaving two
+// entries for the same URL with conflicting revisions, which makes the SW throw
+// "add-to-cache-list-conflicting-entries" during evaluation (registration
+// fails). Normalize slashes and dedupe, keeping a revisioned entry.
+const dedupeManifestEntries = (entries) => {
+  const byUrl = new Map();
+  for (const entry of entries) {
+    const url = entry.url.replace(/([^:]\/)\/+/g, "$1");
+    const normalized = { ...entry, url };
+    const existing = byUrl.get(url);
+    if (!existing || (existing.revision == null && entry.revision != null)) {
+      byUrl.set(url, normalized);
+    }
+  }
+  return { manifest: [...byUrl.values()], warnings: [] };
+};
+
 const withSerwist = withSerwistInit({
   swSrc: "src/app/sw.ts",
   swDest: "public/sw.js",
   // Precache the offline fallback route.
   additionalPrecacheEntries: [{ url: "/~offline", revision }],
+  manifestTransforms: [dedupeManifestEntries],
   // Avoid SW caching pains during local development.
   disable: process.env.NODE_ENV === "development",
   reloadOnOnline: true,
