@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { formatPatente } from "@/lib/patente";
 import UrgentAlerts from "@/components/UrgentAlerts";
@@ -23,9 +23,18 @@ export default function Dashboard({
   alerts: LiveAlert[];
   patentes: string[];
 }) {
+  // Alerts the user dismissed locally, so both the urgent list and the
+  // per-vehicle attention icon drop them immediately (before a server refresh).
+  const [dismissed, setDismissed] = useState<Set<string>>(() => new Set());
+
+  const activeAlerts = useMemo(
+    () => alerts.filter((a) => !dismissed.has(a.id)),
+    [alerts, dismissed],
+  );
+
   const vehicleStats: VehicleStat[] = useMemo(
-    () => computeVehicleStats(vehicles, received, alerts),
-    [vehicles, received, alerts],
+    () => computeVehicleStats(vehicles, received, activeAlerts),
+    [vehicles, received, activeAlerts],
   );
 
   // Patente -> alias, so live alerts can name the car (first alias wins).
@@ -39,7 +48,18 @@ export default function Dashboard({
 
   return (
     <div className="flex flex-col gap-4 py-4">
-      <UrgentAlerts initial={alerts} patentes={patentes} aliases={aliases} />
+      <UrgentAlerts
+        initial={alerts}
+        patentes={patentes}
+        aliases={aliases}
+        onDismiss={(id) =>
+          setDismissed((prev) => {
+            const next = new Set(prev);
+            next.add(id);
+            return next;
+          })
+        }
+      />
       <section className="px-4">
         <div className="mb-2 flex items-center justify-between">
           <h2 className="text-sm font-semibold">Estado de mis vehículos</h2>

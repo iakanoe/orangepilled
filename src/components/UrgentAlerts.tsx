@@ -19,10 +19,12 @@ export default function UrgentAlerts({
   initial,
   patentes,
   aliases,
+  onDismiss,
 }: {
   initial: LiveAlert[];
   patentes: string[];
   aliases: Record<string, string>;
+  onDismiss?: (id: string) => void;
 }) {
   // Keep a single client instance so the realtime channel is stable.
   const [supabase] = useState(() => createClient());
@@ -84,6 +86,7 @@ export default function UrgentAlerts({
   async function dismiss(id: string) {
     dismissedRef.current.add(id);
     setAlerts((xs) => xs.filter((a) => a.id !== id));
+    onDismiss?.(id);
     await supabase
       .from("live_alerts")
       .update({ estado: "resuelto" })
