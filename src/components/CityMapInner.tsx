@@ -34,6 +34,26 @@ const CABA_BBOX: LatLngBoundsExpression = [
   [CABA_BOUNDS.north, CABA_BOUNDS.east],
 ];
 
+// Leaflet.heat's simpleheat calls getImageData on every redraw; opt its canvas
+// into willReadFrequently so the browser keeps it in a CPU-readable buffer and
+// stops warning about slow readbacks.
+let heatCanvasPatched = false;
+function patchHeatCanvasReadback() {
+  if (heatCanvasPatched || typeof HTMLCanvasElement === "undefined") return;
+  heatCanvasPatched = true;
+  const original = HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext = function (
+    this: HTMLCanvasElement,
+    type: string,
+    attrs?: CanvasRenderingContext2DSettings,
+  ) {
+    if (type === "2d" && this.classList.contains("leaflet-heatmap-layer")) {
+      return original.call(this, type, { ...attrs, willReadFrequently: true });
+    }
+    return original.call(this, type, attrs);
+  } as typeof HTMLCanvasElement.prototype.getContext;
+}
+
 export default function CityMapInner() {
   const mapRef = useRef<LeafletMap | null>(null);
   const [pos, setPos] = useState<LatLng | null>(null);
@@ -183,6 +203,7 @@ function HeatLayer() {
     );
 
     if (!layerRef.current) {
+      patchHeatCanvasReadback();
       layerRef.current = L.heatLayer(heatPoints, {
         radius: 28,
         blur: 24,
