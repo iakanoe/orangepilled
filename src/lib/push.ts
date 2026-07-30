@@ -53,6 +53,11 @@ export async function sendPushToUser(
         await webpush.sendNotification(
           { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
           body,
+          // `urgency: high` tells the push service (FCM/APNs) to wake a
+          // sleeping/closed device promptly instead of batching under Doze /
+          // low-power. `TTL` keeps the message queued for a day if the device
+          // is offline, so it still lands once the phone reconnects.
+          { urgency: "high", TTL: 24 * 60 * 60 },
         );
         sent++;
       } catch (err) {

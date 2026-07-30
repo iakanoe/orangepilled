@@ -10,7 +10,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "gen:vapid": "node scripts/gen-vapid.mjs",
-    "gen:icons": "node scripts/gen-icons.mjs"
+    "gen:icons": "node scripts/gen-icons.mjs",
+    "test:push": "node scripts/test-push.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
