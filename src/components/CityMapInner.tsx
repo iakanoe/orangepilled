@@ -9,20 +9,21 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
-import type { LatLngBoundsExpression, Map as LeafletMap } from "leaflet";
+import L, {
+  type LatLngBoundsExpression,
+  type Map as LeafletMap,
+} from "leaflet";
+import "leaflet.heat";
 import { createClient } from "@/lib/supabase/client";
 import "@/lib/leaflet-icon";
 import {
   CABA_BOUNDS,
+  HEAT_GRADIENT,
   MAP_MAX_ZOOM,
   MAP_MIN_ZOOM,
-  buildCells,
-  cellSizeForZoom,
-  heatColor,
   padBounds,
   startOfWindowBA,
   type Bounds,
-  type Cell,
 } from "@/lib/city-status";
 
 type LatLng = { lat: number; lng: number };
@@ -83,7 +84,7 @@ export default function CityMapInner() {
           maxZoom={MAP_MAX_ZOOM}
         />
         <UserLocation pos={pos} onChange={setPos} />
-        <HeatGrid />
+        <HeatLayer />
       </MapContainer>
 
       <button
@@ -142,13 +143,14 @@ function UserLocation({
   );
 }
 
-// Fetches today's incidents for the visible area (plus padding) and paints a
-// heat grid whose cell size scales with the zoom level. Re-runs on pan/zoom.
-function HeatGrid() {
+// Fetches incidents for the visible area (plus padding) and paints a smooth
+// gradient heat layer (canvas) over a green baseline. The whole area reads
+// "clear" (green) by default and ramps toward red where reports cluster.
+// Re-runs on pan/zoom.
+function HeatLayer() {
   const map = useMap();
   const supabase = useMemo(() => createClient(), []);
-  const [cells, setCells] = useState<Cell[]>([]);
-  const [max, setMax] = useState(0);
+  const layerRef = useRef<L.HeatLayer | null>(null);
   const [bounds, setBounds] = useState<Bounds | null>(null);
   const reqId = useRef(0);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -161,7 +163,6 @@ function HeatGrid() {
       north: b.getNorth(),
       east: b.getEast(),
     });
-    const cell = cellSizeForZoom(map.getZoom());
     setBounds(padded);
 
     const id = ++reqId.current;
@@ -177,9 +178,21 @@ function HeatGrid() {
 
     if (id !== reqId.current) return; // a newer request already ran
     const pts = (data ?? []) as { lat: number; lng: number }[];
-    const built = buildCells(pts, cell);
-    setCells(built);
-    setMax(built.reduce((m, c) => Math.max(m, c.count), 0));
+    const heatPoints = pts.map(
+      (p) => [p.lat, p.lng, 1] as [number, number, number],
+    );
+
+    if (!layerRef.current) {
+      layerRef.current = L.heatLayer(heatPoints, {
+        radius: 28,
+        blur: 24,
+        minOpacity: 0.3,
+        maxZoom: MAP_MAX_ZOOM,
+        gradient: HEAT_GRADIENT,
+      }).addTo(map);
+    } else {
+      layerRef.current.setLatLngs(heatPoints);
+    }
   }, [map, supabase]);
 
   const schedule = useCallback(() => {
@@ -193,38 +206,27 @@ function HeatGrid() {
     refresh();
     return () => {
       if (timer.current) clearTimeout(timer.current);
+      if (layerRef.current) {
+        layerRef.current.remove();
+        layerRef.current = null;
+      }
     };
   }, [refresh]);
 
+  // Green baseline under the heat canvas so quiet areas read "clear".
+  if (!bounds) return null;
   return (
-    <>
-      {/* Everything in view reads "clear" (green) by default. */}
-      {bounds && (
-        <Rectangle
-          bounds={[
-            [bounds.south, bounds.west],
-            [bounds.north, bounds.east],
-          ]}
-          pathOptions={{
-            stroke: false,
-            fillColor: "#22c55e",
-            fillOpacity: 0.12,
-            interactive: false,
-          }}
-        />
-      )}
-      {cells.map((c, i) => (
-        <Rectangle
-          key={i}
-          bounds={c.bounds}
-          pathOptions={{
-            stroke: false,
-            fillColor: heatColor(c.count, max),
-            fillOpacity: 0.55,
-            interactive: false,
-          }}
-        />
-      ))}
-    </>
+    <Rectangle
+      bounds={[
+        [bounds.south, bounds.west],
+        [bounds.north, bounds.east],
+      ]}
+      pathOptions={{
+        stroke: false,
+        fillColor: "#22c55e",
+        fillOpacity: 0.2,
+        interactive: false,
+      }}
+    />
   );
 }
