@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "@/components/Link";
 import { formatPatente } from "@/lib/patente";
 import UrgentAlerts from "@/components/UrgentAlerts";
+import InstallPrompt from "@/components/InstallPrompt";
 import {
   STATUS_STYLES,
   computeVehicleStats,
@@ -48,6 +49,7 @@ export default function Dashboard({
 
   return (
     <div className="flex flex-col gap-4 py-4">
+      <InstallPrompt />
       <UrgentAlerts
         initial={alerts}
         patentes={patentes}

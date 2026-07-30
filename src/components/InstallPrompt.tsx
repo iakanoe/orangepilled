@@ -7,36 +7,10 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-const DISMISS_KEY = "install-dismissed";
-// Keep the dismissal for a long time, but allow it to eventually reappear.
-const DISMISS_MAX_AGE = 60 * 60 * 24 * 180; // 180 days (seconds)
-
-// Persistence helpers. localStorage can throw or silently drop writes in
-// restrictive contexts (Safari Private Browsing, some in-app webviews), which
-// made the banner reappear on every visit. A cookie survives those cases, so
-// we write to both and treat either as "dismissed".
-function isDismissed(): boolean {
-  try {
-    if (localStorage.getItem(DISMISS_KEY)) return true;
-  } catch {
-    // ignore
-  }
-  return document.cookie
-    .split(";")
-    .some((c) => c.trim().startsWith(`${DISMISS_KEY}=`));
-}
-
-function persistDismiss(): void {
-  try {
-    localStorage.setItem(DISMISS_KEY, "1");
-  } catch {
-    // ignore
-  }
-  document.cookie = `${DISMISS_KEY}=1; path=/; max-age=${DISMISS_MAX_AGE}; SameSite=Lax`;
-}
-
 // Android/desktop: handle beforeinstallprompt.
 // iOS Safari: no event — show Add-to-Home-Screen hint instead.
+// Rendered inline at the top of the dashboard as a permanent, non-dismissable
+// banner. Hidden only when the app is already running as an installed PWA.
 export default function InstallPrompt() {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(
     null,
@@ -45,8 +19,6 @@ export default function InstallPrompt() {
   const [isIos, setIsIos] = useState(false);
 
   useEffect(() => {
-    if (isDismissed()) return;
-
     const standalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       // iOS
@@ -70,23 +42,20 @@ export default function InstallPrompt() {
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
-  function dismiss() {
-    setShow(false);
-    persistDismiss();
-  }
-
   async function install() {
     if (!deferred) return;
     await deferred.prompt();
-    await deferred.userChoice;
+    const choice = await deferred.userChoice;
+    if (choice.outcome === "accepted") {
+      setShow(false);
+    }
     setDeferred(null);
-    dismiss();
   }
 
   if (!show) return null;
 
   return (
-    <div className="fixed inset-x-3 bottom-20 z-50 rounded-xl border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-800 dark:bg-gray-900">
+    <div className="mx-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <div className="flex items-start gap-3">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-600 text-xl">
           🚗
@@ -106,18 +75,10 @@ export default function InstallPrompt() {
             </p>
           )}
         </div>
-      </div>
-      <div className="mt-3 flex justify-end gap-2">
-        <button
-          onClick={dismiss}
-          className="pressable rounded-lg px-3 py-1.5 text-sm text-gray-500 transition-colors hover:bg-gray-100 active:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:active:bg-gray-700"
-        >
-          Ahora no
-        </button>
         {!isIos && (
           <button
             onClick={install}
-            className="pressable rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
+            className="pressable shrink-0 self-center rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
           >
             Instalar
           </button>
