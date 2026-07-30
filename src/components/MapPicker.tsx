@@ -86,12 +86,12 @@ export default function MapPicker({ value, onChange }: Props) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Dirección o cruce (ej: Callao y Corrientes)"
-            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
+            className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-800"
           />
           <button
             type="submit"
             disabled={searching}
-            className="rounded-lg border border-gray-300 px-3 text-sm"
+            className="rounded-lg border border-gray-300 px-3 text-sm dark:border-gray-700"
           >
             {searching ? "…" : "Buscar"}
           </button>
@@ -107,7 +107,7 @@ export default function MapPicker({ value, onChange }: Props) {
       </div>
 
       {results.length > 0 && (
-        <ul className="max-h-32 overflow-y-auto rounded-lg border border-gray-200 bg-white text-sm">
+        <ul className="max-h-32 overflow-y-auto rounded-lg border border-gray-200 bg-white text-sm dark:border-gray-800 dark:bg-gray-900">
           {results.map((r, i) => (
             <li key={i}>
               <button
@@ -119,7 +119,7 @@ export default function MapPicker({ value, onChange }: Props) {
                   setResults([]);
                   setQuery(r.label);
                 }}
-                className="block w-full px-3 py-2 text-left hover:bg-gray-50"
+                className="block w-full px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 {r.label}
               </button>
@@ -128,7 +128,7 @@ export default function MapPicker({ value, onChange }: Props) {
         </ul>
       )}
 
-      <div className="h-64 overflow-hidden rounded-xl border border-gray-200">
+      <div className="h-64 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800">
         <MapContainer
           center={[center.lat, center.lng]}
           zoom={value ? 15 : 12}

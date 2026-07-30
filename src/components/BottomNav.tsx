@@ -15,7 +15,7 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white">
+    <nav className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
       <ul className="mx-auto flex max-w-lg items-stretch justify-around">
         {TABS.map((t) => {
           const active =
@@ -25,7 +25,9 @@ export default function BottomNav() {
               <Link
                 href={t.href}
                 className={`flex flex-col items-center gap-0.5 py-2 text-[11px] ${
-                  active ? "text-brand-600" : "text-gray-400"
+                  active
+                    ? "text-brand-600 dark:text-brand-400"
+                    : "text-gray-400 dark:text-gray-500"
                 }`}
               >
                 <span className="text-xl leading-none">{t.icon}</span>

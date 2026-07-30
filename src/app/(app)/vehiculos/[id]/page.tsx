@@ -83,17 +83,19 @@ export default async function VehiculoPage({
 
   return (
     <>
-      <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3">
+      <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
         <BackButton fallback="/vehiculos" />
         <div className="min-w-0 flex-1">
           <h1 className="font-mono text-lg font-bold leading-tight tracking-wide">
             {formatPatente(vehicle.patente)}
           </h1>
-          <p className="truncate text-xs text-gray-500">{subtitle}</p>
+          <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+            {subtitle}
+          </p>
         </div>
         <Link
           href={`/vehiculos/${id}/editar`}
-          className="shrink-0 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-semibold text-gray-700"
+          className="shrink-0 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:border-gray-700 dark:text-gray-300"
         >
           Editar
         </Link>
@@ -115,7 +117,7 @@ export default async function VehiculoPage({
                   <li key={`r-${item.report.id}`}>
                     <Link
                       href={`/reportes/${item.report.id}`}
-                      className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-3"
+                      className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900"
                     >
                       <span className="text-xl">
                         {incidentEmoji(item.report.tipo)}
@@ -125,23 +127,23 @@ export default async function VehiculoPage({
                           {incidentLabel(item.report.tipo)}
                         </p>
                         {item.report.severidad != null && (
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
                             {SEVERIDAD_LABELS[item.report.severidad] ??
                               `Severidad ${item.report.severidad}`}
                           </p>
                         )}
                         {item.report.descripcion && (
-                          <p className="truncate text-xs text-gray-500">
+                          <p className="truncate text-xs text-gray-500 dark:text-gray-400">
                             {item.report.descripcion}
                           </p>
                         )}
                         {item.report.direccion && (
-                          <p className="mt-0.5 truncate text-xs text-gray-400">
+                          <p className="mt-0.5 truncate text-xs text-gray-400 dark:text-gray-500">
                             📍 {item.report.direccion}
                           </p>
                         )}
                       </div>
-                      <span className="shrink-0 text-[11px] text-gray-400">
+                      <span className="shrink-0 text-[11px] text-gray-400 dark:text-gray-500">
                         {fmtDate(item.report.ocurrido_en)}
                       </span>
                     </Link>
@@ -149,30 +151,30 @@ export default async function VehiculoPage({
                 ) : (
                   <li
                     key={`a-${item.alert.id}`}
-                    className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-3"
+                    className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900"
                   >
                     <span className="text-xl opacity-60">
                       {alertEmoji(item.alert.tipo)}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                      <p className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
                         {alertLabel(item.alert.tipo)}
-                        <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-500">
+                        <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-500 dark:bg-gray-800 dark:text-gray-400">
                           Alerta
                         </span>
                       </p>
                       {item.alert.descripcion && (
-                        <p className="truncate text-xs text-gray-500">
+                        <p className="truncate text-xs text-gray-500 dark:text-gray-400">
                           {item.alert.descripcion}
                         </p>
                       )}
                       {item.alert.direccion && (
-                        <p className="mt-0.5 truncate text-xs text-gray-400">
+                        <p className="mt-0.5 truncate text-xs text-gray-400 dark:text-gray-500">
                           📍 {item.alert.direccion}
                         </p>
                       )}
                     </div>
-                    <span className="shrink-0 text-[11px] text-gray-400">
+                    <span className="shrink-0 text-[11px] text-gray-400 dark:text-gray-500">
                       {fmtDate(item.alert.created_at)}
                     </span>
                   </li>
@@ -180,7 +182,7 @@ export default async function VehiculoPage({
               )}
             </ul>
           ) : (
-            <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400">
+            <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500">
               Este vehículo todavía no tiene historial.
             </div>
           )}

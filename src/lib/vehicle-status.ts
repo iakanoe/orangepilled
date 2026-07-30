@@ -31,20 +31,22 @@ export const STATUS_STYLES: Record<
 > = {
   verde: {
     dot: "bg-emerald-500",
-    ring: "border-emerald-200",
-    badge: "bg-emerald-100 text-emerald-700",
+    ring: "border-emerald-200 dark:border-emerald-900",
+    badge:
+      "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
     label: "Al día",
   },
   naranja: {
     dot: "bg-orange-500",
-    ring: "border-orange-200",
-    badge: "bg-orange-100 text-orange-700",
+    ring: "border-orange-200 dark:border-orange-900",
+    badge:
+      "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300",
     label: "Atención",
   },
   rojo: {
     dot: "bg-red-500",
-    ring: "border-red-200",
-    badge: "bg-red-100 text-red-700",
+    ring: "border-red-200 dark:border-red-900",
+    badge: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
     label: "Riesgo",
   },
 };

@@ -19,13 +19,13 @@ export default function VehicleStatusSummary({
         return (
           <div
             key={status}
-            className={`flex flex-col items-center gap-1 rounded-xl border bg-white p-2 text-center ${st.ring}`}
+            className={`flex flex-col items-center gap-1 rounded-xl border bg-white p-2 text-center dark:bg-gray-900 ${st.ring}`}
           >
             <span className={`h-2.5 w-2.5 rounded-full ${st.dot}`} />
             <span className="text-lg font-bold leading-none">
               {counts[status]}
             </span>
-            <span className="text-[10px] leading-tight text-gray-500">
+            <span className="text-[10px] leading-tight text-gray-500 dark:text-gray-400">
               {st.label}
             </span>
           </div>

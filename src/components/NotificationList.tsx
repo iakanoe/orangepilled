@@ -96,7 +96,7 @@ export default function NotificationList({
 
   if (!items.length) {
     return (
-      <div className="p-8 text-center text-sm text-gray-500">
+      <div className="p-8 text-center text-sm text-gray-500 dark:text-gray-400">
         <p className="mb-3 text-4xl">🔔</p>
         No tenés notificaciones todavía.
       </div>
@@ -115,13 +115,13 @@ export default function NotificationList({
           </button>
         </div>
       )}
-      <ul className="divide-y divide-gray-100">
+      <ul className="divide-y divide-gray-100 dark:divide-gray-800">
         {items.map((n) => (
           <li key={n.id}>
             <button
               onClick={() => toggle(n)}
               className={`flex w-full items-start gap-3 px-4 py-3 text-left ${
-                n.leido ? "" : "bg-brand-50/50"
+                n.leido ? "" : "bg-brand-50/50 dark:bg-brand-500/10"
               }`}
             >
               <span className="text-xl">{n.emoji}</span>
@@ -132,19 +132,19 @@ export default function NotificationList({
                     <span className="h-2 w-2 shrink-0 rounded-full bg-brand-600" />
                   )}
                 </div>
-                <p className="font-mono text-xs text-gray-500">
+                <p className="font-mono text-xs text-gray-500 dark:text-gray-400">
                   {formatPatente(n.patente)}
-                  <span className="ml-1 rounded bg-gray-100 px-1 text-[10px] uppercase">
+                  <span className="ml-1 rounded bg-gray-100 px-1 text-[10px] uppercase dark:bg-gray-800">
                     {n.origen === "report" ? "reporte" : "aviso"}
                   </span>
                 </p>
                 {n.descripcion && (
-                  <p className="mt-0.5 text-xs text-gray-500">
+                  <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
                     {n.descripcion}
                   </p>
                 )}
               </div>
-              <span className="shrink-0 text-[11px] text-gray-400">
+              <span className="shrink-0 text-[11px] text-gray-400 dark:text-gray-500">
                 {fmt(n.created_at)}
               </span>
             </button>
@@ -163,12 +163,14 @@ export default function NotificationList({
                   <>
                     <MiniMap lat={n.lat} lng={n.lng} />
                     {n.direccion && (
-                      <p className="text-xs text-gray-500">{n.direccion}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {n.direccion}
+                      </p>
                     )}
                   </>
                 )}
                 {!n.image && n.lat == null && (
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-gray-400 dark:text-gray-500">
                     Sin foto ni ubicación.
                   </p>
                 )}

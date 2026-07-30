@@ -95,10 +95,10 @@ export default function UrgentAlerts({
   return (
     <section className="px-4">
       <div className="mb-2 flex items-center gap-2">
-        <span className="text-sm font-semibold text-red-700">
+        <span className="text-sm font-semibold text-red-700 dark:text-red-400">
           Alertas urgentes
         </span>
-        <span className="rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-medium text-red-700">
+        <span className="rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-medium text-red-700 dark:bg-red-900/40 dark:text-red-300">
           {alerts.length}
         </span>
       </div>
@@ -106,33 +106,33 @@ export default function UrgentAlerts({
         {alerts.map((a) => (
           <li
             key={a.id}
-            className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-3"
+            className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-900 dark:bg-red-950/40"
           >
             <span className="text-xl">{alertEmoji(a.tipo)}</span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold text-red-800">
+                <p className="text-sm font-semibold text-red-800 dark:text-red-200">
                   {alertLabel(a.tipo)}
                 </p>
-                <span className="shrink-0 text-[11px] text-red-500">
+                <span className="shrink-0 text-[11px] text-red-500 dark:text-red-400">
                   {fmt(a.created_at)}
                 </span>
               </div>
-              <p className="font-mono text-xs text-red-600">
+              <p className="font-mono text-xs text-red-600 dark:text-red-400">
                 {formatPatente(a.patente)}
                 {aliases[a.patente] && (
-                  <span className="ml-1 font-sans font-medium text-red-700">
+                  <span className="ml-1 font-sans font-medium text-red-700 dark:text-red-300">
                     · {aliases[a.patente]}
                   </span>
                 )}
               </p>
               {a.descripcion && (
-                <p className="mt-0.5 text-xs text-red-700/80">
+                <p className="mt-0.5 text-xs text-red-700/80 dark:text-red-300/80">
                   {a.descripcion}
                 </p>
               )}
               {a.direccion && (
-                <p className="mt-0.5 text-[11px] text-red-500">
+                <p className="mt-0.5 text-[11px] text-red-500 dark:text-red-400">
                   📍 {a.direccion}
                 </p>
               )}
@@ -140,7 +140,7 @@ export default function UrgentAlerts({
             <button
               onClick={() => dismiss(a.id)}
               aria-label="Descartar alerta"
-              className="shrink-0 rounded-full bg-white/70 px-2 py-1 text-xs font-medium text-red-600 ring-1 ring-red-200 active:bg-white"
+              className="shrink-0 rounded-full bg-white/70 px-2 py-1 text-xs font-medium text-red-600 ring-1 ring-red-200 active:bg-white dark:bg-white/10 dark:text-red-300 dark:ring-red-800"
             >
               Descartar
             </button>

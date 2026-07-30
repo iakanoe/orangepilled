@@ -14,20 +14,24 @@ export default function QuickActions() {
         <button
           type="button"
           onClick={() => setOpen("report")}
-          className="flex flex-col gap-1 rounded-xl bg-white p-4 text-left shadow-sm ring-1 ring-gray-100"
+          className="flex flex-col gap-1 rounded-xl bg-white p-4 text-left shadow-sm ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800"
         >
           <span className="text-2xl">📝</span>
           <span className="font-semibold">Reportar incidente</span>
-          <span className="text-xs text-gray-500">Conducta de un vehículo</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            Conducta de un vehículo
+          </span>
         </button>
         <button
           type="button"
           onClick={() => setOpen("alert")}
-          className="flex flex-col gap-1 rounded-xl bg-white p-4 text-left shadow-sm ring-1 ring-gray-100"
+          className="flex flex-col gap-1 rounded-xl bg-white p-4 text-left shadow-sm ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800"
         >
           <span className="text-2xl">🚨</span>
           <span className="font-semibold">Avisar en vivo</span>
-          <span className="text-xs text-gray-500">Problema en un ajeno</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            Problema en un ajeno
+          </span>
         </button>
       </div>
 

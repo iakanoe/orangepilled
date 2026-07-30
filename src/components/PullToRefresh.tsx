@@ -121,11 +121,11 @@ export default function PullToRefresh({
         style={{ transform: "translateY(-100%)" }}
       >
         <span
-          className="mt-2 grid h-8 w-8 place-items-center rounded-full bg-white shadow"
+          className="mt-2 grid h-8 w-8 place-items-center rounded-full bg-white shadow dark:bg-gray-800"
           style={{ opacity: refreshing ? 1 : progress }}
         >
           <span
-            className={`h-4 w-4 rounded-full border-2 border-gray-300 border-t-brand-600 ${
+            className={`h-4 w-4 rounded-full border-2 border-gray-300 border-t-brand-600 dark:border-gray-600 dark:border-t-brand-400 ${
               refreshing ? "animate-spin" : ""
             }`}
             style={

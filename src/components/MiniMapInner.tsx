@@ -3,9 +3,15 @@
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "@/lib/leaflet-icon";
 
-export default function MiniMapInner({ lat, lng }: { lat: number; lng: number }) {
+export default function MiniMapInner({
+  lat,
+  lng,
+}: {
+  lat: number;
+  lng: number;
+}) {
   return (
-    <div className="h-40 overflow-hidden rounded-lg border border-gray-200">
+    <div className="h-40 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800">
       <MapContainer
         center={[lat, lng]}
         zoom={15}

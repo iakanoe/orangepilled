@@ -68,13 +68,15 @@ export default async function InformePatentePage({
 
   return (
     <>
-      <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3">
+      <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
         <BackButton fallback="/consultar" />
         <div className="min-w-0 flex-1">
           <h1 className="font-mono text-lg font-bold leading-tight tracking-wide">
             {formatPatente(parsed.normalized)}
           </h1>
-          <p className="truncate text-xs text-gray-500">Informe del vehículo</p>
+          <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+            Informe del vehículo
+          </p>
         </div>
         <span
           className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-medium ${st.badge}`}
@@ -86,12 +88,12 @@ export default async function InformePatentePage({
       <div className="flex flex-col gap-4 p-4">
         {/* Status — same color code used across the app */}
         <section
-          className={`flex items-center gap-3 rounded-xl border bg-white p-4 ${st.ring}`}
+          className={`flex items-center gap-3 rounded-xl border bg-white p-4 dark:bg-gray-900 ${st.ring}`}
         >
           <span className={`h-3.5 w-3.5 shrink-0 rounded-full ${st.dot}`} />
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold">{st.label}</p>
-            <p className="truncate text-xs text-gray-500">
+            <p className="truncate text-xs text-gray-500 dark:text-gray-400">
               {statusDesc(recent)}
             </p>
           </div>
@@ -107,7 +109,7 @@ export default async function InformePatentePage({
               {reports.map((r) => (
                 <li
                   key={r.id}
-                  className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-3"
+                  className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900"
                 >
                   <span className="text-xl">{incidentEmoji(r.tipo)}</span>
                   <div className="min-w-0 flex-1">
@@ -115,30 +117,30 @@ export default async function InformePatentePage({
                       {incidentLabel(r.tipo)}
                     </p>
                     {r.severidad != null && (
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         {SEVERIDAD_LABELS[r.severidad] ??
                           `Severidad ${r.severidad}`}
                       </p>
                     )}
                     {r.descripcion && (
-                      <p className="truncate text-xs text-gray-500">
+                      <p className="truncate text-xs text-gray-500 dark:text-gray-400">
                         {r.descripcion}
                       </p>
                     )}
                     {r.direccion && (
-                      <p className="mt-0.5 truncate text-xs text-gray-400">
+                      <p className="mt-0.5 truncate text-xs text-gray-400 dark:text-gray-500">
                         📍 {r.direccion}
                       </p>
                     )}
                   </div>
-                  <span className="shrink-0 text-[11px] text-gray-400">
+                  <span className="shrink-0 text-[11px] text-gray-400 dark:text-gray-500">
                     {fmtDate(r.ocurrido_en)}
                   </span>
                 </li>
               ))}
             </ul>
           ) : (
-            <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400">
+            <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500">
               Esta patente todavía no tiene reportes.
             </div>
           )}

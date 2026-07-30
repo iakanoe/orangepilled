@@ -107,7 +107,7 @@ export default async function NotificacionesPage() {
 
   return (
     <>
-      <header className="border-b border-gray-200 bg-white px-4 py-3">
+      <header className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
         <h1 className="text-lg font-bold">Notificaciones</h1>
       </header>
       <NotificationList initial={items} />

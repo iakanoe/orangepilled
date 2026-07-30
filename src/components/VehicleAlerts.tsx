@@ -43,29 +43,31 @@ export default function VehicleAlerts({ initial }: { initial: LiveAlert[] }) {
         {active.map((a) => (
           <li
             key={a.id}
-            className="flex items-start gap-3 rounded-xl border border-red-300 bg-red-50 p-3"
+            className="flex items-start gap-3 rounded-xl border border-red-300 bg-red-50 p-3 dark:border-red-900 dark:bg-red-950/40"
           >
             <span className="text-xl">{alertEmoji(a.tipo)}</span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-red-900">
+              <p className="text-sm font-semibold text-red-900 dark:text-red-200">
                 {alertLabel(a.tipo)}
               </p>
               {a.descripcion && (
-                <p className="text-xs text-red-800/80">{a.descripcion}</p>
+                <p className="text-xs text-red-800/80 dark:text-red-300/80">
+                  {a.descripcion}
+                </p>
               )}
               {a.direccion && (
-                <p className="mt-0.5 truncate text-xs text-red-700/70">
+                <p className="mt-0.5 truncate text-xs text-red-700/70 dark:text-red-400/70">
                   📍 {a.direccion}
                 </p>
               )}
-              <p className="mt-1 text-[11px] text-red-700/70">
+              <p className="mt-1 text-[11px] text-red-700/70 dark:text-red-400/70">
                 {fmtDate(a.created_at)}
               </p>
             </div>
             <button
               onClick={() => dismiss(a.id)}
               aria-label="Descartar alerta"
-              className="shrink-0 rounded-full bg-white/70 px-2 py-1 text-xs font-medium text-red-600 ring-1 ring-red-200 active:bg-white"
+              className="shrink-0 rounded-full bg-white/70 px-2 py-1 text-xs font-medium text-red-600 ring-1 ring-red-200 active:bg-white dark:bg-white/10 dark:text-red-300 dark:ring-red-800"
             >
               Descartar
             </button>

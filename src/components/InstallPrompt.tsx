@@ -86,7 +86,7 @@ export default function InstallPrompt() {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-x-3 bottom-20 z-50 rounded-xl border border-gray-200 bg-white p-4 shadow-lg">
+    <div className="fixed inset-x-3 bottom-20 z-50 rounded-xl border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-800 dark:bg-gray-900">
       <div className="flex items-start gap-3">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-600 text-xl">
           🚗
@@ -96,19 +96,22 @@ export default function InstallPrompt() {
             Instalá {process.env.NEXT_PUBLIC_APP_NAME}
           </p>
           {isIos ? (
-            <p className="mt-0.5 text-gray-500">
+            <p className="mt-0.5 text-gray-500 dark:text-gray-400">
               Tocá <span className="font-medium">Compartir</span> y luego{" "}
               <span className="font-medium">Agregar a inicio</span>.
             </p>
           ) : (
-            <p className="mt-0.5 text-gray-500">
+            <p className="mt-0.5 text-gray-500 dark:text-gray-400">
               Accedé más rápido y recibí avisos con la app instalada.
             </p>
           )}
         </div>
       </div>
       <div className="mt-3 flex justify-end gap-2">
-        <button onClick={dismiss} className="px-3 py-1.5 text-sm text-gray-500">
+        <button
+          onClick={dismiss}
+          className="px-3 py-1.5 text-sm text-gray-500 dark:text-gray-400"
+        >
           Ahora no
         </button>
         {!isIos && (

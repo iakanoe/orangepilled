@@ -14,7 +14,7 @@ export default function ConsultarPage() {
 
       <PatenteLookup />
 
-      <p className="px-4 text-sm text-gray-500">
+      <p className="px-4 text-sm text-gray-500 dark:text-gray-400">
         Ingresá una patente para ver su informe. Solo se muestra el historial de
         reportes; los avisos urgentes solo los recibe quien tenga el vehículo
         registrado.

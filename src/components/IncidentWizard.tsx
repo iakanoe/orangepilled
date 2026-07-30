@@ -233,23 +233,23 @@ export default function IncidentWizard({
       onClick={onClose}
     >
       <div
-        className="mx-auto flex h-[100dvh] w-full max-w-lg flex-col bg-white"
+        className="mx-auto flex h-[100dvh] w-full max-w-lg flex-col bg-white dark:bg-gray-900"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center gap-3 border-b border-gray-100 px-4 py-3">
+        <div className="flex items-center gap-3 border-b border-gray-100 px-4 py-3 dark:border-gray-800">
           <button
             type="button"
             onClick={onClose}
             aria-label="Cerrar"
-            className="grid h-9 w-9 place-items-center rounded-full text-xl text-gray-500 hover:bg-gray-100"
+            className="grid h-9 w-9 place-items-center rounded-full text-xl text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
           >
             ✕
           </button>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-bold">{title}</p>
             {!result && (
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-400 dark:text-gray-500">
                 Paso {stepIdx + 1} de {steps.length}
               </p>
             )}
@@ -263,7 +263,7 @@ export default function IncidentWizard({
               <span
                 key={s}
                 className={`h-1 flex-1 rounded-full ${
-                  i <= stepIdx ? "bg-brand-600" : "bg-gray-200"
+                  i <= stepIdx ? "bg-brand-600" : "bg-gray-200 dark:bg-gray-700"
                 }`}
               />
             ))}
@@ -326,12 +326,12 @@ export default function IncidentWizard({
 
         {/* Footer */}
         {!result && (
-          <div className="flex gap-2 border-t border-gray-100 px-4 py-3 pb-safe">
+          <div className="flex gap-2 border-t border-gray-100 px-4 py-3 pb-safe dark:border-gray-800">
             {stepIdx > 0 && (
               <button
                 type="button"
                 onClick={back}
-                className="rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold"
+                className="rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold dark:border-gray-700"
               >
                 Atrás
               </button>
@@ -382,7 +382,7 @@ function PatenteStep({
     <div className="flex flex-col gap-4">
       <div>
         <h2 className="text-lg font-bold">¿Qué patente?</h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Ingresá la patente del vehículo.
         </p>
       </div>
@@ -398,7 +398,7 @@ function PatenteStep({
               ? "border-red-400"
               : patenteOk
                 ? "border-green-500"
-                : "border-gray-300"
+                : "border-gray-300 dark:border-gray-700"
           }`}
         />
         {patente && !patenteOk && (
@@ -418,10 +418,10 @@ function PatenteStep({
         type="button"
         disabled
         title="Próximamente"
-        className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-gray-300 py-3 text-sm text-gray-400"
+        className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-gray-300 py-3 text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500"
       >
         📷 Detectar desde una foto
-        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase">
+        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase dark:bg-gray-800">
           Pronto
         </span>
       </button>
@@ -450,7 +450,7 @@ function CuandoStep({
     <div className="flex flex-col gap-4">
       <div>
         <h2 className="text-lg font-bold">¿Cuándo sucedió?</h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           No hace falta que sea exacto. Si el incidente duró un rato (por
           ejemplo, si te siguió manejando mal por toda una avenida), poné una
           hora estimada dentro de ese momento.
@@ -468,7 +468,7 @@ function CuandoStep({
             key={q.label}
             type="button"
             onClick={() => onQuick(q.m)}
-            className="rounded-full border border-gray-300 px-3 py-1.5 text-sm"
+            className="rounded-full border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-700"
           >
             {q.label}
           </button>
@@ -481,19 +481,19 @@ function CuandoStep({
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-brand-500"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-800"
         />
       </div>
 
       <div>
         <label className="mb-1 block text-sm font-medium">
-          Hora <span className="text-gray-400">(24 hs)</span>
+          Hora <span className="text-gray-400 dark:text-gray-500">(24 hs)</span>
         </label>
         <div className="flex items-center gap-2">
           <select
             value={hour}
             onChange={(e) => setHour(Number(e.target.value))}
-            className="flex-1 rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg outline-none focus:border-brand-500"
+            className="flex-1 rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-800"
           >
             {HOURS.map((h) => (
               <option key={h} value={h}>
@@ -501,11 +501,13 @@ function CuandoStep({
               </option>
             ))}
           </select>
-          <span className="text-lg font-bold text-gray-400">:</span>
+          <span className="text-lg font-bold text-gray-400 dark:text-gray-500">
+            :
+          </span>
           <select
             value={minute}
             onChange={(e) => setMinute(Number(e.target.value))}
-            className="flex-1 rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg outline-none focus:border-brand-500"
+            className="flex-1 rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-800"
           >
             {MINUTES.map((m) => (
               <option key={m} value={m}>
@@ -532,7 +534,7 @@ function DondeStep({
     <div className="flex flex-col gap-4">
       <div>
         <h2 className="text-lg font-bold">¿Dónde sucedió?</h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           No hace falta que sea el punto exacto. Si pasó a lo largo de un
           recorrido, marcá un lugar representativo. Buscá una dirección o un
           cruce (ej: <span className="font-medium">Callao y Corrientes</span>),
@@ -543,11 +545,11 @@ function DondeStep({
       <MapField value={pos} onChange={onChange} />
 
       {direccion ? (
-        <p className="rounded-lg bg-green-50 px-3 py-2 text-xs text-green-700">
+        <p className="rounded-lg bg-green-50 px-3 py-2 text-xs text-green-700 dark:bg-green-950/50 dark:text-green-300">
           📍 {direccion}
         </p>
       ) : (
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-gray-400 dark:text-gray-500">
           Marcá un punto para continuar. La ubicación es obligatoria.
         </p>
       )}
@@ -582,7 +584,7 @@ function DetallesStep({
     <div className="flex flex-col gap-5">
       <div>
         <h2 className="text-lg font-bold">Detalles</h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Elegí el tipo. El resto es opcional.
         </p>
       </div>
@@ -600,8 +602,8 @@ function DetallesStep({
               onClick={() => setTipo(c.value)}
               className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm ${
                 tipo === c.value
-                  ? "border-brand-500 bg-brand-50 font-semibold"
-                  : "border-gray-200 bg-white"
+                  ? "border-brand-500 bg-brand-100 font-semibold text-brand-800 dark:bg-brand-500/25 dark:text-brand-100"
+                  : "border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
               }`}
             >
               <span className="text-lg">{c.emoji}</span>
@@ -615,7 +617,8 @@ function DetallesStep({
       {isReport && (
         <div>
           <label className="mb-1 block text-sm font-medium">
-            Severidad <span className="text-gray-400">(opcional)</span>
+            Severidad{" "}
+            <span className="text-gray-400 dark:text-gray-500">(opcional)</span>
           </label>
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((n) => (
@@ -625,8 +628,8 @@ function DetallesStep({
                 onClick={() => setSeveridad(severidad === n ? 0 : n)}
                 className={`flex-1 rounded-lg border py-2 text-xs ${
                   severidad >= n && severidad > 0
-                    ? "border-amber-400 bg-amber-50"
-                    : "border-gray-200"
+                    ? "border-amber-400 bg-amber-50 dark:bg-amber-900/30"
+                    : "border-gray-200 dark:border-gray-700"
                 }`}
                 title={SEVERIDAD_LABELS[n]}
               >
@@ -635,7 +638,7 @@ function DetallesStep({
             ))}
           </div>
           {severidad > 0 && (
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
               {SEVERIDAD_LABELS[severidad]}
             </p>
           )}
@@ -645,21 +648,23 @@ function DetallesStep({
       {/* Descripción */}
       <div>
         <label className="mb-1 block text-sm font-medium">
-          Descripción <span className="text-gray-400">(opcional)</span>
+          Descripción{" "}
+          <span className="text-gray-400 dark:text-gray-500">(opcional)</span>
         </label>
         <textarea
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
           rows={3}
           placeholder="Contá qué pasó…"
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-800"
         />
       </div>
 
       {/* Fotos */}
       <div>
         <label className="mb-1 block text-sm font-medium">
-          Foto(s) <span className="text-gray-400">(opcional)</span>
+          Foto(s){" "}
+          <span className="text-gray-400 dark:text-gray-500">(opcional)</span>
         </label>
         <input
           type="file"
@@ -669,10 +674,10 @@ function DetallesStep({
           onChange={(e) =>
             setFiles(Array.from(e.target.files ?? []).slice(0, 5))
           }
-          className="block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700"
+          className="block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 dark:text-gray-400 dark:file:bg-brand-900/40 dark:file:text-brand-300"
         />
         {files.length > 0 && (
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
             {files.length} archivo(s)
           </p>
         )}
@@ -699,12 +704,14 @@ function ResultView({
 }) {
   if (result.kind === "error") {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-        <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-red-100 text-3xl">
+      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center dark:border-red-900 dark:bg-red-950/50">
+        <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-red-100 text-3xl dark:bg-red-900/40">
           ⚠️
         </div>
         <h2 className="text-lg font-bold">No se pudo enviar</h2>
-        <p className="mt-1 text-sm text-gray-600">{result.msg}</p>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
+          {result.msg}
+        </p>
         <button
           onClick={onRetry}
           className="mt-5 w-full rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white"
@@ -716,8 +723,8 @@ function ResultView({
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 text-center">
-      <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-green-100 text-3xl">
+    <div className="rounded-xl border border-gray-200 bg-white p-6 text-center dark:border-gray-800 dark:bg-gray-900">
+      <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-green-100 text-3xl dark:bg-green-900/40">
         {result.kind === "queued" ? "📥" : "✅"}
       </div>
       <h2 className="text-lg font-bold">
@@ -727,7 +734,7 @@ function ResultView({
             ? "Reporte enviado"
             : "Aviso enviado"}
       </h2>
-      <p className="mt-1 text-sm text-gray-500">
+      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
         {result.kind === "queued"
           ? "Se enviará automáticamente cuando vuelva internet."
           : result.notified
@@ -739,7 +746,7 @@ function ResultView({
       <div className="mt-5 flex gap-2">
         <button
           onClick={onClose}
-          className="flex-1 rounded-lg border border-gray-300 py-2.5 text-sm font-semibold"
+          className="flex-1 rounded-lg border border-gray-300 py-2.5 text-sm font-semibold dark:border-gray-700"
         >
           Cerrar
         </button>

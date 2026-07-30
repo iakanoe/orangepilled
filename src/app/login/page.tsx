@@ -53,7 +53,7 @@ function LoginForm() {
         <h1 className="text-2xl font-bold">
           {process.env.NEXT_PUBLIC_APP_NAME}
         </h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Reportá y recibí avisos sobre patentes.
         </p>
       </div>
@@ -71,7 +71,7 @@ function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="vos@email.com"
-            className="rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-brand-500"
+            className="rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-900"
           />
           <button
             type="submit"
@@ -80,7 +80,7 @@ function LoginForm() {
           >
             {loading ? "Enviando…" : "Enviar código"}
           </button>
-          <p className="text-center text-xs text-gray-400">
+          <p className="text-center text-xs text-gray-400 dark:text-gray-500">
             Te mandamos un código de 6 dígitos por email.
           </p>
         </form>
@@ -97,7 +97,7 @@ function LoginForm() {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             placeholder="123456"
-            className="rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg tracking-[0.3em] outline-none focus:border-brand-500"
+            className="rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg tracking-[0.3em] outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-900"
           />
           <button
             type="submit"
@@ -109,7 +109,7 @@ function LoginForm() {
           <button
             type="button"
             onClick={() => setStep("email")}
-            className="text-center text-xs text-gray-400 underline"
+            className="text-center text-xs text-gray-400 underline dark:text-gray-500"
           >
             Cambiar email
           </button>
@@ -117,7 +117,7 @@ function LoginForm() {
       )}
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/50 dark:text-red-400">
           {error}
         </p>
       )}

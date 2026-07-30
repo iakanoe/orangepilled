@@ -77,7 +77,9 @@ export default function VehicleForm({
           onChange={(e) => setPatente(e.target.value.toUpperCase())}
           placeholder="AB123CD"
           className={`w-full rounded-lg border px-3 py-2.5 font-mono text-lg tracking-wider outline-none ${
-            patente && !parsed.ok ? "border-red-400" : "border-gray-300"
+            patente && !parsed.ok
+              ? "border-red-400"
+              : "border-gray-300 dark:border-gray-700"
           }`}
         />
         {parsed.ok && (
@@ -93,16 +95,16 @@ export default function VehicleForm({
           value={alias}
           onChange={(e) => setAlias(e.target.value)}
           placeholder="El auto de mamá"
-          className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-brand-500"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-800"
         />
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
           Solo vos ves este alias. Podés seguir cualquier patente, esté o no
           registrada por otra persona.
         </p>
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/50 dark:text-red-400">
           {error}
         </p>
       )}

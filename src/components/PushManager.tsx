@@ -43,8 +43,8 @@ export default function PushManager() {
 
   if (state === "denied") {
     return (
-      <div className="mx-4 mb-2 rounded-xl border border-gray-200 bg-white p-3">
-        <p className="text-sm text-amber-600">
+      <div className="mx-4 mb-2 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
+        <p className="text-sm text-amber-600 dark:text-amber-400">
           Notificaciones bloqueadas. Habilitalas en los ajustes del navegador
           para recibir avisos sobre tus vehículos.
         </p>
@@ -53,11 +53,11 @@ export default function PushManager() {
   }
 
   return (
-    <div className="mx-4 mb-2 rounded-xl border border-gray-200 bg-white p-3">
+    <div className="mx-4 mb-2 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="font-medium">Notificaciones push</p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Recibí un aviso al instante cuando reportan tu vehículo.
           </p>
         </div>

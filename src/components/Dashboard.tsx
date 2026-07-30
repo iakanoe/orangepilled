@@ -57,7 +57,7 @@ export default function Dashboard({
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400">
+          <div className="flex flex-col items-center rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500">
             <p className="mb-2 text-3xl">🚗</p>
             Todavía no registraste vehículos.
             <Link
@@ -78,7 +78,7 @@ function VehicleStatusCard({ s }: { s: VehicleStat }) {
   return (
     <Link
       href={`/vehiculos/${s.vehicle.id}`}
-      className={`flex items-center gap-3 rounded-xl border bg-white p-3 ${st.ring}`}
+      className={`flex items-center gap-3 rounded-xl border bg-white p-3 dark:border-gray-800 dark:bg-gray-900 ${st.ring}`}
     >
       <span className={`h-3 w-3 shrink-0 rounded-full ${st.dot}`} />
       <div className="min-w-0 flex-1">
@@ -94,20 +94,22 @@ function VehicleStatusCard({ s }: { s: VehicleStat }) {
           {s.active > 0 && (
             <span
               title={`${s.active} alerta${s.active > 1 ? "s" : ""} en vivo`}
-              className="ml-auto inline-flex shrink-0 items-center gap-0.5 rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700"
+              className="ml-auto inline-flex shrink-0 items-center gap-0.5 rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-900/40 dark:text-red-300"
             >
               ⚠️{s.active > 1 ? ` ${s.active}` : ""}
             </span>
           )}
         </div>
         {s.vehicle.alias && (
-          <p className="truncate text-xs font-medium text-gray-700">
+          <p className="truncate text-xs font-medium text-gray-700 dark:text-gray-300">
             {s.vehicle.alias}
           </p>
         )}
-        <p className="truncate text-xs text-gray-500">{statusDescription(s)}</p>
+        <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+          {statusDescription(s)}
+        </p>
       </div>
-      <span className="text-gray-300">›</span>
+      <span className="text-gray-300 dark:text-gray-600">›</span>
     </Link>
   );
 }

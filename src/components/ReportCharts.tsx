@@ -18,8 +18,7 @@ export interface NamedCount {
 }
 
 export function TipoBarChart({ data }: { data: NamedCount[] }) {
-  if (!data.length)
-    return <Empty text="Sin datos para el gráfico." />;
+  if (!data.length) return <Empty text="Sin datos para el gráfico." />;
   return (
     <ResponsiveContainer width="100%" height={Math.max(140, data.length * 34)}>
       <BarChart data={data} layout="vertical" margin={{ left: 8, right: 16 }}>
@@ -60,6 +59,8 @@ export function TimelineChart({ data }: { data: NamedCount[] }) {
 
 function Empty({ text }: { text: string }) {
   return (
-    <div className="grid h-32 place-items-center text-sm text-gray-400">{text}</div>
+    <div className="grid h-32 place-items-center text-sm text-gray-400 dark:text-gray-500">
+      {text}
+    </div>
   );
 }

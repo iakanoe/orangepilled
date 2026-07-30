@@ -90,7 +90,7 @@ export default function CityMapInner() {
         type="button"
         onClick={recenter}
         aria-label="Centrar en mi ubicación"
-        className="absolute bottom-[calc(env(safe-area-inset-bottom,0px)+5.5rem)] right-3 z-[500] grid h-11 w-11 place-items-center rounded-full bg-white text-xl shadow-md ring-1 ring-black/5 active:scale-95"
+        className="absolute bottom-[calc(env(safe-area-inset-bottom,0px)+5.5rem)] right-3 z-[500] grid h-11 w-11 place-items-center rounded-full bg-white text-xl shadow-md ring-1 ring-black/5 active:scale-95 dark:bg-gray-800 dark:ring-white/10"
       >
         📍
       </button>

@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 const MiniMapInner = dynamic(() => import("@/components/MiniMapInner"), {
   ssr: false,
   loading: () => (
-    <div className="h-40 rounded-lg bg-gray-100" aria-hidden />
+    <div className="h-40 rounded-lg bg-gray-100 dark:bg-gray-800" aria-hidden />
   ),
 });
 

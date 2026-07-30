@@ -63,13 +63,13 @@ export default async function ReportePage({
 
   return (
     <>
-      <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3">
+      <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
         <BackButton fallback="/" />
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-lg font-bold leading-tight">
             {incidentEmoji(report.tipo)} {incidentLabel(report.tipo)}
           </h1>
-          <p className="truncate text-xs text-gray-500">
+          <p className="truncate text-xs text-gray-500 dark:text-gray-400">
             {fmtDate(report.ocurrido_en)}
           </p>
         </div>
@@ -77,8 +77,10 @@ export default async function ReportePage({
 
       <div className="flex flex-col gap-4 p-4">
         {/* Patente */}
-        <section className="rounded-xl border border-gray-200 bg-white p-3">
-          <p className="mb-1 text-xs font-medium text-gray-400">Vehículo</p>
+        <section className="rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
+          <p className="mb-1 text-xs font-medium text-gray-400 dark:text-gray-500">
+            Vehículo
+          </p>
           {vehicle ? (
             <Link
               href={`/vehiculos/${vehicle.id}`}
@@ -100,8 +102,10 @@ export default async function ReportePage({
 
         {/* Severidad */}
         {report.severidad != null && (
-          <section className="rounded-xl border border-gray-200 bg-white p-3">
-            <p className="mb-1 text-xs font-medium text-gray-400">Severidad</p>
+          <section className="rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
+            <p className="mb-1 text-xs font-medium text-gray-400 dark:text-gray-500">
+              Severidad
+            </p>
             <p className="text-sm font-semibold">
               {SEVERIDAD_LABELS[report.severidad] ??
                 `Severidad ${report.severidad}`}
@@ -111,11 +115,11 @@ export default async function ReportePage({
 
         {/* Descripción */}
         {report.descripcion && (
-          <section className="rounded-xl border border-gray-200 bg-white p-3">
-            <p className="mb-1 text-xs font-medium text-gray-400">
+          <section className="rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
+            <p className="mb-1 text-xs font-medium text-gray-400 dark:text-gray-500">
               Descripción
             </p>
-            <p className="whitespace-pre-wrap text-sm text-gray-700">
+            <p className="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300">
               {report.descripcion}
             </p>
           </section>
@@ -124,7 +128,7 @@ export default async function ReportePage({
         {/* Fotos */}
         {media.length > 0 && (
           <section>
-            <p className="mb-2 text-xs font-medium text-gray-400">
+            <p className="mb-2 text-xs font-medium text-gray-400 dark:text-gray-500">
               Foto(s) ({media.length})
             </p>
             <div className="flex flex-col gap-2">
@@ -144,10 +148,12 @@ export default async function ReportePage({
         {/* Ubicación */}
         {report.lat != null && report.lng != null && (
           <section>
-            <p className="mb-2 text-xs font-medium text-gray-400">Ubicación</p>
+            <p className="mb-2 text-xs font-medium text-gray-400 dark:text-gray-500">
+              Ubicación
+            </p>
             <MiniMap lat={report.lat} lng={report.lng} />
             {report.direccion && (
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 📍 {report.direccion}
               </p>
             )}
@@ -155,7 +161,7 @@ export default async function ReportePage({
         )}
 
         {/* Meta */}
-        <section className="rounded-xl border border-gray-200 bg-white p-3 text-xs text-gray-500">
+        <section className="rounded-xl border border-gray-200 bg-white p-3 text-xs text-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400">
           <p>Registrado el {fmtDate(report.created_at)}</p>
         </section>
       </div>
