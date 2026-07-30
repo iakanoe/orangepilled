@@ -10,6 +10,10 @@ import {
   incidentEmoji,
 } from "@/lib/incident-types";
 
+// A user can't re-report the same plate for the same incident type within
+// this window — cuts down accidental double-taps and repeat spam.
+const REPORT_COOLDOWN_MS = 15 * 60 * 1000;
+
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -36,6 +40,28 @@ export async function POST(request: Request) {
   let fotos: string[] = Array.isArray(body.fotos) ? body.fotos.slice(0, 5) : [];
 
   const admin = createAdminClient();
+
+  // Rate-limit repeat reports: same reporter, same plate, same incident type
+  // inside the cooldown window is rejected (the client surfaces `error`).
+  const since = new Date(Date.now() - REPORT_COOLDOWN_MS).toISOString();
+  const { data: recent } = await admin
+    .from("reports")
+    .select("id")
+    .eq("reporter_id", user.id)
+    .eq("patente", normalized)
+    .eq("tipo", body.tipo)
+    .gte("created_at", since)
+    .limit(1)
+    .maybeSingle();
+  if (recent) {
+    return NextResponse.json(
+      {
+        error:
+          "Ya reportaste este vehículo por el mismo motivo hace poco. Esperá unos minutos antes de volver a reportarlo.",
+      },
+      { status: 429 },
+    );
+  }
 
   // Photos captured offline ride along as data URLs; upload them now (this
   // often runs when the queued request is replayed after reconnecting).
