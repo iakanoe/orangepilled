@@ -110,14 +110,14 @@ export default function InstallPrompt() {
       <div className="mt-3 flex justify-end gap-2">
         <button
           onClick={dismiss}
-          className="px-3 py-1.5 text-sm text-gray-500 dark:text-gray-400"
+          className="pressable rounded-lg px-3 py-1.5 text-sm text-gray-500 transition-colors hover:bg-gray-100 active:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:active:bg-gray-700"
         >
           Ahora no
         </button>
         {!isIos && (
           <button
             onClick={install}
-            className="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white"
+            className="pressable rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
           >
             Instalar
           </button>

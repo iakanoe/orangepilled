@@ -14,7 +14,7 @@ export default function BackButton({ fallback = "/" }: { fallback?: string }) {
         if (window.history.length > 1) router.back();
         else router.push(fallback);
       }}
-      className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+      className="pressable grid h-8 w-8 shrink-0 place-items-center rounded-full text-lg transition-colors hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700"
     >
       ←
     </button>

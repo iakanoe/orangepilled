@@ -65,7 +65,7 @@ export default function Dashboard({
           <h2 className="text-sm font-semibold">Estado de mis vehículos</h2>
           <Link
             href="/vehiculos"
-            className="text-xs font-semibold text-brand-600"
+            className="rounded text-xs font-semibold text-brand-600 transition-colors hover:text-brand-700 active:text-brand-800 dark:hover:text-brand-400"
           >
             Ver todos ›
           </Link>
@@ -82,7 +82,7 @@ export default function Dashboard({
             Todavía no registraste vehículos.
             <Link
               href="/vehiculos/nuevo"
-              className="mt-4 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white"
+              className="pressable mt-4 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
             >
               + Agregar mi primer vehículo
             </Link>
@@ -98,7 +98,7 @@ function VehicleStatusCard({ s }: { s: VehicleStat }) {
   return (
     <Link
       href={`/vehiculos/${s.vehicle.id}`}
-      className={`flex items-center gap-3 rounded-xl border bg-white p-3 dark:border-gray-800 dark:bg-gray-900 ${st.ring}`}
+      className={`pressable-card flex items-center gap-3 rounded-xl border bg-white p-3 transition hover:shadow-sm active:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:active:bg-gray-800 ${st.ring}`}
     >
       <span className={`h-3 w-3 shrink-0 rounded-full ${st.dot}`} />
       <div className="min-w-0 flex-1">

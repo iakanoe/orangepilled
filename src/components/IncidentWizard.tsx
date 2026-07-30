@@ -242,7 +242,7 @@ export default function IncidentWizard({
             type="button"
             onClick={onClose}
             aria-label="Cerrar"
-            className="grid h-9 w-9 place-items-center rounded-full text-xl text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+            className="pressable grid h-9 w-9 place-items-center rounded-full text-xl text-gray-500 transition-colors hover:bg-gray-100 active:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:active:bg-gray-700"
           >
             ✕
           </button>
@@ -331,7 +331,7 @@ export default function IncidentWizard({
               <button
                 type="button"
                 onClick={back}
-                className="rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold dark:border-gray-700"
+                className="pressable rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold transition-colors hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
               >
                 Atrás
               </button>
@@ -341,7 +341,7 @@ export default function IncidentWizard({
                 type="button"
                 onClick={submit}
                 disabled={!canProceed || submitting}
-                className="flex-1 rounded-xl bg-brand-600 py-3 font-semibold text-white disabled:opacity-50"
+                className="pressable flex-1 rounded-xl bg-brand-600 py-3 font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800 disabled:opacity-50"
               >
                 {submitting
                   ? "Enviando…"
@@ -354,7 +354,7 @@ export default function IncidentWizard({
                 type="button"
                 onClick={next}
                 disabled={!canProceed}
-                className="flex-1 rounded-xl bg-brand-600 py-3 font-semibold text-white disabled:opacity-50"
+                className="pressable flex-1 rounded-xl bg-brand-600 py-3 font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800 disabled:opacity-50"
               >
                 Siguiente
               </button>
@@ -468,7 +468,7 @@ function CuandoStep({
             key={q.label}
             type="button"
             onClick={() => onQuick(q.m)}
-            className="rounded-full border border-gray-300 px-3 py-1.5 text-sm dark:border-gray-700"
+            className="pressable rounded-full border border-gray-300 px-3 py-1.5 text-sm transition-colors hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
           >
             {q.label}
           </button>
@@ -600,10 +600,10 @@ function DetallesStep({
               key={c.value}
               type="button"
               onClick={() => setTipo(c.value)}
-              className={`flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm ${
+              className={`pressable flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors ${
                 tipo === c.value
                   ? "border-brand-500 bg-brand-100 font-semibold text-brand-800 dark:bg-brand-500/25 dark:text-brand-100"
-                  : "border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+                  : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:active:bg-gray-700"
               }`}
             >
               <span className="text-lg">{c.emoji}</span>
@@ -626,10 +626,10 @@ function DetallesStep({
                 key={n}
                 type="button"
                 onClick={() => setSeveridad(severidad === n ? 0 : n)}
-                className={`flex-1 rounded-lg border py-2 text-xs ${
+                className={`pressable flex-1 rounded-lg border py-2 text-xs transition-colors ${
                   severidad >= n && severidad > 0
                     ? "border-amber-400 bg-amber-50 dark:bg-amber-900/30"
-                    : "border-gray-200 dark:border-gray-700"
+                    : "border-gray-200 hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
                 }`}
                 title={SEVERIDAD_LABELS[n]}
               >
@@ -714,7 +714,7 @@ function ResultView({
         </p>
         <button
           onClick={onRetry}
-          className="mt-5 w-full rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white"
+          className="pressable mt-5 w-full rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
         >
           Volver a intentar
         </button>
@@ -746,13 +746,13 @@ function ResultView({
       <div className="mt-5 flex gap-2">
         <button
           onClick={onClose}
-          className="flex-1 rounded-lg border border-gray-300 py-2.5 text-sm font-semibold dark:border-gray-700"
+          className="pressable flex-1 rounded-lg border border-gray-300 py-2.5 text-sm font-semibold transition-colors hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
         >
           Cerrar
         </button>
         <button
           onClick={onHome}
-          className="flex-1 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white"
+          className="pressable flex-1 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
         >
           Ir al inicio
         </button>

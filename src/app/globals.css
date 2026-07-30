@@ -23,6 +23,47 @@ body {
   @apply bg-gray-50 text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100;
 }
 
+/* Native-app interaction feel: kill the mobile tap-flash, avoid text selection
+   on controls, and treat taps as taps (no 300ms delay) on everything the user
+   can act on. */
+button,
+a,
+label,
+summary,
+[role="button"],
+input[type="checkbox"],
+input[type="radio"],
+input[type="submit"],
+input[type="file"]::-webkit-file-upload-button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button,
+a,
+[role="button"] {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Press feedback for tappable controls. `.pressable` for buttons/chips,
+   `.pressable-card` for larger surfaces (a subtler scale reads better on big
+   elements). Both fall back gracefully when the user prefers reduced motion. */
+.pressable {
+  @apply transition-transform duration-100 ease-out active:scale-[0.95];
+}
+
+.pressable-card {
+  @apply transition-transform duration-100 ease-out active:scale-[0.985];
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressable,
+  .pressable-card {
+    @apply transition-none active:scale-100;
+  }
+}
+
 /* Leaflet renders inside a fixed-height container; ensure it fills it. */
 .leaflet-container {
   height: 100%;

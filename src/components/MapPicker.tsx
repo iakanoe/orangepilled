@@ -91,7 +91,7 @@ export default function MapPicker({ value, onChange }: Props) {
           <button
             type="submit"
             disabled={searching}
-            className="rounded-lg border border-gray-300 px-3 text-sm dark:border-gray-700"
+            className="pressable rounded-lg border border-gray-300 px-3 text-sm transition-colors hover:bg-gray-50 active:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
           >
             {searching ? "…" : "Buscar"}
           </button>
@@ -100,7 +100,7 @@ export default function MapPicker({ value, onChange }: Props) {
           type="button"
           onClick={locateMe}
           title="Usar mi ubicación"
-          className="rounded-lg bg-brand-600 px-3 text-white"
+          className="pressable rounded-lg bg-brand-600 px-3 text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
         >
           📍
         </button>
@@ -119,7 +119,7 @@ export default function MapPicker({ value, onChange }: Props) {
                   setResults([]);
                   setQuery(r.label);
                 }}
-                className="block w-full px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-800"
+                className="block w-full px-3 py-2 text-left transition-colors hover:bg-gray-50 active:bg-gray-100 dark:hover:bg-gray-800 dark:active:bg-gray-700"
               >
                 {r.label}
               </button>

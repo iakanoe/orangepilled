@@ -24,10 +24,10 @@ export default function BottomNav() {
             <li key={t.href} className="flex-1">
               <Link
                 href={t.href}
-                className={`flex flex-col items-center gap-0.5 py-2 text-[11px] ${
+                className={`pressable flex flex-col items-center gap-0.5 py-2 text-[11px] transition-colors active:bg-gray-100 dark:active:bg-gray-800 ${
                   active
                     ? "text-brand-600 dark:text-brand-400"
-                    : "text-gray-400 dark:text-gray-500"
+                    : "text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                 }`}
               >
                 <span className="text-xl leading-none">{t.icon}</span>

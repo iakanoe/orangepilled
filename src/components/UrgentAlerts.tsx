@@ -143,7 +143,7 @@ export default function UrgentAlerts({
             <button
               onClick={() => dismiss(a.id)}
               aria-label="Descartar alerta"
-              className="shrink-0 rounded-full bg-white/70 px-2 py-1 text-xs font-medium text-red-600 ring-1 ring-red-200 active:bg-white dark:bg-white/10 dark:text-red-300 dark:ring-red-800"
+              className="pressable shrink-0 rounded-full bg-white/70 px-2 py-1 text-xs font-medium text-red-600 ring-1 ring-red-200 transition-colors hover:bg-white active:bg-red-100 dark:bg-white/10 dark:text-red-300 dark:ring-red-800 dark:hover:bg-white/20 dark:active:bg-white/25"
             >
               Descartar
             </button>

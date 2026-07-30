@@ -37,7 +37,7 @@ export default function PatenteLookup({ initial = "" }: { initial?: string }) {
         <button
           type="submit"
           disabled={!parsed.ok}
-          className="shrink-0 rounded-lg bg-brand-600 px-4 font-semibold text-white disabled:opacity-50"
+          className="pressable shrink-0 rounded-lg bg-brand-600 px-4 font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800 disabled:opacity-50"
         >
           Consultar
         </button>

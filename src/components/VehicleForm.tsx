@@ -112,7 +112,7 @@ export default function VehicleForm({
       <button
         type="submit"
         disabled={busy || !parsed.ok}
-        className="rounded-xl bg-brand-600 py-3 font-semibold text-white disabled:opacity-50"
+        className="pressable rounded-xl bg-brand-600 py-3 font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800 disabled:opacity-50"
       >
         {busy ? "Guardando…" : editing ? "Guardar cambios" : "Agregar vehículo"}
       </button>
@@ -122,7 +122,7 @@ export default function VehicleForm({
           type="button"
           onClick={remove}
           disabled={busy}
-          className="py-2 text-sm font-medium text-red-600"
+          className="rounded-lg py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 active:bg-red-100 disabled:opacity-50 dark:hover:bg-red-950/40 dark:active:bg-red-950/70"
         >
           Quitar de mi cuenta
         </button>

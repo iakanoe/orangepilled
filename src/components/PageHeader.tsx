@@ -18,7 +18,7 @@ export default function PageHeader({
         <button
           onClick={() => router.back()}
           aria-label="Volver"
-          className="grid h-8 w-8 place-items-center rounded-full text-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="pressable grid h-8 w-8 place-items-center rounded-full text-lg transition-colors hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700"
         >
           ←
         </button>

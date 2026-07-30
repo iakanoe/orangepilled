@@ -37,7 +37,7 @@ export default function ThemeToggle() {
       onClick={toggle}
       aria-label={isDark ? "Activar modo claro" : "Activar modo oscuro"}
       aria-pressed={isDark}
-      className="flex w-full items-center justify-between gap-3 text-left"
+      className="group flex w-full items-center justify-between gap-3 text-left"
     >
       <span className="flex flex-col">
         <span className="font-medium">Modo oscuro</span>
@@ -46,7 +46,7 @@ export default function ThemeToggle() {
         </span>
       </span>
       <span
-        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
+        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors group-active:ring-2 group-active:ring-brand-400/40 ${
           isDark ? "bg-brand-600" : "bg-gray-300 dark:bg-gray-600"
         }`}
       >

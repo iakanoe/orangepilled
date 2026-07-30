@@ -109,7 +109,7 @@ export default function NotificationList({
         <div className="flex justify-end px-4 py-2">
           <button
             onClick={markAll}
-            className="text-xs font-medium text-brand-600"
+            className="rounded text-xs font-medium text-brand-600 transition-colors hover:text-brand-700 active:text-brand-800 dark:hover:text-brand-400"
           >
             Marcar todo como leído ({unread})
           </button>
@@ -120,8 +120,10 @@ export default function NotificationList({
           <li key={n.id}>
             <button
               onClick={() => toggle(n)}
-              className={`flex w-full items-start gap-3 px-4 py-3 text-left ${
-                n.leido ? "" : "bg-brand-50/50 dark:bg-brand-500/10"
+              className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors active:bg-gray-100 dark:active:bg-gray-800 ${
+                n.leido
+                  ? "hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                  : "bg-brand-50/50 hover:bg-brand-50 dark:bg-brand-500/10 dark:hover:bg-brand-500/20"
               }`}
             >
               <span className="text-xl">{n.emoji}</span>

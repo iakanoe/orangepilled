@@ -48,7 +48,7 @@ export default function DeleteAccountButton({ email }: { email: string }) {
       <button
         type="button"
         onClick={() => setStep("confirm")}
-        className="w-full rounded-xl border border-red-200 py-3 text-sm font-semibold text-red-600 dark:border-red-900 dark:text-red-400"
+        className="pressable w-full rounded-xl border border-red-200 py-3 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 active:bg-red-100 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40 dark:active:bg-red-950/70"
       >
         Borrar mi cuenta
       </button>
@@ -77,14 +77,14 @@ export default function DeleteAccountButton({ email }: { email: string }) {
                   <button
                     type="button"
                     onClick={() => setStep("reconfirm")}
-                    className="w-full rounded-xl bg-red-600 py-3 text-sm font-semibold text-white"
+                    className="pressable w-full rounded-xl bg-red-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-700 active:bg-red-800"
                   >
                     Continuar
                   </button>
                   <button
                     type="button"
                     onClick={close}
-                    className="w-full rounded-xl border border-gray-200 py-3 text-sm font-semibold dark:border-gray-700"
+                    className="pressable w-full rounded-xl border border-gray-200 py-3 text-sm font-semibold transition-colors hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
                   >
                     Cancelar
                   </button>
@@ -123,7 +123,7 @@ export default function DeleteAccountButton({ email }: { email: string }) {
                     type="button"
                     onClick={handleDelete}
                     disabled={!emailMatches || loading}
-                    className="w-full rounded-xl bg-red-600 py-3 text-sm font-semibold text-white disabled:opacity-50"
+                    className="pressable w-full rounded-xl bg-red-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-700 active:bg-red-800 disabled:opacity-50"
                   >
                     {loading ? "Borrando…" : "Borrar cuenta definitivamente"}
                   </button>
@@ -131,7 +131,7 @@ export default function DeleteAccountButton({ email }: { email: string }) {
                     type="button"
                     onClick={close}
                     disabled={loading}
-                    className="w-full rounded-xl border border-gray-200 py-3 text-sm font-semibold disabled:opacity-50 dark:border-gray-700"
+                    className="pressable w-full rounded-xl border border-gray-200 py-3 text-sm font-semibold transition-colors hover:bg-gray-50 active:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
                   >
                     Cancelar
                   </button>
