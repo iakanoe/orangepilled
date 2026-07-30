@@ -39,7 +39,7 @@ export default async function VehiculosPage() {
   const received = (receivedRes.data ?? []) as Report[];
   const alerts = (alertsRes.data ?? []) as LiveAlert[];
   const stats = computeVehicleStats(list, received, alerts);
-  const statusById = new Map(stats.map((s) => [s.vehicle.id, s.status]));
+  const statById = new Map(stats.map((s) => [s.vehicle.id, s]));
 
   return (
     <>
@@ -80,7 +80,7 @@ export default async function VehiculosPage() {
                 >
                   <span
                     className={`h-2.5 w-2.5 shrink-0 rounded-full ${
-                      STATUS_STYLES[statusById.get(v.id) ?? "verde"].dot
+                      STATUS_STYLES[statById.get(v.id)?.status ?? "verde"].dot
                     }`}
                   />
                   <div className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-lg bg-gray-100 text-xl">
@@ -91,6 +91,17 @@ export default async function VehiculosPage() {
                       <span className="font-mono font-semibold tracking-wide">
                         {formatPatente(v.patente)}
                       </span>
+                      {(statById.get(v.id)?.active ?? 0) > 0 && (
+                        <span
+                          title="Alerta en vivo activa"
+                          className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700"
+                        >
+                          ⚠️
+                          {(statById.get(v.id)?.active ?? 0) > 1
+                            ? ` ${statById.get(v.id)?.active}`
+                            : ""}
+                        </span>
+                      )}
                     </div>
                     <p className="text-xs text-gray-500">
                       {v.alias || "Sin alias"}

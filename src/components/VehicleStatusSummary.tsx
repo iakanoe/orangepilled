@@ -13,7 +13,7 @@ export default function VehicleStatusSummary({
 }) {
   const counts = summarizeByStatus(stats);
   return (
-    <div className="grid grid-cols-4 gap-2">
+    <div className="grid grid-cols-3 gap-2">
       {STATUS_ORDER.map((status) => {
         const st = STATUS_STYLES[status];
         return (

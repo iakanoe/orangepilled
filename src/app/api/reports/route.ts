@@ -29,6 +29,9 @@ export async function POST(request: Request) {
 
   const lat = typeof body.lat === "number" ? body.lat : null;
   const lng = typeof body.lng === "number" ? body.lng : null;
+  if (lat === null || lng === null) {
+    return NextResponse.json({ error: "ubicación requerida" }, { status: 400 });
+  }
   const fotos: string[] = Array.isArray(body.fotos)
     ? body.fotos.slice(0, 5)
     : [];
@@ -66,14 +69,17 @@ export async function POST(request: Request) {
       );
   }
 
-  // Notify everyone tracking this plate (except the reporter themself).
+  // Everyone tracking this plate. "Registered" means the plate exists in the
+  // app at all — independent of who ends up being notified.
   const { data: trackers } = await admin
     .from("vehicles")
     .select("owner_id")
     .eq("patente", normalized);
-  const ownerIds = [
+  const allOwnerIds = [
     ...new Set((trackers ?? []).map((t) => t.owner_id as string)),
-  ].filter((id) => id !== user.id);
+  ];
+  // Notify every tracker except the reporter themself.
+  const ownerIds = allOwnerIds.filter((id) => id !== user.id);
 
   await Promise.all(
     ownerIds.map((ownerId) =>
@@ -92,7 +98,7 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     id: report.id,
-    vehicleRegistered: ownerIds.length > 0,
+    vehicleRegistered: allOwnerIds.length > 0,
     ownersNotified: ownerIds.length,
   });
 }

@@ -370,3 +370,24 @@ select cron.schedule(
   '* * * * *',
   $$ select public.deactivate_stale_alerts(); $$
 );
+
+-- =====================================================================
+-- Realtime: stream live_alerts INSERTs to the browser so the "Alertas
+-- urgentes" section on the dashboard appears on its own, without a manual
+-- refresh. RLS (alerts_select_visible) still gates what each user receives.
+-- The notifications table is streamed too, so the in-app notification
+-- center updates live (RLS notifications_select_own gates delivery).
+-- Idempotent: adding a table already in the publication raises, so guard it.
+-- =====================================================================
+do $$
+begin
+  alter publication supabase_realtime add table public.live_alerts;
+exception when duplicate_object then null;
+end $$;
+
+do $$
+begin
+  alter publication supabase_realtime add table public.notifications;
+exception when duplicate_object then null;
+end $$;
+

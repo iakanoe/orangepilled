@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import Dashboard from "@/components/Dashboard";
+import QuickActions from "@/components/QuickActions";
 import PushManager from "@/components/PushManager";
 import PullToRefresh from "@/components/PullToRefresh";
 import type { Vehicle, Report, LiveAlert } from "@/lib/types";
@@ -57,31 +58,17 @@ export default async function HomePage() {
 
       <PullToRefresh>
         {/* Quick actions */}
-        <div className="grid grid-cols-2 gap-3 p-4">
-          <Link
-            href="/reportar"
-            className="flex flex-col gap-1 rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-100"
-          >
-            <span className="text-2xl">📝</span>
-            <span className="font-semibold">Reportar incidente</span>
-            <span className="text-xs text-gray-500">
-              Conducta de un vehículo
-            </span>
-          </Link>
-          <Link
-            href="/avisar"
-            className="flex flex-col gap-1 rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-100"
-          >
-            <span className="text-2xl">🚨</span>
-            <span className="font-semibold">Avisar en vivo</span>
-            <span className="text-xs text-gray-500">Problema en un ajeno</span>
-          </Link>
-        </div>
+        <QuickActions />
 
         {/* Push opt-in */}
         <PushManager />
 
-        <Dashboard vehicles={vehicles} received={received} alerts={alerts} />
+        <Dashboard
+          vehicles={vehicles}
+          received={received}
+          alerts={alerts}
+          patentes={patentes}
+        />
       </PullToRefresh>
     </>
   );

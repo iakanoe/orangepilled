@@ -1,5 +1,4 @@
-import PageHeader from "@/components/PageHeader";
-import IncidentForm from "@/components/IncidentForm";
+import IncidentModalRoute from "@/components/IncidentModalRoute";
 
 export const metadata = { title: "Avisar en vivo" };
 
@@ -9,13 +8,5 @@ export default async function AvisarPage({
   searchParams: Promise<{ patente?: string }>;
 }) {
   const { patente } = await searchParams;
-  return (
-    <>
-      <PageHeader
-        title="Avisar en vivo"
-        subtitle="Detectaste un problema en un vehículo ajeno"
-      />
-      <IncidentForm mode="alert" initialPatente={patente ?? ""} />
-    </>
-  );
+  return <IncidentModalRoute mode="alert" initialPatente={patente ?? ""} />;
 }

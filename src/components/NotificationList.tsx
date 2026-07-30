@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { createClient } from "@/lib/supabase/client";
+import { useDeferredRealtime } from "@/lib/realtime";
 import { formatPatente } from "@/lib/patente";
 
 const MiniMap = dynamic(() => import("@/components/MiniMap"), { ssr: false });
@@ -31,14 +33,50 @@ function fmt(iso: string) {
   });
 }
 
-export default function NotificationList({ initial }: { initial: NotifItem[] }) {
-  const supabase = createClient();
+export default function NotificationList({
+  initial,
+}: {
+  initial: NotifItem[];
+}) {
+  const router = useRouter();
+  // Stable client so the realtime channel isn't recreated each render.
+  const [supabase] = useState(() => createClient());
   const [items, setItems] = useState(initial);
   const [open, setOpen] = useState<string | null>(null);
+  // Notifications the user read locally, so a refresh doesn't flash them
+  // back to unread before the DB update propagates.
+  const readRef = useRef<Set<string>>(new Set());
+
+  // Re-sync when the server re-renders with fresh data (e.g. after a new
+  // notification triggers router.refresh), preserving local read state.
+  useEffect(() => {
+    setItems(
+      initial.map((i) =>
+        readRef.current.has(i.id) ? { ...i, leido: true } : i,
+      ),
+    );
+  }, [initial]);
+
+  // Realtime: when a new notification lands, pull the freshly assembled list
+  // (the row alone lacks the joined report/alert + media the UI needs).
+  // Deferred so a slow/failing websocket never blocks navigation.
+  useDeferredRealtime(
+    supabase,
+    () =>
+      supabase
+        .channel("notifications-center")
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "notifications" },
+          () => router.refresh(),
+        ),
+    [supabase, router],
+  );
 
   const unread = items.filter((i) => !i.leido).length;
 
   async function markRead(id: string) {
+    readRef.current.add(id);
     setItems((xs) => xs.map((i) => (i.id === id ? { ...i, leido: true } : i)));
     await supabase.from("notifications").update({ leido: true }).eq("id", id);
   }
@@ -46,6 +84,7 @@ export default function NotificationList({ initial }: { initial: NotifItem[] }) 
   async function markAll() {
     const ids = items.filter((i) => !i.leido).map((i) => i.id);
     if (!ids.length) return;
+    ids.forEach((id) => readRef.current.add(id));
     setItems((xs) => xs.map((i) => ({ ...i, leido: true })));
     await supabase.from("notifications").update({ leido: true }).in("id", ids);
   }
@@ -68,7 +107,10 @@ export default function NotificationList({ initial }: { initial: NotifItem[] }) 
     <>
       {unread > 0 && (
         <div className="flex justify-end px-4 py-2">
-          <button onClick={markAll} className="text-xs font-medium text-brand-600">
+          <button
+            onClick={markAll}
+            className="text-xs font-medium text-brand-600"
+          >
             Marcar todo como leído ({unread})
           </button>
         </div>
@@ -97,7 +139,9 @@ export default function NotificationList({ initial }: { initial: NotifItem[] }) 
                   </span>
                 </p>
                 {n.descripcion && (
-                  <p className="mt-0.5 text-xs text-gray-500">{n.descripcion}</p>
+                  <p className="mt-0.5 text-xs text-gray-500">
+                    {n.descripcion}
+                  </p>
                 )}
               </div>
               <span className="shrink-0 text-[11px] text-gray-400">
@@ -124,7 +168,9 @@ export default function NotificationList({ initial }: { initial: NotifItem[] }) 
                   </>
                 )}
                 {!n.image && n.lat == null && (
-                  <p className="text-xs text-gray-400">Sin foto ni ubicación.</p>
+                  <p className="text-xs text-gray-400">
+                    Sin foto ni ubicación.
+                  </p>
                 )}
               </div>
             )}

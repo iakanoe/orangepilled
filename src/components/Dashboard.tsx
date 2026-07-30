@@ -16,19 +16,30 @@ export default function Dashboard({
   vehicles,
   received,
   alerts,
+  patentes,
 }: {
   vehicles: Vehicle[];
   received: Report[];
   alerts: LiveAlert[];
+  patentes: string[];
 }) {
   const vehicleStats: VehicleStat[] = useMemo(
     () => computeVehicleStats(vehicles, received, alerts),
     [vehicles, received, alerts],
   );
 
+  // Patente -> alias, so live alerts can name the car (first alias wins).
+  const aliases = useMemo(() => {
+    const m: Record<string, string> = {};
+    for (const v of vehicles) {
+      if (v.alias && !m[v.patente]) m[v.patente] = v.alias;
+    }
+    return m;
+  }, [vehicles]);
+
   return (
     <div className="flex flex-col gap-4 py-4">
-      <UrgentAlerts initial={alerts} />
+      <UrgentAlerts initial={alerts} patentes={patentes} aliases={aliases} />
       <section className="px-4">
         <div className="mb-2 flex items-center justify-between">
           <h2 className="text-sm font-semibold">Estado de mis vehículos</h2>
@@ -80,6 +91,14 @@ function VehicleStatusCard({ s }: { s: VehicleStat }) {
           >
             {st.label}
           </span>
+          {s.active > 0 && (
+            <span
+              title={`${s.active} alerta${s.active > 1 ? "s" : ""} en vivo`}
+              className="ml-auto inline-flex shrink-0 items-center gap-0.5 rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700"
+            >
+              ⚠️{s.active > 1 ? ` ${s.active}` : ""}
+            </span>
+          )}
         </div>
         {s.vehicle.alias && (
           <p className="truncate text-xs font-medium text-gray-700">

@@ -32,6 +32,8 @@ export default function PullToRefresh({
 
     function onStart(e: TouchEvent) {
       if (refreshingRef.current || window.scrollY > 0) return;
+      // Ignore gestures that begin inside an open modal / dialog.
+      if ((e.target as HTMLElement | null)?.closest('[role="dialog"]')) return;
       startY.current = e.touches[0].clientY;
     }
 

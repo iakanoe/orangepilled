@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import BackButton from "@/components/BackButton";
+import VehicleAlerts from "@/components/VehicleAlerts";
 import { createClient } from "@/lib/supabase/server";
 import { formatPatente } from "@/lib/patente";
 import {
@@ -10,6 +11,7 @@ import {
   alertLabel,
   SEVERIDAD_LABELS,
 } from "@/lib/incident-types";
+import { isAlertActive } from "@/lib/alerts";
 import type { Vehicle, Report, LiveAlert } from "@/lib/types";
 
 export const metadata = { title: "Vehículo" };
@@ -50,8 +52,8 @@ export default async function VehiculoPage({
       .from("live_alerts")
       .select("*")
       .eq("patente", vehicle.patente)
-      .eq("estado", "activo")
-      .order("created_at", { ascending: false }),
+      .order("created_at", { ascending: false })
+      .limit(200),
     supabase
       .from("reports")
       .select("*")
@@ -62,6 +64,20 @@ export default async function VehiculoPage({
 
   const alerts = (alertsRes.data ?? []) as LiveAlert[];
   const reports = (reportsRes.data ?? []) as Report[];
+
+  // Only active alerts are prominent; past alerts get merged into the history.
+  const pastAlerts = alerts.filter((a) => !isAlertActive(a));
+  type HistoryItem =
+    | { kind: "report"; date: string; report: Report }
+    | { kind: "alert"; date: string; alert: LiveAlert };
+  const history: HistoryItem[] = [
+    ...reports.map(
+      (r): HistoryItem => ({ kind: "report", date: r.ocurrido_en, report: r }),
+    ),
+    ...pastAlerts.map(
+      (a): HistoryItem => ({ kind: "alert", date: a.created_at, alert: a }),
+    ),
+  ].sort((x, y) => (x.date < y.date ? 1 : -1));
 
   const subtitle = vehicle.alias || "Sin alias";
 
@@ -84,88 +100,88 @@ export default async function VehiculoPage({
       </header>
 
       <div className="flex flex-col gap-4 p-4">
-        {/* Active alerts — prominent */}
-        {alerts.length > 0 && (
-          <section>
-            <h2 className="mb-2 text-sm font-semibold text-amber-700">
-              🚨 Alertas activas ({alerts.length})
-            </h2>
-            <ul className="flex flex-col gap-2">
-              {alerts.map((a) => (
-                <li
-                  key={a.id}
-                  className="flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50 p-3"
-                >
-                  <span className="text-xl">{alertEmoji(a.tipo)}</span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-amber-900">
-                      {alertLabel(a.tipo)}
-                    </p>
-                    {a.descripcion && (
-                      <p className="text-xs text-amber-800/80">
-                        {a.descripcion}
-                      </p>
-                    )}
-                    {a.direccion && (
-                      <p className="mt-0.5 truncate text-xs text-amber-700/70">
-                        📍 {a.direccion}
-                      </p>
-                    )}
-                  </div>
-                  <span className="shrink-0 text-[11px] text-amber-700/70">
-                    {fmtDate(a.created_at)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+        {/* Active alerts — prominent, dismissable */}
+        <VehicleAlerts initial={alerts} />
 
-        {/* Reports history */}
+        {/* Historial — reports + past alerts merged, newest first */}
         <section>
           <h2 className="mb-2 text-sm font-semibold">
-            Historial de reportes ({reports.length})
+            Historial ({history.length})
           </h2>
-          {reports.length ? (
+          {history.length ? (
             <ul className="flex flex-col gap-2">
-              {reports.map((r) => (
-                <li key={r.id}>
-                  <Link
-                    href={`/reportes/${r.id}`}
+              {history.map((item) =>
+                item.kind === "report" ? (
+                  <li key={`r-${item.report.id}`}>
+                    <Link
+                      href={`/reportes/${item.report.id}`}
+                      className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-3"
+                    >
+                      <span className="text-xl">
+                        {incidentEmoji(item.report.tipo)}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium">
+                          {incidentLabel(item.report.tipo)}
+                        </p>
+                        {item.report.severidad != null && (
+                          <p className="text-xs text-gray-500">
+                            {SEVERIDAD_LABELS[item.report.severidad] ??
+                              `Severidad ${item.report.severidad}`}
+                          </p>
+                        )}
+                        {item.report.descripcion && (
+                          <p className="truncate text-xs text-gray-500">
+                            {item.report.descripcion}
+                          </p>
+                        )}
+                        {item.report.direccion && (
+                          <p className="mt-0.5 truncate text-xs text-gray-400">
+                            📍 {item.report.direccion}
+                          </p>
+                        )}
+                      </div>
+                      <span className="shrink-0 text-[11px] text-gray-400">
+                        {fmtDate(item.report.ocurrido_en)}
+                      </span>
+                    </Link>
+                  </li>
+                ) : (
+                  <li
+                    key={`a-${item.alert.id}`}
                     className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-3"
                   >
-                    <span className="text-xl">{incidentEmoji(r.tipo)}</span>
+                    <span className="text-xl opacity-60">
+                      {alertEmoji(item.alert.tipo)}
+                    </span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium">
-                        {incidentLabel(r.tipo)}
+                      <p className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                        {alertLabel(item.alert.tipo)}
+                        <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-500">
+                          Alerta
+                        </span>
                       </p>
-                      {r.severidad != null && (
-                        <p className="text-xs text-gray-500">
-                          {SEVERIDAD_LABELS[r.severidad] ??
-                            `Severidad ${r.severidad}`}
-                        </p>
-                      )}
-                      {r.descripcion && (
+                      {item.alert.descripcion && (
                         <p className="truncate text-xs text-gray-500">
-                          {r.descripcion}
+                          {item.alert.descripcion}
                         </p>
                       )}
-                      {r.direccion && (
+                      {item.alert.direccion && (
                         <p className="mt-0.5 truncate text-xs text-gray-400">
-                          📍 {r.direccion}
+                          📍 {item.alert.direccion}
                         </p>
                       )}
                     </div>
                     <span className="shrink-0 text-[11px] text-gray-400">
-                      {fmtDate(r.ocurrido_en)}
+                      {fmtDate(item.alert.created_at)}
                     </span>
-                  </Link>
-                </li>
-              ))}
+                  </li>
+                ),
+              )}
             </ul>
           ) : (
             <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400">
-              Este vehículo todavía no tiene reportes.
+              Este vehículo todavía no tiene historial.
             </div>
           )}
         </section>

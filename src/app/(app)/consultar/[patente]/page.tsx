@@ -63,7 +63,7 @@ export default async function InformePatentePage({
   const recent = reports.filter(
     (r) => new Date(r.ocurrido_en).getTime() >= cutoff,
   ).length;
-  const status = vehicleStatus(recent, 0);
+  const status = vehicleStatus(recent);
   const st = STATUS_STYLES[status];
 
   return (

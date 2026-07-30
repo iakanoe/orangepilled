@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useDeferredRealtime } from "@/lib/realtime";
 import { formatPatente } from "@/lib/patente";
 import { alertEmoji, alertLabel } from "@/lib/incident-types";
 import { isAlertActive } from "@/lib/alerts";
@@ -14,10 +15,62 @@ function fmt(iso: string) {
   });
 }
 
-export default function UrgentAlerts({ initial }: { initial: LiveAlert[] }) {
-  const supabase = createClient();
+export default function UrgentAlerts({
+  initial,
+  patentes,
+  aliases,
+}: {
+  initial: LiveAlert[];
+  patentes: string[];
+  aliases: Record<string, string>;
+}) {
+  // Keep a single client instance so the realtime channel is stable.
+  const [supabase] = useState(() => createClient());
   const [alerts, setAlerts] = useState(() =>
     initial.filter((a) => isAlertActive(a)),
+  );
+  // Alerts the user dismissed locally, so a background refresh / realtime
+  // event doesn't resurrect them before the DB update propagates.
+  const dismissedRef = useRef<Set<string>>(new Set());
+  const patenteSet = useMemo(() => new Set(patentes), [patentes]);
+
+  // Re-sync whenever fresh server data arrives (e.g. after a push triggers
+  // router.refresh): new alerts appear without needing a remount.
+  useEffect(() => {
+    setAlerts(
+      initial.filter(
+        (a) => isAlertActive(a) && !dismissedRef.current.has(a.id),
+      ),
+    );
+  }, [initial]);
+
+  // Realtime: a new alert on one of my plates shows up on its own, with no
+  // refresh. RLS already limits what the browser receives; we also filter to
+  // the plates shown on this dashboard. Deferred so a slow/failing websocket
+  // never blocks the dashboard from opening.
+  useDeferredRealtime(
+    supabase,
+    () =>
+      supabase
+        .channel("urgent-alerts")
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "live_alerts" },
+          (payload) => {
+            const a = payload.new as LiveAlert;
+            if (
+              !patenteSet.has(a.patente) ||
+              dismissedRef.current.has(a.id) ||
+              !isAlertActive(a)
+            ) {
+              return;
+            }
+            setAlerts((xs) =>
+              xs.some((x) => x.id === a.id) ? xs : [a, ...xs],
+            );
+          },
+        ),
+    [supabase, patenteSet],
   );
 
   // Auto-deactivate: drop alerts once they age past the active window,
@@ -29,6 +82,7 @@ export default function UrgentAlerts({ initial }: { initial: LiveAlert[] }) {
   }, []);
 
   async function dismiss(id: string) {
+    dismissedRef.current.add(id);
     setAlerts((xs) => xs.filter((a) => a.id !== id));
     await supabase
       .from("live_alerts")
@@ -66,6 +120,11 @@ export default function UrgentAlerts({ initial }: { initial: LiveAlert[] }) {
               </div>
               <p className="font-mono text-xs text-red-600">
                 {formatPatente(a.patente)}
+                {aliases[a.patente] && (
+                  <span className="ml-1 font-sans font-medium text-red-700">
+                    · {aliases[a.patente]}
+                  </span>
+                )}
               </p>
               {a.descripcion && (
                 <p className="mt-0.5 text-xs text-red-700/80">

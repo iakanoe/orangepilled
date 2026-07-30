@@ -2,7 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type L from "leaflet";
-import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
 import "@/lib/leaflet-icon";
 import { reverseGeocode, searchAddress } from "@/lib/geocode";
 
@@ -30,7 +36,8 @@ function ClickHandler({ onPick }: { onPick: (v: LatLng) => void }) {
 function Recenter({ center }: { center: LatLng | null }) {
   const map = useMap();
   useEffect(() => {
-    if (center) map.flyTo([center.lat, center.lng], Math.max(map.getZoom(), 15));
+    if (center)
+      map.flyTo([center.lat, center.lng], Math.max(map.getZoom(), 15));
   }, [center, map]);
   return null;
 }
@@ -78,7 +85,7 @@ export default function MapPicker({ value, onChange }: Props) {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar dirección…"
+            placeholder="Dirección o cruce (ej: Callao y Corrientes)"
             className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500"
           />
           <button

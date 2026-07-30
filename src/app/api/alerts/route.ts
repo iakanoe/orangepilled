@@ -61,14 +61,17 @@ export async function POST(request: Request) {
       .insert(fotos.map((url) => ({ alert_id: alert.id, url, tipo: "image" })));
   }
 
-  // Notify everyone tracking this plate (except the reporter themself).
+  // Everyone tracking this plate. "Registered" means the plate exists in the
+  // app at all — independent of who ends up being notified.
   const { data: trackers } = await admin
     .from("vehicles")
     .select("owner_id")
     .eq("patente", normalized);
-  const ownerIds = [
+  const allOwnerIds = [
     ...new Set((trackers ?? []).map((t) => t.owner_id as string)),
-  ].filter((id) => id !== user.id);
+  ];
+  // Notify every tracker except the reporter themself.
+  const ownerIds = allOwnerIds.filter((id) => id !== user.id);
 
   await Promise.all(
     ownerIds.map((ownerId) =>
@@ -87,7 +90,7 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     id: alert.id,
-    vehicleRegistered: ownerIds.length > 0,
+    vehicleRegistered: allOwnerIds.length > 0,
     ownersNotified: ownerIds.length,
   });
 }

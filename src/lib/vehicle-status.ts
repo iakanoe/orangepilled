@@ -6,7 +6,7 @@ export const RECENT_DAYS = 30;
 // Number of recent reports that escalates a vehicle from orange to red.
 export const RED_THRESHOLD = 3;
 
-export type VehicleStatus = "verde" | "naranja" | "rojo" | "amarillo";
+export type VehicleStatus = "verde" | "naranja" | "rojo";
 
 export type VehicleStat = {
   vehicle: Vehicle;
@@ -17,11 +17,9 @@ export type VehicleStat = {
   status: VehicleStatus;
 };
 
-export function vehicleStatus(
-  recentReports: number,
-  activeAlerts: number,
-): VehicleStatus {
-  if (activeAlerts > 0) return "amarillo";
+// Color status reflects the reports history only. Active live alerts are
+// surfaced separately (a warning icon on the vehicle card), not by color.
+export function vehicleStatus(recentReports: number): VehicleStatus {
   if (recentReports >= RED_THRESHOLD) return "rojo";
   if (recentReports > 0) return "naranja";
   return "verde";
@@ -49,29 +47,13 @@ export const STATUS_STYLES: Record<
     badge: "bg-red-100 text-red-700",
     label: "Riesgo",
   },
-  amarillo: {
-    dot: "bg-amber-400",
-    ring: "border-amber-300",
-    badge: "bg-amber-100 text-amber-700",
-    label: "Alerta activa",
-  },
 };
 
 // Order used when displaying statuses grouped by color (most urgent first).
-export const STATUS_ORDER: VehicleStatus[] = [
-  "amarillo",
-  "rojo",
-  "naranja",
-  "verde",
-];
+export const STATUS_ORDER: VehicleStatus[] = ["rojo", "naranja", "verde"];
 
-// Human-readable description of what the vehicle's status means.
+// Human-readable description of the vehicle's reports status.
 export function statusDescription(s: VehicleStat): string {
-  if (s.active > 0) {
-    return `${s.active} alerta${s.active > 1 ? "s" : ""} en vivo activa${
-      s.active > 1 ? "s" : ""
-    }`;
-  }
   if (s.recent >= RED_THRESHOLD) {
     return `${s.recent} reportes recientes`;
   }
@@ -105,7 +87,7 @@ export function computeVehicleStats(
       total: vReports.length,
       active,
       last: vReports[0]?.ocurrido_en ?? null,
-      status: vehicleStatus(recent, active),
+      status: vehicleStatus(recent),
     };
   });
 }
@@ -118,7 +100,6 @@ export function summarizeByStatus(
     verde: 0,
     naranja: 0,
     rojo: 0,
-    amarillo: 0,
   };
   for (const s of stats) counts[s.status] += 1;
   return counts;
