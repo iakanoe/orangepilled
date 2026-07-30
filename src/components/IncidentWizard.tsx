@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { useRouter } from "next/navigation";
 import MapField from "@/components/MapField";
-import { nativeNavigate } from "@/components/NativeTransitions";
 import type { LatLng } from "@/components/MapPicker";
 import { uploadImagesWithFallback } from "@/lib/upload";
 import { parsePatente, formatPatente } from "@/lib/patente";
@@ -49,7 +47,6 @@ export default function IncidentWizard({
   onClose,
   initialPatente = "",
 }: Props) {
-  const router = useRouter();
   const isReport = mode === "report";
   const catalog: CatalogItem<string>[] = isReport
     ? INCIDENT_TYPES
@@ -279,10 +276,7 @@ export default function IncidentWizard({
               isReport={isReport}
               onRetry={() => setResult(null)}
               onClose={onClose}
-              onHome={() => {
-                onClose();
-                nativeNavigate("back", () => router.push("/"));
-              }}
+              onHome={onClose}
             />
           ) : step === "patente" ? (
             <PatenteStep
