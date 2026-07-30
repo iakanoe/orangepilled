@@ -24,7 +24,6 @@ export function useDeferredRealtime(
     let channel: RealtimeChannel | null = null;
     let cancelled = false;
     const supportsIdle = "requestIdleCallback" in window;
-    let handle: number;
 
     const connect = () => {
       if (cancelled) return;
@@ -37,7 +36,7 @@ export function useDeferredRealtime(
       }
     };
 
-    handle = supportsIdle
+    const handle: number = supportsIdle
       ? window.requestIdleCallback(connect, { timeout: 3000 })
       : window.setTimeout(connect, 1000);
 
