@@ -48,6 +48,17 @@ const nextConfig = {
   // Pin the tracing root to this project (a stray lockfile in the home dir
   // otherwise makes Next infer the wrong workspace root).
   outputFileTracingRoot: import.meta.dirname,
+  experimental: {
+    // Keep already-rendered pages in the client Router Cache so navigating
+    // between tabs reuses cached data instead of refetching and flashing the
+    // loading.tsx skeleton every time. Dynamic pages default to 0s (no reuse);
+    // 5 min gives an instant, app-like feel. Fresh data still arrives via the
+    // existing router.refresh() calls (mutations, realtime, pull-to-refresh).
+    staleTimes: {
+      dynamic: 300,
+      static: 300,
+    },
+  },
   images: {
     // Supabase Storage public bucket. Replace <project-ref> or leave the
     // remotePatterns wide via env-driven config if you prefer.
