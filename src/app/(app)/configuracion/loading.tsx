@@ -4,7 +4,7 @@ export default function Loading() {
   return (
     <>
       <header className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
-        <h1 className="text-lg font-bold">Perfil y configuración</h1>
+        <h1 className="text-lg font-bold">Configuración</h1>
       </header>
 
       <div className="flex flex-col gap-4 p-4">

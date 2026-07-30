@@ -159,7 +159,7 @@ src/
       reportar/           # reporte de incidente
       avisar/             # aviso en vivo
       notificaciones/     # centro de notificaciones
-      perfil/             # perfil + push + logout
+      configuracion/      # configuración + push + logout
     api/
       reports/route.ts    # crea reporte + vincula patente + notifica + push
       alerts/route.ts     # crea aviso en vivo + notifica + push

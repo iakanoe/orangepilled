@@ -48,11 +48,11 @@ export default async function HomePage() {
           {process.env.NEXT_PUBLIC_APP_NAME}
         </h1>
         <Link
-          href="/perfil"
-          aria-label="Perfil"
+          href="/configuracion"
+          aria-label="Configuración"
           className="grid h-8 w-8 place-items-center rounded-full bg-white/20 text-lg hover:bg-white/30 dark:bg-gray-800 dark:hover:bg-gray-700"
         >
-          👤
+          ⚙️
         </Link>
       </header>
 

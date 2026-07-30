@@ -5,7 +5,11 @@ import { pushSupported, subscribeToPush } from "@/lib/push-client";
 
 type State = "loading" | "unsupported" | "denied" | "off" | "on";
 
-export default function PushManager() {
+export default function PushManager({
+  variant = "prompt",
+}: {
+  variant?: "prompt" | "settings";
+}) {
   const [state, setState] = useState<State>("loading");
   const [busy, setBusy] = useState(false);
 
@@ -34,6 +38,42 @@ export default function PushManager() {
     } finally {
       setBusy(false);
     }
+  }
+
+  // Settings variant: always render a status row so the surrounding card is
+  // never empty (used in the configuración page).
+  if (variant === "settings") {
+    return (
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="font-medium">Notificaciones push</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {state === "loading"
+              ? "Comprobando estado…"
+              : state === "unsupported"
+                ? "No disponibles en este dispositivo."
+                : state === "denied"
+                  ? "Bloqueadas. Habilitalas en los ajustes del navegador."
+                  : state === "on"
+                    ? "Activadas. Te avisamos al reportar tu vehículo."
+                    : "Recibí un aviso al instante cuando reportan tu vehículo."}
+          </p>
+        </div>
+        {state === "on" ? (
+          <span className="shrink-0 text-sm font-semibold text-green-600 dark:text-green-400">
+            Activadas
+          </span>
+        ) : state === "off" ? (
+          <button
+            onClick={enable}
+            disabled={busy}
+            className="shrink-0 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+          >
+            {busy ? "…" : "Activar"}
+          </button>
+        ) : null}
+      </div>
+    );
   }
 
   // Nothing to show when push is unavailable or already enabled — the user

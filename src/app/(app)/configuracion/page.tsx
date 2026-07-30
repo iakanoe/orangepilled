@@ -2,9 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import PushManager from "@/components/PushManager";
 import ThemeToggle from "@/components/ThemeToggle";
 
-export const metadata = { title: "Perfil" };
+export const metadata = { title: "Configuración" };
 
-export default async function PerfilPage() {
+export default async function ConfiguracionPage() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -13,7 +13,7 @@ export default async function PerfilPage() {
   return (
     <>
       <header className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
-        <h1 className="text-lg font-bold">Perfil y configuración</h1>
+        <h1 className="text-lg font-bold">Configuración</h1>
       </header>
 
       <div className="flex flex-col gap-4 p-4">
@@ -29,7 +29,7 @@ export default async function PerfilPage() {
         </section>
 
         <section className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
-          <PushManager />
+          <PushManager variant="settings" />
         </section>
 
         <section className="rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400">
