@@ -14,15 +14,23 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    params.get("error") === "link"
+      ? "El enlace no es válido o ya venció. Pedí un código nuevo."
+      : null,
+  );
 
   async function sendCode(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    const emailRedirectTo =
+      typeof window !== "undefined"
+        ? new URL(next, window.location.origin).toString()
+        : undefined;
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
-      options: { shouldCreateUser: true },
+      options: { shouldCreateUser: true, emailRedirectTo },
     });
     setLoading(false);
     if (error) return setError(error.message);
@@ -81,13 +89,13 @@ function LoginForm() {
             {loading ? "Enviando…" : "Enviar código"}
           </button>
           <p className="text-center text-xs text-gray-400 dark:text-gray-500">
-            Te mandamos un código de 6 dígitos por email.
+            Te llega un email: tocá el enlace o ingresá el código de 6 dígitos.
           </p>
         </form>
       ) : (
         <form onSubmit={verify} className="flex flex-col gap-3">
           <label className="text-sm font-medium" htmlFor="code">
-            Código enviado a {email}
+            Ingresá el código enviado a {email} (o tocá el enlace del email)
           </label>
           <input
             id="code"

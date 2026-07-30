@@ -38,8 +38,34 @@ npm install
    registrarse, la vista anonimizada para el heatmap y el bucket de Storage.
 3. En **Project Settings → API Keys** copiá `URL`, la `publishable key`
    (`sb_publishable_…`) y la `secret key` (`sb_secret_…`).
-4. En **Authentication → Providers → Email**, dejá habilitado el login por email
-   (OTP). Para desarrollo podés desactivar "Confirm email" si querés.
+4. En **Authentication → Providers → Email**, habilitá el login por email y
+   asegurate de tener activado **"Enable email OTP"** (código) y el **magic
+   link**. En **URL Configuration** agregá la _Redirect URL_
+   `https://TU_APP.vercel.app/auth/confirm` (y `http://localhost:3000/auth/confirm`
+   para dev) para que el enlace mágico funcione.
+
+### 2b. Email con Resend (magic link + OTP)
+
+Los emails de acceso se envían con **Resend** a través del _Send Email Hook_ de
+Supabase (todo en free tier). El cliente sigue usando `signInWithOtp` /
+`verifyOtp` sin cambios; Supabase genera el código + token y llama a nuestro
+endpoint [`/auth/send-email`](src/app/auth/send-email/route.ts), que verifica la
+firma del webhook y manda un mail **branded** con **enlace mágico y código de 6
+dígitos**. El enlace apunta a [`/auth/confirm`](src/app/auth/confirm/route.ts),
+que canjea el token por la sesión. La plantilla vive en
+[`src/lib/email.ts`](src/lib/email.ts) (`emailLayout` reutilizable para todos
+los mails transaccionales).
+
+1. Agregá la integración **Resend** en Vercel (o creá una cuenta en
+   [resend.com](https://resend.com)). Eso setea `RESEND_API_KEY`.
+2. Para producción, verificá **un dominio gratis** en Resend y poné
+   `EMAIL_FROM=Alerta Patente <no-reply@tudominio.com>`. Sin dominio verificado,
+   el free tier solo entrega desde `onboarding@resend.dev` al email de tu cuenta.
+3. En Supabase, andá a **Authentication → Hooks → Send Email** (Beta),
+   habilitalo como **HTTPS Hook** y apuntá la URL a
+   `https://TU_APP.vercel.app/auth/send-email`.
+4. Copiá el **secret** que genera Supabase (formato `v1,whsec_…`) a la variable
+   `SEND_EMAIL_HOOK_SECRET`.
 
 ### 3. Claves VAPID (push)
 
@@ -114,16 +140,46 @@ npm run gen:vapid -- tu@email.com --write    # las escribe/actualiza en .env.loc
 
 En **Vercel → Project → Settings → Environment Variables** agregá:
 
-| Variable                              | Valor                                                                        |
-| ------------------------------------- | ---------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET` | `media` (o el bucket que creaste)                                            |
-| `NEXT_PUBLIC_APP_NAME`                | `Alerta Patente`                                                             |
-| `NEXT_PUBLIC_APP_URL`                 | la URL pública del deploy (ej. `https://tu-app.vercel.app`, sin barra final) |
+| Variable                              | Valor                                                                          |
+| ------------------------------------- | ------------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET` | `media` (o el bucket que creaste)                                              |
+| `NEXT_PUBLIC_APP_NAME`                | `Alerta Patente`                                                               |
+| `NEXT_PUBLIC_APP_URL`                 | la URL pública del deploy (ej. `https://tu-app.vercel.app`, sin barra final)   |
+| `EMAIL_FROM`                          | remitente verificado en Resend (ej. `Alerta Patente <no-reply@tudominio.com>`) |
+| `SEND_EMAIL_HOOK_SECRET`              | secret del Send Email Hook de Supabase (formato `v1,whsec_…`)                  |
 
-> `NEXT_PUBLIC_APP_URL` se usa para armar los links de las notificaciones push.
-> Ponelo con el dominio final de producción.
+> `NEXT_PUBLIC_APP_URL` se usa para armar los links de las notificaciones push
+> **y el enlace mágico del email de login**. Ponelo con el dominio final de
+> producción.
+>
+> `RESEND_API_KEY` la carga sola la integración **Resend** de Vercel. Si no usás
+> la integración, agregala a mano.
 
-### 3. Base de datos (manual, una sola vez)
+### 3. Auth por email (magic link + OTP) — config única
+
+El login manda un email con **enlace mágico y código de 6 dígitos**; ambos
+resuelven contra Supabase. El mail lo genera Supabase pero lo **envía tu app con
+Resend** vía el _Send Email Hook_, con la plantilla branded de
+[`src/lib/email.ts`](src/lib/email.ts). Detalles del flujo en la sección
+[2b](#2b-email-con-resend-magic-link--otp). En producción, una sola vez:
+
+1. **Resend**: agregá la integración en Vercel (setea `RESEND_API_KEY`) y
+   verificá **un dominio gratis**; usá ese dominio en `EMAIL_FROM`. Sin dominio
+   verificado, el free tier solo entrega desde `onboarding@resend.dev` a tu
+   propio email.
+2. **Supabase → Authentication → Providers → Email**: activá _Enable email OTP_
+   y el magic link.
+3. **Supabase → Authentication → URL Configuration → Redirect URLs**: agregá
+   `https://TU_APP.vercel.app/auth/confirm` (y `http://localhost:3000/auth/confirm`
+   para dev).
+4. **Supabase → Authentication → Hooks → Send Email**: habilitalo como **HTTPS
+   Hook** apuntando a `https://TU_APP.vercel.app/auth/send-email`. Copiá el
+   **secret** (`v1,whsec_…`) a la variable `SEND_EMAIL_HOOK_SECRET` en Vercel.
+
+> Con el hook activo, la app controla el 100% del email; el template nativo de
+> "confirmar mail" de Supabase deja de usarse.
+
+### 4. Base de datos (manual, una sola vez)
 
 El esquema **no se despliega solo**: la integración de Supabase con Vercel solo
 inyecta las credenciales, no crea las tablas. Hay que aplicarlo una vez.
@@ -140,7 +196,7 @@ gratuita — no necesita la Supabase CLI ni la contraseña de la base:
 Solo repetís este paso si cambia el esquema. Es idempotente en la mayor parte,
 pero revisá antes de re-correrlo sobre datos reales.
 
-### 4. Deploy
+### 5. Deploy
 
 ```bash
 vercel --prod    # o pusheá a la rama conectada y Vercel buildea solo
@@ -165,12 +221,15 @@ src/
       alerts/route.ts     # crea aviso en vivo + notifica + push
       push/subscribe/     # guarda/borra suscripción push del dispositivo
     auth/signout/         # cierre de sesión
-    login/                # login por OTP (se queda dentro de la PWA)
+    auth/send-email/      # Send Email Hook de Supabase → manda mail con Resend
+    auth/confirm/         # verificador del enlace mágico (canjea token → sesión)
+    login/                # login por magic link + OTP (se queda dentro de la PWA)
     sw.ts                 # service worker (push, offline, background sync)
     manifest.ts           # Web App Manifest
   components/             # UI (MapPicker, Dashboard, formularios, etc.)
   lib/
     supabase/             # clients: browser, server, admin (service role), middleware
+    email.ts             # Resend + plantilla branded (emailLayout) + auth email
     patente.ts            # validación/normalización de patentes AR
     incident-types.ts     # catálogos (deben coincidir con los enums SQL)
     push.ts / notify.ts   # envío de push + fan-out de notificaciones (server)
