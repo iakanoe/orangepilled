@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/Link";
 import { notFound, redirect } from "next/navigation";
 import BackButton from "@/components/BackButton";
 import VehicleAlerts from "@/components/VehicleAlerts";
@@ -71,12 +71,16 @@ export default async function VehiculoPage({
     | { kind: "report"; date: string; report: Report }
     | { kind: "alert"; date: string; alert: LiveAlert };
   const history: HistoryItem[] = [
-    ...reports.map(
-      (r): HistoryItem => ({ kind: "report", date: r.ocurrido_en, report: r }),
-    ),
-    ...pastAlerts.map(
-      (a): HistoryItem => ({ kind: "alert", date: a.created_at, alert: a }),
-    ),
+    ...reports.map((r): HistoryItem => ({
+      kind: "report",
+      date: r.ocurrido_en,
+      report: r,
+    })),
+    ...pastAlerts.map((a): HistoryItem => ({
+      kind: "alert",
+      date: a.created_at,
+      alert: a,
+    })),
   ].sort((x, y) => (x.date < y.date ? 1 : -1));
 
   const subtitle = vehicle.alias || "Sin alias";

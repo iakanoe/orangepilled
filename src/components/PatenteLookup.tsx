@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { parsePatente, formatPatente } from "@/lib/patente";
+import { nativeNavigate } from "@/components/NativeTransitions";
 
 // Search box for looking up the report history of any plate (not just your
 // own vehicles). Navigates to /consultar?patente=<normalized>; the page
@@ -15,7 +16,9 @@ export default function PatenteLookup({ initial = "" }: { initial?: string }) {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!parsed.ok) return;
-    router.push(`/consultar/${encodeURIComponent(parsed.normalized)}`);
+    nativeNavigate("forward", () =>
+      router.push(`/consultar/${encodeURIComponent(parsed.normalized)}`),
+    );
   }
 
   return (

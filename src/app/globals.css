@@ -75,3 +75,86 @@ a,
 .pb-safe {
   padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
 }
+
+/* Native stack-style page transitions via the View Transitions API. The
+   NativeTransitions component wraps client navigations in startViewTransition
+   and tags <html> with data-nav to pick the direction: forward pushes the new
+   screen in from the right (previous screen parallax-shifts left), back pops
+   the current screen off to the right (previous screen slides back in). Both
+   snapshots move at once, mirroring iOS push/pop and Android shared-axis. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-group(root) {
+    animation-duration: 0.34s;
+    animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    /* Override the UA cross-fade; we drive transform/opacity ourselves. */
+    animation-duration: 0.34s;
+    animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+    mix-blend-mode: normal;
+  }
+
+  /* Forward: incoming screen slides in over the outgoing one. */
+  html[data-nav="forward"]::view-transition-new(root) {
+    z-index: 2;
+    animation-name: vt-in-right;
+  }
+  html[data-nav="forward"]::view-transition-old(root) {
+    z-index: 1;
+    animation-name: vt-out-left;
+  }
+
+  /* Back: current screen slides off to the right, revealing the previous one. */
+  html[data-nav="back"]::view-transition-old(root) {
+    z-index: 2;
+    animation-name: vt-out-right;
+  }
+  html[data-nav="back"]::view-transition-new(root) {
+    z-index: 1;
+    animation-name: vt-in-left;
+  }
+}
+
+@keyframes vt-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes vt-out-left {
+  from {
+    transform: translateX(0);
+    filter: brightness(1);
+  }
+  to {
+    transform: translateX(-25%);
+    filter: brightness(0.9);
+  }
+}
+@keyframes vt-in-left {
+  from {
+    transform: translateX(-25%);
+    filter: brightness(0.9);
+  }
+  to {
+    transform: translateX(0);
+    filter: brightness(1);
+  }
+}
+@keyframes vt-out-right {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Keep the bottom tab bar pinned during transitions instead of sliding with
+   the page — the way a native tab bar stays put while content animates. */
+.vt-bottom-nav {
+  view-transition-name: bottom-nav;
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/Link";
 import { formatPatente } from "@/lib/patente";
 import UrgentAlerts from "@/components/UrgentAlerts";
 import {

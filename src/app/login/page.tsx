@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { nativeNavigate } from "@/components/NativeTransitions";
 
 function LoginForm() {
   const router = useRouter();
@@ -48,7 +49,7 @@ function LoginForm() {
     });
     setLoading(false);
     if (error) return setError(error.message);
-    router.replace(next);
+    nativeNavigate("forward", () => router.replace(next));
     router.refresh();
   }
 

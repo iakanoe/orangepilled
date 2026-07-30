@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/Link";
 import { SkeletonCard, SkeletonRow } from "@/components/Skeleton";
 
 export default function Loading() {

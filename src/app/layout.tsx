@@ -3,6 +3,7 @@ import "leaflet/dist/leaflet.css";
 import "./globals.css";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import InstallPrompt from "@/components/InstallPrompt";
+import NativeTransitions from "@/components/NativeTransitions";
 
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? "Alerta Patente";
 
@@ -50,6 +51,7 @@ export default function RootLayout({
         {children}
         <ServiceWorkerRegister />
         <InstallPrompt />
+        <NativeTransitions />
       </body>
     </html>
   );

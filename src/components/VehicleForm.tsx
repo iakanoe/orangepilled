@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { parsePatente, formatPatente } from "@/lib/patente";
+import { nativeNavigate } from "@/components/NativeTransitions";
 import type { Vehicle } from "@/lib/types";
 
 export default function VehicleForm({
@@ -50,7 +51,9 @@ export default function VehicleForm({
       return;
     }
     // After editing go back to the vehicle summary; after creating, to the list.
-    router.push(editing ? `/vehiculos/${initial!.id}` : "/vehiculos");
+    nativeNavigate("forward", () =>
+      router.push(editing ? `/vehiculos/${initial!.id}` : "/vehiculos"),
+    );
     router.refresh();
   }
 
@@ -64,7 +67,7 @@ export default function VehicleForm({
       return;
     setBusy(true);
     await supabase.from("vehicles").delete().eq("id", initial.id);
-    router.push("/vehiculos");
+    nativeNavigate("back", () => router.push("/vehiculos"));
     router.refresh();
   }
 

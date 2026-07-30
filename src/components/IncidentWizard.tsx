@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import MapField from "@/components/MapField";
+import { nativeNavigate } from "@/components/NativeTransitions";
 import type { LatLng } from "@/components/MapPicker";
 import { uploadImagesWithFallback } from "@/lib/upload";
 import { parsePatente, formatPatente } from "@/lib/patente";
@@ -280,7 +281,7 @@ export default function IncidentWizard({
               onClose={onClose}
               onHome={() => {
                 onClose();
-                router.push("/");
+                nativeNavigate("back", () => router.push("/"));
               }}
             />
           ) : step === "patente" ? (

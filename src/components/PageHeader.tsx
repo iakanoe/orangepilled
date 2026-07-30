@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { nativeNavigate } from "@/components/NativeTransitions";
 
 export default function PageHeader({
   title,
@@ -16,7 +17,7 @@ export default function PageHeader({
     <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
       {back && (
         <button
-          onClick={() => router.back()}
+          onClick={() => nativeNavigate("back", () => router.back())}
           aria-label="Volver"
           className="pressable grid h-8 w-8 place-items-center rounded-full text-lg transition-colors hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700"
         >

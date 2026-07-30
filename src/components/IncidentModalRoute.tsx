@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import IncidentWizard from "@/components/IncidentWizard";
+import { nativeNavigate } from "@/components/NativeTransitions";
 
 // Thin wrapper so the manifest shortcuts and deep links (/reportar, /avisar)
 // still work: they open the wizard as a modal over a blank shell and return
@@ -24,7 +25,7 @@ export default function IncidentModalRoute({
       initialPatente={initialPatente}
       onClose={() => {
         setOpen(false);
-        router.push("/");
+        nativeNavigate("back", () => router.push("/"));
       }}
     />
   );

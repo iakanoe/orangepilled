@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { nativeNavigate } from "@/components/NativeTransitions";
 
 type Step = "idle" | "confirm" | "reconfirm";
 
@@ -35,7 +36,7 @@ export default function DeleteAccountButton({ email }: { email: string }) {
         const data = await res.json().catch(() => null);
         throw new Error(data?.error ?? "No se pudo borrar la cuenta");
       }
-      router.replace("/login");
+      nativeNavigate("forward", () => router.replace("/login"));
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error inesperado");
