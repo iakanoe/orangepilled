@@ -94,8 +94,9 @@ export async function POST(request: Request) {
   const allOwnerIds = [
     ...new Set((trackers ?? []).map((t) => t.owner_id as string)),
   ];
-  // Notify every tracker except the reporter themself.
-  const ownerIds = allOwnerIds.filter((id) => id !== user.id);
+  // Notify every tracker of the plate, including the reporter when they
+  // track it themselves (so reports on your own vehicles reach your Avisos).
+  const ownerIds = allOwnerIds;
 
   await Promise.all(
     ownerIds.map((ownerId) =>
