@@ -20,7 +20,7 @@ import {
   cellSizeForZoom,
   heatColor,
   padBounds,
-  startOfTodayBA,
+  startOfWindowBA,
   type Bounds,
   type Cell,
 } from "@/lib/city-status";
@@ -168,7 +168,7 @@ function HeatGrid() {
     const { data } = await supabase
       .from("reports_heatmap")
       .select("lat,lng")
-      .gte("ocurrido_en", startOfTodayBA())
+      .gte("ocurrido_en", startOfWindowBA())
       .gte("lat", padded.south)
       .lte("lat", padded.north)
       .gte("lng", padded.west)

@@ -72,6 +72,23 @@ export function startOfTodayBA(now: Date = new Date()): string {
   return new Date(shifted.getTime() + BA_OFFSET_MS).toISOString();
 }
 
+// Days shown on the city map: today + the previous 7 calendar days.
+export const CITY_WINDOW_DAYS = 7;
+
+/**
+ * Start of the map window: midnight (Buenos Aires) of `days` calendar days
+ * ago, i.e. the last 7 calendar days plus today. Returned as an ISO UTC string.
+ */
+export function startOfWindowBA(
+  days: number = CITY_WINDOW_DAYS,
+  now: Date = new Date(),
+): string {
+  const shifted = new Date(now.getTime() - BA_OFFSET_MS);
+  shifted.setUTCHours(0, 0, 0, 0);
+  shifted.setUTCDate(shifted.getUTCDate() - days);
+  return new Date(shifted.getTime() + BA_OFFSET_MS).toISOString();
+}
+
 /**
  * Bucket points into a grid of `cellSize` degrees, anchored to the world
  * origin so cells stay put while panning. Only non-empty cells are returned.

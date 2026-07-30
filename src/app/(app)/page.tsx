@@ -43,14 +43,14 @@ export default async function HomePage() {
 
   return (
     <>
-      <header className="flex items-center justify-between bg-brand-600 px-4 pb-5 pt-6 text-white">
-        <h1 className="text-xl font-bold">
+      <header className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3">
+        <h1 className="text-lg font-bold leading-tight">
           {process.env.NEXT_PUBLIC_APP_NAME}
         </h1>
         <Link
           href="/perfil"
           aria-label="Perfil"
-          className="grid h-9 w-9 place-items-center rounded-full bg-white/15 text-lg hover:bg-white/25"
+          className="grid h-8 w-8 place-items-center rounded-full bg-gray-100 text-lg hover:bg-gray-200"
         >
           👤
         </Link>
