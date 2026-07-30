@@ -6,16 +6,36 @@ patente; si esa patente está registrada por su dueño, el dueño recibe una
 **notificación push al instante**. También permite **avisar en vivo** de un
 problema en un vehículo ajeno (alarma sonando, rueda pinchada, etc.).
 
-> **Estado:** MVP (fase 1). Incluye registro de vehículos, reporte con mapa
-> OSM, push al dueño, avisos en vivo, dashboard con filtros y PWA instalable
-> con cola offline. Diferido a fases siguientes: heatmap agregado, verificación
-> fuerte de titularidad y detección de patente por foto (ALPR).
+> **Estado:** MVP (fase 1). Incluye registro de patentes, reporte con mapa
+> OSM, push al dueño, avisos en vivo, consulta pública por patente, mapa
+> general (heatmap por grilla), dashboard con filtros y PWA instalable con cola
+> offline. Diferido a fases siguientes: verificación fuerte de titularidad,
+> heatmap con agregación H3/hexbin y detección de patente por foto (ALPR).
+
+## Funcionalidades
+
+- **Registro de patentes** ("vehículos"): cada cuenta **suscribe** patentes con
+  un alias. La misma patente puede estar en varias cuentas — no hay propiedad
+  global, solo suscripción.
+- **Reporte de incidente** con tipo, severidad, descripción, fotos y ubicación
+  en mapa (pin arrastrable + geocoding de direcciones/esquinas).
+- **Aviso en vivo** sobre un vehículo ajeno (alarma sonando, rueda pinchada…).
+- **Push al dueño**: si la patente reportada está suscrita, sus dueños reciben
+  una notificación push al instante (incluso con la app cerrada).
+- **Consultar patente**: historial público de reportes de cualquier patente.
+- **Mapa general**: heatmap de incidentes agregado por grilla, desde la vista
+  anonimizada `reports_heatmap` (sin patentes ni identificadores).
+- **Semáforo por vehículo** (verde / naranja / rojo) según reportes recientes.
+- **Dashboard** con filtros y gráficos (Recharts) + realtime opcional.
+- **PWA instalable** con cola offline (Background Sync) y fallback offline.
+- **Borrado de cuenta** con reconfirmación por email; conserva los reportes y
+  avisos públicos (solo se desvincula al autor).
 
 ## Stack
 
 - **Next.js 15** (App Router) — UI + API en un solo proyecto (Route Handlers).
-- **Supabase** — Postgres + **PostGIS**, Auth (email OTP), Storage (fotos). Todo
-  en free tier.
+- **Supabase** — Postgres + **PostGIS**, Auth (email OTP), Storage (fotos) y
+  **Realtime** (avisos/dashboard en vivo). Todo en free tier.
 - **Serwist** — service worker, precache del app shell, offline y **Background
   Sync** (cola de reportes offline).
 - **Web Push (VAPID)** con la librería `web-push`.
@@ -204,22 +224,39 @@ vercel --prod    # o pusheá a la rama conectada y Vercel buildea solo
 
 Tras cargar/rotar variables, hacé un **redeploy** para que tomen efecto.
 
+## Scripts
+
+| Comando                       | Qué hace                                                                                                           |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `npm run dev`                 | Desarrollo (service worker y push **desactivados**).                                                               |
+| `npm run build` / `npm start` | Build de producción (PWA + push activos) / servirlo.                                                               |
+| `npm run lint`                | ESLint (config Next).                                                                                              |
+| `npm run typecheck`           | `tsc --noEmit`, chequeo de tipos sin emitir.                                                                       |
+| `npm run gen:vapid`           | Claves VAPID (`-- tu@email.com [--write \| --vercel]`).                                                            |
+| `npm run gen:icons`           | Genera los iconos PWA desde [`scripts/icon.svg`](scripts/icon.svg).                                                |
+| `npm run test:push`           | Envía un push de prueba a las suscripciones guardadas (verifica entrega con la app cerrada; opcional `<user-id>`). |
+
 ## Arquitectura (mapa rápido)
 
 ```
 src/
   app/
     (app)/                # rutas autenticadas (bottom nav)
-      page.tsx            # dashboard + acciones rápidas
-      vehiculos/          # ABM de vehículos
+      page.tsx            # dashboard + acciones rápidas + semáforo de vehículos
+      vehiculos/          # ABM de patentes suscritas (alias por usuario)
       reportar/           # reporte de incidente
       avisar/             # aviso en vivo
+      consultar/          # consulta pública del historial de una patente
+      ciudad/             # mapa general (heatmap agregado por grilla)
+      reportes/[id]/      # detalle de un reporte
       notificaciones/     # centro de notificaciones
-      configuracion/      # configuración + push + logout
+      configuracion/      # config + push + logout + borrar cuenta
+    ~offline/             # fallback offline del app shell
     api/
       reports/route.ts    # crea reporte + vincula patente + notifica + push
       alerts/route.ts     # crea aviso en vivo + notifica + push
       push/subscribe/     # guarda/borra suscripción push del dispositivo
+      account/delete/     # borra la cuenta (conserva reportes/avisos públicos)
     auth/signout/         # cierre de sesión
     auth/send-email/      # Send Email Hook de Supabase → manda mail con Resend
     auth/confirm/         # verificador del enlace mágico (canjea token → sesión)
@@ -233,6 +270,11 @@ src/
     patente.ts            # validación/normalización de patentes AR
     incident-types.ts     # catálogos (deben coincidir con los enums SQL)
     push.ts / notify.ts   # envío de push + fan-out de notificaciones (server)
+    realtime.ts           # suscripción realtime diferida (idle) a canales Supabase
+    city-status.ts        # grilla/agregación del mapa general (heatmap)
+    vehicle-status.ts     # semáforo verde/naranja/rojo por historial de reportes
+    geocode.ts            # geocoding Nominatim (direcciones/esquinas → lat/lng)
+    upload.ts / upload-server.ts  # compresión de fotos (cliente) + subida a Storage (server)
 middleware.ts             # refresh de sesión + gate de rutas privadas
 supabase/schema.sql       # esquema completo + RLS + Storage
 ```
@@ -263,6 +305,12 @@ supabase/schema.sql       # esquema completo + RLS + Storage
   suscritos, notificaciones y suscripciones push). El `reporter_id` de reportes
   y avisos es `on delete set null`, así que la historia pública se mantiene, solo
   se desvincula al autor. El borrado exige reconfirmar escribiendo el email.
+- **Semáforo por vehículo derivado solo del historial de reportes.** Con los
+  umbrales de [`vehicle-status.ts`](src/lib/vehicle-status.ts): un reporte se
+  cuenta como "reciente" si ocurrió en los últimos `RECENT_DAYS` (30) días.
+  0 recientes → **verde** ("Al día"); 1–2 → **naranja** ("Atención"); ≥
+  `RED_THRESHOLD` (3) → **rojo** ("Riesgo"). Los avisos en vivo activos **no**
+  cambian el color: se muestran aparte con un ícono de alerta en la tarjeta.
 
 ## Seguridad y privacidad
 
