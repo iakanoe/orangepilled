@@ -103,9 +103,11 @@ export default async function VehiculosPage() {
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {v.alias || "Sin alias"}
-                    </p>
+                    {v.alias && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {v.alias}
+                      </p>
+                    )}
                   </div>
                   <span className="text-gray-300 dark:text-gray-600">›</span>
                 </Link>

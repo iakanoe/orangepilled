@@ -83,7 +83,7 @@ export default async function VehiculoPage({
     })),
   ].sort((x, y) => (x.date < y.date ? 1 : -1));
 
-  const subtitle = vehicle.alias || "Sin alias";
+  const subtitle = vehicle.alias;
 
   return (
     <>
@@ -93,9 +93,11 @@ export default async function VehiculoPage({
           <h1 className="font-mono text-lg font-bold leading-tight tracking-wide">
             {formatPatente(vehicle.patente)}
           </h1>
-          <p className="truncate text-xs text-gray-500 dark:text-gray-400">
-            {subtitle}
-          </p>
+          {subtitle && (
+            <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+              {subtitle}
+            </p>
+          )}
         </div>
         <Link
           href={`/vehiculos/${id}/editar`}
