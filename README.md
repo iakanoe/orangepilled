@@ -79,6 +79,75 @@ npm run build && npm start   # producción (PWA + push activos)
 > desplegado con HTTPS). En `next dev` están desactivados a propósito para
 > evitar problemas de caché.
 
+## Deploy en Vercel
+
+La integración de **Supabase** carga sola sus variables
+(`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
+`SUPABASE_SECRET_KEY`) al conectar el proyecto. Lo único manual es **VAPID**
+(las claves de push) y un par de variables de la app.
+
+### 1. Claves VAPID → Vercel (automático)
+
+El script `gen:vapid` acepta tu email para el `subject` y puede subir las tres
+variables directamente a Vercel:
+
+```bash
+npm i -g vercel        # si aún no la tenés
+vercel link            # linkeá este repo a tu proyecto de Vercel
+
+# genera las claves con tu email y las carga en production/preview/development
+npm run gen:vapid -- tu@email.com --vercel
+```
+
+Alternativas del mismo script:
+
+```bash
+npm run gen:vapid -- tu@email.com            # solo imprime las 3 líneas
+npm run gen:vapid -- tu@email.com --write    # las escribe/actualiza en .env.local
+```
+
+> `--vercel` requiere la Vercel CLI y el proyecto linkeado. Corre
+> `vercel env rm/add` por cada variable, así que es **idempotente**: podés
+> re-ejecutarlo para rotar las claves.
+
+### 2. Variables restantes de la app
+
+En **Vercel → Project → Settings → Environment Variables** agregá:
+
+| Variable                              | Valor                                                                        |
+| ------------------------------------- | ---------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET` | `media` (o el bucket que creaste)                                            |
+| `NEXT_PUBLIC_APP_NAME`                | `Alerta Patente`                                                             |
+| `NEXT_PUBLIC_APP_URL`                 | la URL pública del deploy (ej. `https://tu-app.vercel.app`, sin barra final) |
+
+> `NEXT_PUBLIC_APP_URL` se usa para armar los links de las notificaciones push.
+> Ponelo con el dominio final de producción.
+
+### 3. Base de datos (manual, una sola vez)
+
+El esquema **no se despliega solo**: la integración de Supabase con Vercel solo
+inyecta las credenciales, no crea las tablas. Hay que aplicarlo una vez.
+
+**Método recomendado (free tier): SQL Editor.** Es la vía más simple y 100%
+gratuita — no necesita la Supabase CLI ni la contraseña de la base:
+
+1. Entrá a tu proyecto en [supabase.com](https://supabase.com) → **SQL Editor**.
+2. Abrí [`supabase/schema.sql`](supabase/schema.sql), copiá **todo** el contenido
+   y pegalo en un query nuevo.
+3. **Run**. Crea tablas, PostGIS, políticas RLS, triggers, la vista del heatmap
+   y el bucket de Storage.
+
+Solo repetís este paso si cambia el esquema. Es idempotente en la mayor parte,
+pero revisá antes de re-correrlo sobre datos reales.
+
+### 4. Deploy
+
+```bash
+vercel --prod    # o pusheá a la rama conectada y Vercel buildea solo
+```
+
+Tras cargar/rotar variables, hacé un **redeploy** para que tomen efecto.
+
 ## Arquitectura (mapa rápido)
 
 ```
