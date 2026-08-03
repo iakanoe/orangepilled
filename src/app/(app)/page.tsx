@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "@/components/Link";
 import { Settings, ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
@@ -5,11 +6,12 @@ import Dashboard from "@/components/Dashboard";
 import QuickActions from "@/components/QuickActions";
 import PushManager from "@/components/PushManager";
 import PullToRefresh from "@/components/PullToRefresh";
+import { Skeleton, SkeletonCard } from "@/components/Skeleton";
 import type { Vehicle, Report, LiveAlert } from "@/lib/types";
 
 export const metadata = { title: "Inicio" };
 
-export default async function HomePage() {
+async function DashboardData() {
   const supabase = await createClient();
 
   const { data: vehiclesData } = await supabase
@@ -43,6 +45,29 @@ export default async function HomePage() {
   const alerts = (alertsRes.data ?? []) as LiveAlert[];
 
   return (
+    <Dashboard
+      vehicles={vehicles}
+      received={received}
+      alerts={alerts}
+      patentes={patentes}
+    />
+  );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="flex flex-col gap-3 p-4">
+      <SkeletonCard />
+      <Skeleton className="h-4 w-40" />
+      <SkeletonCard />
+      <SkeletonCard />
+      <SkeletonCard />
+    </div>
+  );
+}
+
+export default function HomePage() {
+  return (
     <>
       <header className="app-bar justify-between">
         <div className="flex min-w-0 items-center gap-2.5">
@@ -69,12 +94,9 @@ export default async function HomePage() {
         {/* Push opt-in */}
         <PushManager />
 
-        <Dashboard
-          vehicles={vehicles}
-          received={received}
-          alerts={alerts}
-          patentes={patentes}
-        />
+        <Suspense fallback={<DashboardSkeleton />}>
+          <DashboardData />
+        </Suspense>
       </PullToRefresh>
     </>
   );
