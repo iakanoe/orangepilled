@@ -1,5 +1,6 @@
 import { LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import PageHeader from "@/components/PageHeader";
 import SettingsNotifications from "@/components/SettingsNotifications";
 import ThemeToggle from "@/components/ThemeToggle";
 import DeleteAccountButton from "@/components/DeleteAccountButton";
@@ -13,10 +14,8 @@ export default async function ConfiguracionPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <div>
-      <header className="app-bar">
-        <h1 className="app-title">Configuración</h1>
-      </header>
+    <>
+      <PageHeader title="Configuración" />
 
       <div className="flex flex-col gap-4 p-4">
         <section className="card p-4">
@@ -58,6 +57,6 @@ export default async function ConfiguracionPage() {
 
         {user?.email && <DeleteAccountButton email={user.email} />}
       </div>
-    </div>
+    </>
   );
 }
