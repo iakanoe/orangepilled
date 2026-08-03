@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { parsePatente, formatPatente } from "@/lib/patente";
 import { nativeNavigate } from "@/components/NativeTransitions";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { saveVehicle, deleteVehicle } from "@/app/(app)/vehiculos/actions";
 import type { Vehicle } from "@/lib/types";
 
@@ -15,6 +16,7 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
   const [alias, setAlias] = useState(initial?.alias ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmRemove, setConfirmRemove] = useState(false);
 
   const parsed = parsePatente(patente);
 
@@ -45,17 +47,12 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
 
   async function remove() {
     if (!initial) return;
-    if (
-      !confirm(
-        "¿Quitar este vehículo de tu cuenta? Sus reportes y avisos no se borran; solo dejarás de seguirlo.",
-      )
-    )
-      return;
     setBusy(true);
     setError(null);
     const res = await deleteVehicle(initial.id);
     if (!res.ok) {
       setBusy(false);
+      setConfirmRemove(false);
       setError(res.error);
       return;
     }
@@ -114,13 +111,24 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
       {editing && (
         <button
           type="button"
-          onClick={remove}
+          onClick={() => setConfirmRemove(true)}
           disabled={busy}
           className="rounded-lg py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 active:bg-red-100 disabled:opacity-50 dark:hover:bg-red-950/40 dark:active:bg-red-950/70"
         >
           Quitar de mi cuenta
         </button>
       )}
+
+      <ConfirmDialog
+        open={confirmRemove}
+        danger
+        busy={busy}
+        title="Quitar vehículo"
+        message="¿Quitar este vehículo de tu cuenta? Sus reportes y avisos no se borran; solo dejarás de seguirlo."
+        confirmLabel="Quitar"
+        onConfirm={remove}
+        onCancel={() => setConfirmRemove(false)}
+      />
     </form>
   );
 }

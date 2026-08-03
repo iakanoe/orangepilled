@@ -6,4 +6,5 @@ quiero que al instalar la PWA se abra directamente la app como PWA o al menos qu
 quiero convertir al proyecto en una app mobile con react native, aparte de la PWA.
 en la PWA en android el color de la status bar se me pone azul y no naranja como el branding... arreglar.
 quiero cambiar toda la UI para que sea menos AI-coded
-el prompt de "estás seguro de sacar el vehiculo de tu cuenta" es del browser y no interno de la app. me gustaría que fuera un modal in-app así es mas facil después de migrar a react native mobile.
+cuando estoy tipeando en mobile, el boton de siguiente del wizard queda tapado por el teclado
+hacer un mejor texto para la parte de settings que describa bien la app, orientado a usuarios no tecnicos (PWA no tiene sentido en ese contexto...)
