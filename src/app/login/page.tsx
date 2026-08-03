@@ -3,12 +3,15 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { nativeNavigate } from "@/components/NativeTransitions";
+import { APP_NAME } from "@/config/app";
 
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
+  const t = useTranslations("login");
   const next = params.get("next") || "/";
   const supabase = createClient();
 
@@ -17,9 +20,7 @@ function LoginForm() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(
-    params.get("error") === "link"
-      ? "El enlace no es válido o ya venció. Pedí un código nuevo."
-      : null,
+    params.get("error") === "link" ? t("linkError") : null,
   );
 
   async function sendCode(e: React.FormEvent) {
@@ -60,18 +61,16 @@ function LoginForm() {
         <div className="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-2xl bg-brand-600 text-white">
           <ShieldCheck className="h-8 w-8" aria-hidden />
         </div>
-        <h1 className="text-2xl font-bold">
-          {process.env.NEXT_PUBLIC_APP_NAME}
-        </h1>
+        <h1 className="text-2xl font-bold">{APP_NAME}</h1>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Reportá y recibí avisos sobre patentes.
+          {t("tagline")}
         </p>
       </div>
 
       {step === "email" ? (
         <form onSubmit={sendCode} className="flex flex-col gap-3">
           <label className="field-label" htmlFor="email">
-            Tu email
+            {t("emailLabel")}
           </label>
           <input
             id="email"
@@ -80,20 +79,20 @@ function LoginForm() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="vos@email.com"
+            placeholder={t("emailPlaceholder")}
             className="input"
           />
           <button type="submit" disabled={loading} className="btn btn-primary">
-            {loading ? "Enviando…" : "Enviar código"}
+            {loading ? t("sending") : t("sendCode")}
           </button>
           <p className="text-center text-xs text-gray-400 dark:text-gray-500">
-            Te llega un email: tocá el enlace o ingresá el código de 6 dígitos.
+            {t("emailHint")}
           </p>
         </form>
       ) : (
         <form onSubmit={verify} className="flex flex-col gap-3">
           <label className="field-label" htmlFor="code">
-            Ingresá el código enviado a {email} (o tocá el enlace del email)
+            {t("codeLabel", { email })}
           </label>
           <input
             id="code"
@@ -102,18 +101,18 @@ function LoginForm() {
             required
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            placeholder="123456"
+            placeholder={t("codePlaceholder")}
             className="input text-center text-lg tracking-[0.3em]"
           />
           <button type="submit" disabled={loading} className="btn btn-primary">
-            {loading ? "Verificando…" : "Entrar"}
+            {loading ? t("verifying") : t("enter")}
           </button>
           <button
             type="button"
             onClick={() => setStep("email")}
             className="text-center text-xs text-gray-400 underline dark:text-gray-500"
           >
-            Cambiar email
+            {t("changeEmail")}
           </button>
         </form>
       )}

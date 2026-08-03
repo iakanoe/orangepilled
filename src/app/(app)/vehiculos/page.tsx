@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import Link from "@/components/Link";
 import { Plus, Car, TriangleAlert, ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
@@ -8,7 +9,10 @@ import { computeVehicleStats, STATUS_STYLES } from "@/lib/vehicle-status";
 import { SkeletonCard, SkeletonRow } from "@/components/Skeleton";
 import type { Vehicle, Report, LiveAlert } from "@/lib/types";
 
-export const metadata = { title: "Mis vehículos" };
+export async function generateMetadata() {
+  const t = await getTranslations("meta");
+  return { title: t("vehiculos") };
+}
 
 function VehiclesListSkeleton() {
   return (
@@ -25,14 +29,16 @@ function VehiclesListSkeleton() {
   );
 }
 
-export default function VehiculosPage() {
+export default async function VehiculosPage() {
+  const t = await getTranslations("meta");
+  const tv = await getTranslations("vehiclesPage");
   return (
     <div>
       <header className="app-bar justify-between">
-        <h1 className="app-title">Mis vehículos</h1>
+        <h1 className="app-title">{t("vehiculos")}</h1>
         <Link href="/vehiculos/nuevo" className="btn btn-primary px-3 py-1.5">
           <Plus className="h-4 w-4" aria-hidden />
-          Agregar
+          {tv("add")}
         </Link>
       </header>
 
@@ -76,6 +82,7 @@ async function VehiclesList() {
   const alerts = (alertsRes.data ?? []) as LiveAlert[];
   const stats = computeVehicleStats(list, received, alerts);
   const statById = new Map(stats.map((s) => [s.vehicle.id, s]));
+  const tv = await getTranslations("vehiclesPage");
 
   if (list.length === 0) {
     return (
@@ -84,13 +91,13 @@ async function VehiclesList() {
           <Car className="h-6 w-6" aria-hidden />
         </span>
         <p className="mt-3">
-          Todavía no registraste vehículos.
+          {tv("emptyTitle")}
           <br />
-          Agregá uno para recibir reportes y avisos.
+          {tv("emptyBody")}
         </p>
         <Link href="/vehiculos/nuevo" className="btn btn-primary mt-4">
           <Plus className="h-4 w-4" aria-hidden />
-          Agregar mi primer vehículo
+          {tv("emptyCta")}
         </Link>
       </div>
     );
@@ -123,7 +130,7 @@ async function VehiclesList() {
                   </span>
                   {(statById.get(v.id)?.active ?? 0) > 0 && (
                     <span
-                      title="Alerta en vivo activa"
+                      title={tv("liveAlertActive")}
                       className="inline-flex shrink-0 items-center gap-0.5 rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-900/40 dark:text-red-300"
                     >
                       <TriangleAlert className="h-3 w-3" aria-hidden />

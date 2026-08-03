@@ -1,8 +1,12 @@
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import CityView from "@/components/CityView";
 import { startOfWindowBA } from "@/lib/city-status";
 
-export const metadata = { title: "Mapa general" };
+export async function generateMetadata() {
+  const t = await getTranslations("meta");
+  return { title: t("ciudad") };
+}
 
 // Always fetch fresh city-wide numbers.
 export const dynamic = "force-dynamic";

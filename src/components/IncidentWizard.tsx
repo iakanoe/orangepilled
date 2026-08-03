@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
+import { useTranslations } from "next-intl";
 import MapField from "@/components/MapField";
 import type { LatLng } from "@/components/MapPicker";
 import { uploadImagesWithFallback } from "@/lib/upload";
@@ -59,6 +60,8 @@ export default function IncidentWizard({
   initialPatente = "",
 }: Props) {
   const router = useRouter();
+  const t = useTranslations("wizard");
+  const tc = useTranslations("common");
   const isReport = mode === "report";
   const catalog: CatalogItem<string>[] = isReport
     ? INCIDENT_TYPES
@@ -240,7 +243,7 @@ export default function IncidentWizard({
         router.refresh();
       } else {
         track("incident_error", { mode, status: res.status });
-        setResult({ kind: "error", msg: data.error ?? "Error al enviar" });
+        setResult({ kind: "error", msg: data.error ?? t("errorSend") });
       }
     } catch {
       // The fetch threw before any response arrived. If a service worker
@@ -256,7 +259,7 @@ export default function IncidentWizard({
       } else {
         setResult({
           kind: "error",
-          msg: "Sin conexión. Reintentá cuando tengas internet.",
+          msg: t("offline"),
         });
       }
     } finally {
@@ -264,7 +267,7 @@ export default function IncidentWizard({
     }
   }
 
-  const title = isReport ? "Reportar incidente" : "Avisar en vivo";
+  const title = isReport ? t("titleReport") : t("titleAlert");
 
   return createPortal(
     <div
@@ -283,7 +286,7 @@ export default function IncidentWizard({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Cerrar"
+            aria-label={tc("cerrar")}
             className="icon-btn -ml-1"
           >
             <X className="h-5 w-5" aria-hidden />
@@ -292,7 +295,7 @@ export default function IncidentWizard({
             <p className="truncate text-sm font-bold">{title}</p>
             {!result && (
               <p className="text-xs text-gray-400 dark:text-gray-500">
-                Paso {stepIdx + 1} de {steps.length}
+                {t("step", { current: stepIdx + 1, total: steps.length })}
               </p>
             )}
           </div>
@@ -372,7 +375,7 @@ export default function IncidentWizard({
                 onClick={back}
                 className="btn btn-outline px-5"
               >
-                Atrás
+                {t("back")}
               </button>
             )}
             {isLast ? (
@@ -383,10 +386,10 @@ export default function IncidentWizard({
                 className="btn btn-primary flex-1"
               >
                 {submitting
-                  ? "Enviando…"
+                  ? t("sending")
                   : isReport
-                    ? "Enviar reporte"
-                    : "Enviar aviso"}
+                    ? t("submitReport")
+                    : t("submitAlert")}
               </button>
             ) : (
               <button
@@ -395,7 +398,7 @@ export default function IncidentWizard({
                 disabled={!canProceed}
                 className="btn btn-primary flex-1"
               >
-                Siguiente
+                {t("next")}
               </button>
             )}
           </div>
@@ -417,19 +420,20 @@ function PatenteStep({
   setPatente: (v: string) => void;
   patenteOk: boolean;
 }) {
+  const t = useTranslations("wizard");
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h2 className="text-lg font-bold">¿Qué patente?</h2>
+        <h2 className="text-lg font-bold">{t("patenteTitle")}</h2>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Ingresá la patente del vehículo.
+          {t("patenteSubtitle")}
         </p>
       </div>
       <div>
         <input
           value={patente}
           onChange={(e) => setPatente(e.target.value.toUpperCase())}
-          placeholder="AB123CD"
+          placeholder={t("patentePlaceholder")}
           autoCapitalize="characters"
           autoFocus
           className={`w-full rounded-lg border px-3 py-3 text-center font-mono text-2xl tracking-widest outline-none ${
@@ -441,9 +445,7 @@ function PatenteStep({
           }`}
         />
         {patente && !patenteOk && (
-          <p className="mt-1 text-xs text-red-500">
-            Formato inválido. Ej: ABC123 o AB123CD.
-          </p>
+          <p className="mt-1 text-xs text-red-500">{t("patenteInvalid")}</p>
         )}
         {patenteOk && (
           <p className="mt-1 text-center text-xs text-green-600">
@@ -456,13 +458,13 @@ function PatenteStep({
       <button
         type="button"
         disabled
-        title="Próximamente"
+        title={t("soonTitle")}
         className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-gray-300 py-3 text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500"
       >
         <Camera className="h-4 w-4" aria-hidden />
-        Detectar desde una foto
+        {t("detectPhoto")}
         <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase dark:bg-gray-800">
-          Pronto
+          {t("soon")}
         </span>
       </button>
     </div>
@@ -486,23 +488,22 @@ function CuandoStep({
   setMinute: (v: number) => void;
   onQuick: (minutesAgo: number) => void;
 }) {
+  const t = useTranslations("wizard");
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h2 className="text-lg font-bold">¿Cuándo sucedió?</h2>
+        <h2 className="text-lg font-bold">{t("cuandoTitle")}</h2>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          No hace falta que sea exacto. Si el incidente duró un rato (por
-          ejemplo, si te siguió manejando mal por toda una avenida), poné una
-          hora estimada dentro de ese momento.
+          {t("cuandoSubtitle")}
         </p>
       </div>
 
       <div className="flex flex-wrap gap-2">
         {[
-          { label: "Ahora", m: 0 },
-          { label: "Hace 30 min", m: 30 },
-          { label: "Hace 1 h", m: 60 },
-          { label: "Hace 2 h", m: 120 },
+          { label: t("quickNow"), m: 0 },
+          { label: t("quick30"), m: 30 },
+          { label: t("quick60"), m: 60 },
+          { label: t("quick120"), m: 120 },
         ].map((q) => {
           const d = new Date(Date.now() - q.m * 60000);
           const qDate = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -528,7 +529,9 @@ function CuandoStep({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium">Fecha</label>
+        <label className="mb-1 block text-sm font-medium">
+          {t("dateLabel")}
+        </label>
         <input
           type="date"
           value={date}
@@ -539,7 +542,10 @@ function CuandoStep({
 
       <div>
         <label className="mb-1 block text-sm font-medium">
-          Hora <span className="text-gray-400 dark:text-gray-500">(24 hs)</span>
+          {t("hourLabel")}{" "}
+          <span className="text-gray-400 dark:text-gray-500">
+            {t("hour24")}
+          </span>
         </label>
         <div className="flex items-center gap-2">
           <select
@@ -582,15 +588,15 @@ function DondeStep({
   direccion: string | null;
   onChange: (v: LatLng, dir: string | null) => void;
 }) {
+  const t = useTranslations("wizard");
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h2 className="text-lg font-bold">¿Dónde sucedió?</h2>
+        <h2 className="text-lg font-bold">{t("dondeTitle")}</h2>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          No hace falta que sea el punto exacto. Si pasó a lo largo de un
-          recorrido, marcá un lugar representativo. Buscá una dirección o un
-          cruce (ej: <span className="font-medium">Callao y Corrientes</span>),
-          tocá el mapa o usá tu ubicación.
+          {t.rich("dondeSubtitle", {
+            b: (chunks) => <span className="font-medium">{chunks}</span>,
+          })}
         </p>
       </div>
 
@@ -603,7 +609,7 @@ function DondeStep({
         </p>
       ) : (
         <p className="text-xs text-gray-400 dark:text-gray-500">
-          Marcá un punto para continuar. La ubicación es obligatoria.
+          {t("dondeRequired")}
         </p>
       )}
     </div>
@@ -633,19 +639,20 @@ function DetallesStep({
   files: File[];
   setFiles: (v: File[]) => void;
 }) {
+  const t = useTranslations("wizard");
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="text-lg font-bold">Detalles</h2>
+        <h2 className="text-lg font-bold">{t("detallesTitle")}</h2>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Elegí el tipo. El resto es opcional.
+          {t("detallesSubtitle")}
         </p>
       </div>
 
       {/* Tipo (requerido) */}
       <div>
         <label className="mb-2 block text-sm font-medium">
-          {isReport ? "Tipo de incidente" : "¿Qué pasa con el vehículo?"}
+          {isReport ? t("typeReport") : t("typeAlert")}
         </label>
         <div className="grid grid-cols-2 gap-2">
           {catalog.map((c) => {
@@ -677,8 +684,10 @@ function DetallesStep({
       {isReport && (
         <div>
           <label className="mb-1 block text-sm font-medium">
-            Severidad{" "}
-            <span className="text-gray-400 dark:text-gray-500">(opcional)</span>
+            {t("severity")}{" "}
+            <span className="text-gray-400 dark:text-gray-500">
+              {t("optional")}
+            </span>
           </label>
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((n) => (
@@ -708,14 +717,16 @@ function DetallesStep({
       {/* Descripción */}
       <div>
         <label className="mb-1 block text-sm font-medium">
-          Descripción{" "}
-          <span className="text-gray-400 dark:text-gray-500">(opcional)</span>
+          {t("description")}{" "}
+          <span className="text-gray-400 dark:text-gray-500">
+            {t("optional")}
+          </span>
         </label>
         <textarea
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
           rows={3}
-          placeholder="Contá qué pasó…"
+          placeholder={t("descriptionPlaceholder")}
           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-800"
         />
       </div>
@@ -723,8 +734,10 @@ function DetallesStep({
       {/* Fotos */}
       <div>
         <label className="mb-1 block text-sm font-medium">
-          Foto(s){" "}
-          <span className="text-gray-400 dark:text-gray-500">(opcional)</span>
+          {t("photos")}{" "}
+          <span className="text-gray-400 dark:text-gray-500">
+            {t("optional")}
+          </span>
         </label>
         <PhotoPicker files={files} setFiles={setFiles} />
       </div>
@@ -741,6 +754,7 @@ function PhotoPicker({
   files: File[];
   setFiles: (v: File[]) => void;
 }) {
+  const t = useTranslations("wizard");
   const inputRef = useRef<HTMLInputElement>(null);
   const [urls, setUrls] = useState<string[]>([]);
 
@@ -773,13 +787,13 @@ function PhotoPicker({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={urls[i]}
-              alt={`Foto ${i + 1}`}
+              alt={t("photoAlt", { n: i + 1 })}
               className="h-full w-full object-cover"
             />
             <button
               type="button"
               onClick={() => removeAt(i)}
-              aria-label="Sacar foto"
+              aria-label={t("photoRemove")}
               className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80"
             >
               <X className="h-3.5 w-3.5" aria-hidden />
@@ -791,7 +805,7 @@ function PhotoPicker({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            aria-label="Agregar foto"
+            aria-label={t("photoAdd")}
             className="pressable grid h-20 w-20 place-items-center rounded-lg border-2 border-dashed border-gray-300 text-gray-400 transition-colors hover:border-brand-400 hover:text-brand-500 dark:border-gray-600 dark:text-gray-500 dark:hover:border-brand-500 dark:hover:text-brand-300"
           >
             <Plus className="h-6 w-6" aria-hidden />
@@ -814,7 +828,7 @@ function PhotoPicker({
 
       {files.length > 0 && (
         <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-          {files.length} de {MAX_PHOTOS} foto(s)
+          {t("photoCount", { count: files.length, max: MAX_PHOTOS })}
         </p>
       )}
     </div>
@@ -837,18 +851,20 @@ function ResultView({
   onClose: () => void;
   onHome: () => void;
 }) {
+  const t = useTranslations("wizard");
+  const tc = useTranslations("common");
   if (result.kind === "error") {
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center dark:border-red-900 dark:bg-red-950/50">
         <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-300">
           <TriangleAlert className="h-7 w-7" aria-hidden />
         </div>
-        <h2 className="text-lg font-bold">No se pudo enviar</h2>
+        <h2 className="text-lg font-bold">{t("resultErrorTitle")}</h2>
         <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
           {result.msg}
         </p>
         <button onClick={onRetry} className="btn btn-primary mt-5 w-full">
-          Volver a intentar
+          {t("resultRetry")}
         </button>
       </div>
     );
@@ -865,26 +881,26 @@ function ResultView({
       </div>
       <h2 className="text-lg font-bold">
         {result.kind === "queued"
-          ? "Guardado sin conexión"
+          ? t("resultQueuedTitle")
           : isReport
-            ? "Reporte enviado"
-            : "Aviso enviado"}
+            ? t("resultReportSent")
+            : t("resultAlertSent")}
       </h2>
       <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
         {result.kind === "queued"
-          ? "Se enviará automáticamente cuando vuelva internet."
+          ? t("resultQueuedBody")
           : result.notified
-            ? "El dueño del vehículo fue notificado al instante."
+            ? t("resultNotifiedBody")
             : result.registered
-              ? "Registrado. El dueño verá el reporte."
-              : "Registrado. Esta patente todavía no tiene dueño en la app."}
+              ? t("resultRegisteredBody")
+              : t("resultNoOwnerBody")}
       </p>
       <div className="mt-5 flex gap-2">
         <button onClick={onClose} className="btn btn-outline flex-1">
-          Cerrar
+          {tc("cerrar")}
         </button>
         <button onClick={onHome} className="btn btn-primary flex-1">
-          Ir al inicio
+          {t("resultHome")}
         </button>
       </div>
     </div>

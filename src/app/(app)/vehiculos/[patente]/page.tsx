@@ -1,6 +1,7 @@
 import Link from "@/components/Link";
 import { notFound } from "next/navigation";
 import { Pencil, MapPin } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import BackButton from "@/components/BackButton";
 import PullToRefresh from "@/components/PullToRefresh";
 import VehicleAlerts from "@/components/VehicleAlerts";
@@ -19,11 +20,13 @@ import {
   vehicleStatus,
   STATUS_STYLES,
   RECENT_DAYS,
-  RED_THRESHOLD,
 } from "@/lib/vehicle-status";
 import type { Vehicle, Report, LiveAlert } from "@/lib/types";
 
-export const metadata = { title: "Vehículo" };
+export async function generateMetadata() {
+  const t = await getTranslations("meta");
+  return { title: t("vehiculo") };
+}
 
 // Reports/alerts are shared data updated from any device, so never serve a
 // stale prerendered copy — always query fresh on the server.
@@ -39,12 +42,13 @@ function fmtDate(iso: string) {
   });
 }
 
-function statusDesc(recent: number): string {
-  if (recent >= RED_THRESHOLD)
-    return `${recent} reportes en los últimos ${RECENT_DAYS} días`;
+function statusDesc(
+  recent: number,
+  t: (key: string, values?: Record<string, string | number>) => string,
+): string {
   if (recent > 0)
-    return `${recent} reporte${recent > 1 ? "s" : ""} en los últimos ${RECENT_DAYS} días`;
-  return "Sin reportes recientes";
+    return t("statusRecent", { count: recent, days: RECENT_DAYS });
+  return t("statusNone");
 }
 
 // One screen for both cases:
@@ -119,6 +123,7 @@ export default async function VehiculoPage({
 
   const status = vehicleStatus(recent);
   const st = STATUS_STYLES[status];
+  const t = await getTranslations("vehicleDetail");
 
   // Merge reports with past alerts (mine only) into a single history feed.
   type HistoryItem =
@@ -139,8 +144,8 @@ export default async function VehiculoPage({
   ].sort((x, y) => (x.date < y.date ? 1 : -1));
 
   const subtitle = mine
-    ? vehicle!.alias || "Tu vehículo"
-    : "Informe del vehículo";
+    ? vehicle!.alias || t("subtitleMine")
+    : t("subtitleOther");
 
   return (
     <div>
@@ -160,7 +165,7 @@ export default async function VehiculoPage({
             className="btn btn-outline shrink-0 px-3 py-1.5"
           >
             <Pencil className="h-4 w-4" aria-hidden />
-            Editar
+            {t("edit")}
           </Link>
         ) : (
           <span
@@ -184,7 +189,7 @@ export default async function VehiculoPage({
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold">{st.label}</p>
               <p className="truncate text-xs text-gray-500 dark:text-gray-400">
-                {statusDesc(recent)}
+                {statusDesc(recent, t)}
               </p>
             </div>
           </section>
@@ -192,7 +197,7 @@ export default async function VehiculoPage({
           {/* History — reports (+ past alerts when it's your vehicle) */}
           <section>
             <h2 className="mb-2 text-sm font-semibold">
-              {mine ? "Historial" : "Historial de reportes"} ({history.length})
+              {mine ? t("historyMine") : t("historyOther")} ({history.length})
             </h2>
             {history.length ? (
               <ul className="flex flex-col gap-2">
@@ -210,9 +215,7 @@ export default async function VehiculoPage({
               </ul>
             ) : (
               <div className="rounded-lg border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500">
-                {mine
-                  ? "Este vehículo todavía no tiene historial."
-                  : "Esta patente todavía no tiene reportes recientes."}
+                {mine ? t("emptyMine") : t("emptyOther")}
               </div>
             )}
           </section>
@@ -222,8 +225,15 @@ export default async function VehiculoPage({
   );
 }
 
-function ReportRow({ report, linked }: { report: Report; linked: boolean }) {
+async function ReportRow({
+  report,
+  linked,
+}: {
+  report: Report;
+  linked: boolean;
+}) {
   const Icon = incidentIcon(report.tipo);
+  const t = await getTranslations("vehicleDetail");
   const body = (
     <>
       <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
@@ -234,7 +244,7 @@ function ReportRow({ report, linked }: { report: Report; linked: boolean }) {
         {report.severidad != null && (
           <p className="text-xs text-gray-500 dark:text-gray-400">
             {SEVERIDAD_LABELS[report.severidad] ??
-              `Severidad ${report.severidad}`}
+              t("severityFallback", { n: report.severidad })}
           </p>
         )}
         {report.descripcion && (
@@ -269,8 +279,9 @@ function ReportRow({ report, linked }: { report: Report; linked: boolean }) {
   );
 }
 
-function AlertRow({ alert }: { alert: LiveAlert }) {
+async function AlertRow({ alert }: { alert: LiveAlert }) {
   const Icon = alertIcon(alert.tipo);
+  const t = await getTranslations("vehicleDetail");
   return (
     <li className="flex items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
       <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
@@ -280,7 +291,7 @@ function AlertRow({ alert }: { alert: LiveAlert }) {
         <p className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
           {alertLabel(alert.tipo)}
           <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-500 dark:bg-gray-800 dark:text-gray-400">
-            Alerta
+            {t("alertBadge")}
           </span>
         </p>
         {alert.descripcion && (

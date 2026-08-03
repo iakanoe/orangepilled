@@ -1,10 +1,10 @@
 import { isAlertActive } from "@/lib/alerts";
 import type { Vehicle, Report, LiveAlert } from "@/lib/types";
 
-// A report counts as "recent" if it happened within this many days.
-export const RECENT_DAYS = 30;
-// Number of recent reports that escalates a vehicle from orange to red.
-export const RED_THRESHOLD = 3;
+// Product tuning knobs live in @/config/thresholds; re-exported here so the
+// status logic below (and its importers) keep reading naturally.
+export { RECENT_DAYS, RED_THRESHOLD } from "@/config/thresholds";
+import { RECENT_DAYS, RED_THRESHOLD } from "@/config/thresholds";
 
 export type VehicleStatus = "verde" | "naranja" | "rojo";
 

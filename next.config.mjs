@@ -1,5 +1,8 @@
 import { randomUUID } from "node:crypto";
 import withSerwistInit from "@serwist/next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 // A revision versions precached pages so stale responses are not served.
 // Not a git repo by default, so we use a random per-build revision.
@@ -72,4 +75,4 @@ const nextConfig = {
   },
 };
 
-export default withSerwist(nextConfig);
+export default withSerwist(withNextIntl(nextConfig));

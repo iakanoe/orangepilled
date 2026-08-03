@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 // In-app confirmation modal (no browser confirm()), so the flow works
 // identically once the app is ported to React Native. Fully controlled:
 // the parent owns `open` and the confirm/cancel handlers.
@@ -7,8 +9,8 @@ export default function ConfirmDialog({
   open,
   title,
   message,
-  confirmLabel = "Confirmar",
-  cancelLabel = "Cancelar",
+  confirmLabel,
+  cancelLabel,
   danger = false,
   busy = false,
   onConfirm,
@@ -24,7 +26,11 @@ export default function ConfirmDialog({
   onConfirm: () => void;
   onCancel: () => void;
 }) {
+  const tc = useTranslations("common");
   if (!open) return null;
+
+  const confirm = confirmLabel ?? tc("confirmar");
+  const cancel = cancelLabel ?? tc("cancelar");
 
   return (
     <div
@@ -60,7 +66,7 @@ export default function ConfirmDialog({
                 : "btn-primary"
             }`}
           >
-            {busy ? "…" : confirmLabel}
+            {busy ? "…" : confirm}
           </button>
           <button
             type="button"
@@ -68,7 +74,7 @@ export default function ConfirmDialog({
             disabled={busy}
             className="btn btn-outline w-full"
           >
-            {cancelLabel}
+            {cancel}
           </button>
         </div>
       </div>

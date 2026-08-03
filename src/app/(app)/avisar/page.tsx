@@ -1,6 +1,10 @@
+import { getTranslations } from "next-intl/server";
 import IncidentModalRoute from "@/components/IncidentModalRoute";
 
-export const metadata = { title: "Avisar en vivo" };
+export async function generateMetadata() {
+  const t = await getTranslations("meta");
+  return { title: t("avisar") };
+}
 
 export default async function AvisarPage({
   searchParams,

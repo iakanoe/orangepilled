@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { track } from "@vercel/analytics";
+import { useTranslations } from "next-intl";
 import { pushSupported, subscribeToPush } from "@/lib/push-client";
 
 type State = "loading" | "unsupported" | "denied" | "off" | "on";
@@ -11,6 +12,7 @@ export default function PushManager({
 }: {
   variant?: "prompt" | "settings";
 }) {
+  const t = useTranslations("push");
   const [state, setState] = useState<State>("loading");
   const [busy, setBusy] = useState(false);
   // Notifications are only offered once the app is installed as a PWA.
@@ -61,22 +63,22 @@ export default function PushManager({
     return (
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="font-medium">Notificaciones push</p>
+          <p className="font-medium">{t("title")}</p>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {state === "loading"
-              ? "Comprobando estado…"
+              ? t("checking")
               : state === "unsupported"
-                ? "No disponibles en este dispositivo."
+                ? t("unsupported")
                 : state === "denied"
-                  ? "Bloqueadas. Habilitalas en los ajustes del navegador."
+                  ? t("deniedShort")
                   : state === "on"
-                    ? "Activadas. Te avisamos al reportar tu vehículo."
-                    : "Recibí un aviso al instante cuando reportan tu vehículo."}
+                    ? t("onLong")
+                    : t("offPrompt")}
           </p>
         </div>
         {state === "on" ? (
           <span className="shrink-0 text-sm font-semibold text-green-600 dark:text-green-400">
-            Activadas
+            {t("on")}
           </span>
         ) : state === "off" ? (
           <button
@@ -84,7 +86,7 @@ export default function PushManager({
             disabled={busy}
             className="btn btn-primary shrink-0 px-4 py-2"
           >
-            {busy ? "…" : "Activar"}
+            {busy ? "…" : t("activate")}
           </button>
         ) : null}
       </div>
@@ -100,8 +102,7 @@ export default function PushManager({
     return (
       <div className="mx-4 mb-2 card p-3">
         <p className="text-sm text-amber-600 dark:text-amber-400">
-          Notificaciones bloqueadas. Habilitalas en los ajustes del navegador
-          para recibir avisos sobre tus vehículos.
+          {t("deniedLong")}
         </p>
       </div>
     );
@@ -111,9 +112,9 @@ export default function PushManager({
     <div className="mx-4 mb-2 card p-3">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="font-medium">Notificaciones push</p>
+          <p className="font-medium">{t("title")}</p>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Recibí un aviso al instante cuando reportan tu vehículo.
+            {t("offPrompt")}
           </p>
         </div>
         <button
@@ -121,7 +122,7 @@ export default function PushManager({
           disabled={busy}
           className="btn btn-primary shrink-0 px-4 py-2"
         >
-          {busy ? "…" : "Activar"}
+          {busy ? "…" : t("activate")}
         </button>
       </div>
     </div>

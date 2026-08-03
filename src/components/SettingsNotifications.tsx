@@ -1,7 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useInstallPrompt } from "@/lib/use-install-prompt";
 import PushManager from "@/components/PushManager";
+import { APP_NAME } from "@/config/app";
 
 // Configuración section that gates notifications behind installing the PWA.
 // - Not installed: show an install prompt (or iOS/manual hint).
@@ -9,6 +11,7 @@ import PushManager from "@/components/PushManager";
 export default function SettingsNotifications() {
   const { standalone, isIos, installed, canInstall, install } =
     useInstallPrompt();
+  const t = useTranslations("install");
 
   if (standalone === null) return null; // detecting — avoid an empty card flash
 
@@ -20,21 +23,21 @@ export default function SettingsNotifications() {
     );
   }
 
-  const appName = process.env.NEXT_PUBLIC_APP_NAME;
+  const appName = APP_NAME;
 
   return (
     <section className="card p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-medium">
-            {installed ? "¡App instalada!" : `Instalá ${appName}`}
+            {installed ? t("installed") : t("installCta", { appName })}
           </p>
           <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
             {installed
-              ? `Abrí ${appName} desde el ícono en tu pantalla de inicio para activar las notificaciones.`
+              ? t("installedNotif", { appName })
               : isIos
-                ? "Instalá la app (Compartir → Agregar a inicio) para recibir avisos cuando reporten tu vehículo."
-                : "Instalá la app para recibir avisos al instante cuando reporten tu vehículo."}
+                ? t("iosNotifHint")
+                : t("androidNotifHint")}
           </p>
         </div>
         {!isIos && !installed && canInstall && (
@@ -42,7 +45,7 @@ export default function SettingsNotifications() {
             onClick={install}
             className="btn btn-primary shrink-0 self-center px-4 py-2"
           >
-            Instalar
+            {t("installButton")}
           </button>
         )}
       </div>

@@ -1,5 +1,6 @@
 import "server-only";
 import { Resend } from "resend";
+import { APP_NAME, APP_URL } from "@/config/app";
 
 const apiKey = process.env.RESEND_API_KEY;
 
@@ -12,9 +13,6 @@ export const resend = apiKey ? new Resend(apiKey) : null;
 // or verify one domain for free and set EMAIL_FROM to it.
 export const EMAIL_FROM =
   process.env.EMAIL_FROM || "Alerta Patente <onboarding@resend.dev>";
-
-const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "Alerta Patente";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "";
 
 // Brand palette (kept in sync with tailwind.config.ts `brand`).
 const BRAND = "#ea580c"; // brand-600

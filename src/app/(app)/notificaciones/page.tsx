@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import NotificationList, {
   type NotifItem,
@@ -5,7 +6,10 @@ import NotificationList, {
 import { incidentLabel, alertLabel } from "@/lib/incident-types";
 import type { NotificationRow, Report, LiveAlert, MediaRow } from "@/lib/types";
 
-export const metadata = { title: "Notificaciones" };
+export async function generateMetadata() {
+  const t = await getTranslations("meta");
+  return { title: t("notificaciones") };
+}
 
 export default async function NotificacionesPage() {
   const supabase = await createClient();

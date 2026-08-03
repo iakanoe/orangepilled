@@ -1,16 +1,22 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import type { LatLng } from "@/components/MapPicker";
+
+function MapLoading() {
+  const t = useTranslations("mapField");
+  return (
+    <div className="grid h-64 place-items-center rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-400 dark:border-gray-800 dark:bg-gray-800 dark:text-gray-500">
+      {t("loading")}
+    </div>
+  );
+}
 
 // Leaflet touches `window`, so the picker must never render on the server.
 const MapPicker = dynamic(() => import("@/components/MapPicker"), {
   ssr: false,
-  loading: () => (
-    <div className="grid h-64 place-items-center rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-400 dark:border-gray-800 dark:bg-gray-800 dark:text-gray-500">
-      Cargando mapa…
-    </div>
-  ),
+  loading: () => <MapLoading />,
 });
 
 export default function MapField(props: {

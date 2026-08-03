@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LocateFixed } from "lucide-react";
+import { useTranslations } from "next-intl";
 import {
   CircleMarker,
   MapContainer,
@@ -83,6 +84,7 @@ function patchHeatRedrawGuard() {
 }
 
 export default function CityMapInner() {
+  const t = useTranslations("cityMap");
   const mapRef = useRef<LeafletMap | null>(null);
   const [pos, setPos] = useState<LatLng | null>(null);
 
@@ -95,7 +97,7 @@ export default function CityMapInner() {
       return;
     }
     if (!navigator.geolocation) {
-      alert("Tu dispositivo no permite compartir la ubicación.");
+      alert(t("noGeolocation"));
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -107,8 +109,8 @@ export default function CityMapInner() {
       (err) => {
         alert(
           err.code === err.PERMISSION_DENIED
-            ? "No tenemos acceso a tu ubicación. Activá los permisos de ubicación para este sitio y volvé a intentarlo."
-            : "No pudimos obtener tu ubicación.",
+            ? t("permissionDenied")
+            : t("locationError"),
         );
       },
       { enableHighAccuracy: true, timeout: 10000 },
@@ -138,7 +140,7 @@ export default function CityMapInner() {
       <button
         type="button"
         onClick={recenter}
-        aria-label="Centrar en mi ubicación"
+        aria-label={t("recenter")}
         className="absolute bottom-[calc(env(safe-area-inset-bottom,0px)+5.5rem)] right-3 z-[500] grid h-11 w-11 place-items-center rounded-full bg-white text-gray-700 shadow-pop ring-1 ring-black/5 active:scale-95 dark:bg-gray-800 dark:text-gray-200 dark:ring-white/10"
       >
         <LocateFixed className="h-5 w-5" aria-hidden />

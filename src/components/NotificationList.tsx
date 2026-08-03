@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Bell } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useDeferredRealtime } from "@/lib/realtime";
 import { formatPatente } from "@/lib/patente";
@@ -40,6 +41,7 @@ export default function NotificationList({
 }: {
   initial: NotifItem[];
 }) {
+  const t = useTranslations("notifications");
   const router = useRouter();
   // Stable client so the realtime channel isn't recreated each render.
   const [supabase] = useState(() => createClient());
@@ -102,7 +104,7 @@ export default function NotificationList({
         <span className="grid h-12 w-12 place-items-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500">
           <Bell className="h-6 w-6" aria-hidden />
         </span>
-        <p className="mt-3">No tenés notificaciones todavía.</p>
+        <p className="mt-3">{t("empty")}</p>
       </div>
     );
   }
@@ -115,7 +117,7 @@ export default function NotificationList({
             onClick={markAll}
             className="rounded text-xs font-medium text-brand-600 transition-colors hover:text-brand-700 active:text-brand-800 dark:hover:text-brand-400"
           >
-            Marcar todo como leído ({unread})
+            {t("markAll", { count: unread })}
           </button>
         </div>
       )}
@@ -146,7 +148,9 @@ export default function NotificationList({
                   <p className="font-mono text-xs text-gray-500 dark:text-gray-400">
                     {formatPatente(n.patente)}
                     <span className="ml-1 rounded bg-gray-100 px-1 text-[10px] uppercase dark:bg-gray-800">
-                      {n.origen === "report" ? "reporte" : "aviso"}
+                      {n.origen === "report"
+                        ? t("reportBadge")
+                        : t("alertBadge")}
                     </span>
                   </p>
                   {n.descripcion && (
@@ -166,7 +170,7 @@ export default function NotificationList({
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={n.image}
-                      alt="foto del reporte"
+                      alt={t("photoAlt")}
                       className="max-h-56 w-full rounded-lg object-cover"
                     />
                   )}
@@ -182,7 +186,7 @@ export default function NotificationList({
                   )}
                   {!n.image && n.lat == null && (
                     <p className="text-xs text-gray-400 dark:text-gray-500">
-                      Sin foto ni ubicación.
+                      {t("noMedia")}
                     </p>
                   )}
                 </div>

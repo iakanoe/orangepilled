@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
 import { Check } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { parsePatente, formatPatente } from "@/lib/patente";
 import { nativeNavigate } from "@/components/NativeTransitions";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -12,6 +13,8 @@ import type { Vehicle } from "@/lib/types";
 
 export default function VehicleForm({ initial }: { initial?: Vehicle }) {
   const router = useRouter();
+  const t = useTranslations("vehicleForm");
+  const tc = useTranslations("common");
   const editing = !!initial;
 
   const [patente, setPatente] = useState(initial?.patente ?? "");
@@ -24,7 +27,7 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!parsed.ok) return setError("Patente inválida");
+    if (!parsed.ok) return setError(t("invalidPatente"));
     setBusy(true);
     setError(null);
 
@@ -72,11 +75,11 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
   return (
     <form onSubmit={submit} className="flex flex-col gap-4 p-4">
       <div>
-        <label className="field-label">Patente *</label>
+        <label className="field-label">{t("patenteLabel")}</label>
         <input
           value={patente}
           onChange={(e) => setPatente(e.target.value.toUpperCase())}
-          placeholder="AB123CD"
+          placeholder={t("patentePlaceholder")}
           className={`input font-mono text-lg tracking-wider ${
             patente && !parsed.ok
               ? "border-red-400 focus:border-red-400 focus:ring-red-400/10"
@@ -92,16 +95,15 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
       </div>
 
       <div>
-        <label className="field-label">Alias</label>
+        <label className="field-label">{t("aliasLabel")}</label>
         <input
           value={alias}
           onChange={(e) => setAlias(e.target.value)}
-          placeholder="El auto de mamá"
+          placeholder={t("aliasPlaceholder")}
           className="input"
         />
         <p className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
-          Solo vos ves este alias. Podés seguir cualquier patente, esté o no
-          registrada por otra persona.
+          {t("aliasHelp")}
         </p>
       </div>
 
@@ -116,7 +118,7 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
         disabled={busy || !parsed.ok}
         className="btn btn-primary"
       >
-        {busy ? "Guardando…" : editing ? "Guardar cambios" : "Agregar vehículo"}
+        {busy ? tc("guardando") : editing ? tc("guardar") : t("add")}
       </button>
 
       {editing && (
@@ -126,7 +128,7 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
           disabled={busy}
           className="rounded-lg py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 active:bg-red-100 disabled:opacity-50 dark:hover:bg-red-950/40 dark:active:bg-red-950/70"
         >
-          Quitar de mi cuenta
+          {t("removeFromAccount")}
         </button>
       )}
 
@@ -134,9 +136,9 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
         open={confirmRemove}
         danger
         busy={busy}
-        title="Quitar vehículo"
-        message="¿Quitar este vehículo de tu cuenta? Sus reportes y avisos no se borran; solo dejarás de seguirlo."
-        confirmLabel="Quitar"
+        title={t("removeTitle")}
+        message={t("removeMessage")}
+        confirmLabel={t("removeConfirm")}
         onConfirm={remove}
         onCancel={() => setConfirmRemove(false)}
       />

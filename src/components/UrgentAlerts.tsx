@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useDeferredRealtime } from "@/lib/realtime";
 import { formatPatente } from "@/lib/patente";
@@ -27,6 +28,7 @@ export default function UrgentAlerts({
   aliases: Record<string, string>;
   onDismiss?: (id: string) => void;
 }) {
+  const t = useTranslations("urgent");
   // Keep a single client instance so the realtime channel is stable.
   const [supabase] = useState(() => createClient());
   const [alerts, setAlerts] = useState(() =>
@@ -100,7 +102,7 @@ export default function UrgentAlerts({
     <section className="px-4">
       <div className="mb-2.5 flex items-center gap-2">
         <span className="text-sm font-semibold text-red-700 dark:text-red-400">
-          Alertas urgentes
+          {t("title")}
         </span>
         <span className="rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-900/40 dark:text-red-300">
           {alerts.length}
@@ -148,10 +150,10 @@ export default function UrgentAlerts({
               </div>
               <button
                 onClick={() => dismiss(a.id)}
-                aria-label="Descartar alerta"
+                aria-label={t("dismissAria")}
                 className="pressable shrink-0 rounded-md border border-red-200 bg-white/70 px-2 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-white active:bg-red-100 dark:border-red-800 dark:bg-white/10 dark:text-red-300 dark:hover:bg-white/20 dark:active:bg-white/25"
               >
-                Descartar
+                {t("dismiss")}
               </button>
             </li>
           );

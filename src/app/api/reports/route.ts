@@ -5,10 +5,7 @@ import { notifyOwner } from "@/lib/notify";
 import { parsePatente, formatPatente } from "@/lib/patente";
 import { uploadDataUrls } from "@/lib/upload-server";
 import { isIncidentTipo, incidentLabel } from "@/lib/incident-types";
-
-// A user can't re-report the same plate for the same incident type within
-// this window — cuts down accidental double-taps and repeat spam.
-const REPORT_COOLDOWN_MS = 15 * 60 * 1000;
+import { REPORT_COOLDOWN_MS } from "@/config/thresholds";
 
 export async function POST(request: Request) {
   const supabase = await createClient();

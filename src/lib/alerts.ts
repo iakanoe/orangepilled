@@ -1,9 +1,8 @@
 import type { LiveAlert } from "@/lib/types";
+import { ALERT_ACTIVE_WINDOW_MS } from "@/config/thresholds";
 
-// A live alert stays "active" only for this long after it was raised.
-// Past this window it auto-deactivates (no cron needed): it stops counting
-// as active everywhere it's read, one hour after the owner was notified.
-export const ALERT_ACTIVE_WINDOW_MS = 60 * 60 * 1000;
+// Re-exported for existing importers; defined in @/config/thresholds.
+export { ALERT_ACTIVE_WINDOW_MS } from "@/config/thresholds";
 
 // An alert is urgent/active if it hasn't been resolved (dismissed) and it
 // was raised within the active window.

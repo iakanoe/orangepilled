@@ -1,11 +1,14 @@
 import type { MetadataRoute } from "next";
+import { getTranslations } from "next-intl/server";
+import { APP_NAME } from "@/config/app";
 
-export default function manifest(): MetadataRoute.Manifest {
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const t = await getTranslations("app");
+  const tm = await getTranslations("meta");
   return {
-    name: process.env.NEXT_PUBLIC_APP_NAME ?? "Alerta Patente",
-    short_name: "Patente",
-    description:
-      "Reportá incidentes y recibí avisos en vivo sobre vehículos por patente.",
+    name: APP_NAME,
+    short_name: t("shortName"),
+    description: t("description"),
     start_url: "/",
     scope: "/",
     display: "standalone",
@@ -38,12 +41,12 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     shortcuts: [
       {
-        name: "Reportar incidente",
+        name: tm("reportar"),
         url: "/reportar",
         icons: [{ src: "/icons/icon-96.png", sizes: "96x96" }],
       },
       {
-        name: "Avisar en vivo",
+        name: tm("avisar"),
         url: "/avisar",
         icons: [{ src: "/icons/icon-96.png", sizes: "96x96" }],
       },

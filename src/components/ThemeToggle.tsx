@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type Theme = "light" | "dark";
 
@@ -11,6 +12,7 @@ function getInitialTheme(): Theme {
 }
 
 export default function ThemeToggle() {
+  const t = useTranslations("theme");
   const [theme, setTheme] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
 
@@ -36,14 +38,14 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={isDark ? "Activar modo claro" : "Activar modo oscuro"}
+      aria-label={isDark ? t("enableLight") : t("enableDark")}
       aria-pressed={isDark}
       className="group flex w-full items-center justify-between gap-3 text-left"
     >
       <span className="flex flex-col">
-        <span className="font-medium">Modo oscuro</span>
+        <span className="font-medium">{t("darkMode")}</span>
         <span className="text-xs text-gray-500 dark:text-gray-400">
-          {mounted ? (isDark ? "Activado" : "Desactivado") : ""}
+          {mounted ? (isDark ? t("on") : t("off")) : ""}
         </span>
       </span>
       <span

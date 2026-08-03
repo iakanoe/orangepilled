@@ -4,12 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { track } from "@vercel/analytics";
+import { useTranslations } from "next-intl";
 import { nativeNavigate } from "@/components/NativeTransitions";
 
 type Step = "idle" | "confirm" | "reconfirm";
 
 export default function DeleteAccountButton({ email }: { email: string }) {
   const router = useRouter();
+  const t = useTranslations("deleteAccount");
+  const tc = useTranslations("common");
   const [step, setStep] = useState<Step>("idle");
   const [typed, setTyped] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,13 +39,13 @@ export default function DeleteAccountButton({ email }: { email: string }) {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        throw new Error(data?.error ?? "No se pudo borrar la cuenta");
+        throw new Error(data?.error ?? t("errorFailed"));
       }
       track("account_deleted");
       nativeNavigate("forward", () => router.replace("/login"));
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error inesperado");
+      setError(err instanceof Error ? err.message : t("errorUnexpected"));
       setLoading(false);
     }
   }
@@ -55,7 +58,7 @@ export default function DeleteAccountButton({ email }: { email: string }) {
         className="btn btn-danger w-full"
       >
         <Trash2 className="h-4 w-4" aria-hidden />
-        Borrar mi cuenta
+        {t("trigger")}
       </button>
 
       {step !== "idle" && (
@@ -72,11 +75,10 @@ export default function DeleteAccountButton({ email }: { email: string }) {
             {step === "confirm" ? (
               <>
                 <h2 className="text-lg font-bold text-red-600 dark:text-red-400">
-                  Borrar mi cuenta
+                  {t("title")}
                 </h2>
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                  Se eliminarán de forma permanente tu cuenta, tus vehículos,
-                  reportes y notificaciones. Esta acción no se puede deshacer.
+                  {t("warning")}
                 </p>
                 <div className="mt-5 flex flex-col gap-2">
                   <button
@@ -84,28 +86,31 @@ export default function DeleteAccountButton({ email }: { email: string }) {
                     onClick={() => setStep("reconfirm")}
                     className="btn w-full bg-red-600 text-white hover:bg-red-700 active:bg-red-800"
                   >
-                    Continuar
+                    {tc("continuar")}
                   </button>
                   <button
                     type="button"
                     onClick={close}
                     className="btn btn-outline w-full"
                   >
-                    Cancelar
+                    {tc("cancelar")}
                   </button>
                 </div>
               </>
             ) : (
               <>
                 <h2 className="text-lg font-bold text-red-600 dark:text-red-400">
-                  Confirmá con tu correo
+                  {t("confirmTitle")}
                 </h2>
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                  Escribí{" "}
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
-                    {email}
-                  </span>{" "}
-                  para confirmar el borrado.
+                  {t.rich("confirmBody", {
+                    email,
+                    b: (chunks) => (
+                      <span className="font-semibold text-gray-900 dark:text-gray-100">
+                        {chunks}
+                      </span>
+                    ),
+                  })}
                 </p>
                 <input
                   type="email"
@@ -114,7 +119,7 @@ export default function DeleteAccountButton({ email }: { email: string }) {
                   spellCheck={false}
                   value={typed}
                   onChange={(e) => setTyped(e.target.value)}
-                  placeholder="tu@correo.com"
+                  placeholder={t("emailPlaceholder")}
                   disabled={loading}
                   className="input mt-3"
                 />
@@ -130,7 +135,7 @@ export default function DeleteAccountButton({ email }: { email: string }) {
                     disabled={!emailMatches || loading}
                     className="btn w-full bg-red-600 text-white hover:bg-red-700 active:bg-red-800 disabled:opacity-50"
                   >
-                    {loading ? "Borrando…" : "Borrar cuenta definitivamente"}
+                    {loading ? t("deleting") : t("confirmDelete")}
                   </button>
                   <button
                     type="button"
@@ -138,7 +143,7 @@ export default function DeleteAccountButton({ email }: { email: string }) {
                     disabled={loading}
                     className="btn btn-outline w-full disabled:opacity-50"
                   >
-                    Cancelar
+                    {tc("cancelar")}
                   </button>
                 </div>
               </>

@@ -2,16 +2,18 @@
 
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { nativeNavigate } from "@/components/NativeTransitions";
 
 // Goes back in history when possible (e.g. came from the dashboard), and
 // falls back to a given route on a fresh load / no history.
 export default function BackButton({ fallback = "/" }: { fallback?: string }) {
   const router = useRouter();
+  const t = useTranslations("nav");
   return (
     <button
       type="button"
-      aria-label="Volver"
+      aria-label={t("volver")}
       onClick={() =>
         nativeNavigate("back", () => {
           if (window.history.length > 1) router.back();

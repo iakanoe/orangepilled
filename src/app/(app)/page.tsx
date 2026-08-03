@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import Link from "@/components/Link";
 import { Settings, ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
@@ -8,8 +9,12 @@ import PushManager from "@/components/PushManager";
 import PullToRefresh from "@/components/PullToRefresh";
 import { Skeleton, SkeletonCard } from "@/components/Skeleton";
 import type { Vehicle, Report, LiveAlert } from "@/lib/types";
+import { APP_NAME } from "@/config/app";
 
-export const metadata = { title: "Inicio" };
+export async function generateMetadata() {
+  const t = await getTranslations("meta");
+  return { title: t("inicio") };
+}
 
 async function DashboardData() {
   const supabase = await createClient();
@@ -66,7 +71,8 @@ function DashboardSkeleton() {
   );
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const t = await getTranslations("nav");
   return (
     <div>
       <header className="app-bar justify-between">
@@ -74,13 +80,11 @@ export default function HomePage() {
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand-600 text-white">
             <ShieldCheck className="h-[18px] w-[18px]" aria-hidden />
           </span>
-          <h1 className="app-title truncate">
-            {process.env.NEXT_PUBLIC_APP_NAME}
-          </h1>
+          <h1 className="app-title truncate">{APP_NAME}</h1>
         </div>
         <Link
           href="/configuracion"
-          aria-label="Configuración"
+          aria-label={t("configuracion")}
           className="icon-btn -mr-1"
         >
           <Settings className="h-5 w-5" aria-hidden />

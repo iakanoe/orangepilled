@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LocateFixed } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type L from "leaflet";
 import {
   MapContainer,
@@ -44,6 +45,7 @@ function Recenter({ center }: { center: LatLng | null }) {
 }
 
 export default function MapPicker({ value, onChange }: Props) {
+  const t = useTranslations("map");
   const [flyTo, setFlyTo] = useState<LatLng | null>(value);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<
@@ -67,7 +69,7 @@ export default function MapPicker({ value, onChange }: Props) {
         setFlyTo(v);
         pick(v);
       },
-      () => alert("No pudimos obtener tu ubicación."),
+      () => alert(t("locationError")),
       { enableHighAccuracy: true, timeout: 8000 },
     );
   }
@@ -86,7 +88,7 @@ export default function MapPicker({ value, onChange }: Props) {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Dirección o cruce (ej: Callao y Corrientes)"
+            placeholder={t("searchPlaceholder")}
             className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-800"
           />
           <button
@@ -94,14 +96,14 @@ export default function MapPicker({ value, onChange }: Props) {
             disabled={searching}
             className="pressable rounded-lg border border-gray-300 px-3 text-sm transition-colors hover:bg-gray-50 active:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
           >
-            {searching ? "…" : "Buscar"}
+            {searching ? "…" : t("search")}
           </button>
         </form>
         <button
           type="button"
           onClick={locateMe}
-          title="Usar mi ubicación"
-          aria-label="Usar mi ubicación"
+          title={t("useLocation")}
+          aria-label={t("useLocation")}
           className="pressable grid place-items-center rounded-lg bg-brand-600 px-3 text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
         >
           <LocateFixed className="h-4 w-4" aria-hidden />
@@ -159,9 +161,7 @@ export default function MapPicker({ value, onChange }: Props) {
           )}
         </MapContainer>
       </div>
-      <p className="text-xs text-gray-400">
-        Tocá el mapa o arrastrá el pin para marcar el lugar.
-      </p>
+      <p className="text-xs text-gray-400">{t("hint")}</p>
     </div>
   );
 }

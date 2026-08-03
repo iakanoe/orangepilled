@@ -1,13 +1,15 @@
+import { getTranslations } from "next-intl/server";
 import { Skeleton } from "@/components/Skeleton";
 
-export default function Loading() {
+export default async function Loading() {
+  const t = await getTranslations("cityView");
   return (
     <div className="-mb-24 flex h-dvh flex-col overflow-hidden">
       {/* Same static header as the loaded view */}
       <header className="app-bar flex-col !items-start gap-0.5">
-        <h1 className="app-title">Mapa general</h1>
+        <h1 className="app-title">{t("title")}</h1>
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          Incidentes en la última semana
+          {t("subtitle")}
         </p>
       </header>
 

@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { FileText, Siren } from "lucide-react";
+import { useTranslations } from "next-intl";
 import IncidentWizard from "@/components/IncidentWizard";
 
 type Mode = "report" | "alert";
 
 export default function QuickActions() {
+  const t = useTranslations("quickActions");
   const [open, setOpen] = useState<Mode | null>(null);
 
   return (
@@ -22,10 +24,10 @@ export default function QuickActions() {
           </span>
           <span className="flex flex-col gap-0.5">
             <span className="font-semibold leading-tight">
-              Reportar incidente
+              {t("reportTitle")}
             </span>
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              Conducta de un vehículo
+              {t("reportSubtitle")}
             </span>
           </span>
         </button>
@@ -38,9 +40,11 @@ export default function QuickActions() {
             <Siren className="h-5 w-5" aria-hidden />
           </span>
           <span className="flex flex-col gap-0.5">
-            <span className="font-semibold leading-tight">Avisar en vivo</span>
+            <span className="font-semibold leading-tight">
+              {t("alertTitle")}
+            </span>
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              Problema en un ajeno
+              {t("alertSubtitle")}
             </span>
           </span>
         </button>

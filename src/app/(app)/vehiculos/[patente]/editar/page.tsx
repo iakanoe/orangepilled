@@ -1,11 +1,15 @@
 import { notFound, redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import PageHeader from "@/components/PageHeader";
 import VehicleForm from "@/components/VehicleForm";
 import { createClient } from "@/lib/supabase/server";
 import { parsePatente } from "@/lib/patente";
 import type { Vehicle } from "@/lib/types";
 
-export const metadata = { title: "Editar vehículo" };
+export async function generateMetadata() {
+  const t = await getTranslations("meta");
+  return { title: t("editarVehiculo") };
+}
 
 export default async function EditarVehiculoPage({
   params,
@@ -30,9 +34,10 @@ export default async function EditarVehiculoPage({
 
   if (!vehicle) notFound();
 
+  const t = await getTranslations("meta");
   return (
     <div>
-      <PageHeader title="Editar vehículo" />
+      <PageHeader title={t("editarVehiculo")} />
       <VehicleForm initial={vehicle as Vehicle} />
     </div>
   );

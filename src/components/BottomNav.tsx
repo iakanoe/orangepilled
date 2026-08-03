@@ -2,30 +2,32 @@
 
 import Link from "@/components/Link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Home, Car, Map, Search, Bell, type LucideIcon } from "lucide-react";
 
-const TABS: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/", label: "Inicio", icon: Home },
-  { href: "/vehiculos", label: "Vehículos", icon: Car },
-  { href: "/ciudad", label: "Mapa", icon: Map },
-  { href: "/consultar", label: "Consultar", icon: Search },
-  { href: "/notificaciones", label: "Avisos", icon: Bell },
+const TABS: { href: string; labelKey: string; icon: LucideIcon }[] = [
+  { href: "/", labelKey: "inicio", icon: Home },
+  { href: "/vehiculos", labelKey: "vehiculos", icon: Car },
+  { href: "/ciudad", labelKey: "mapa", icon: Map },
+  { href: "/consultar", labelKey: "consultar", icon: Search },
+  { href: "/notificaciones", labelKey: "avisos", icon: Bell },
 ];
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const t = useTranslations("nav");
 
   return (
     <nav className="vt-bottom-nav pb-safe fixed inset-x-0 bottom-0 z-40 border-t border-gray-200/80 bg-white/85 backdrop-blur-md dark:border-gray-800/80 dark:bg-gray-950/80">
       <ul className="mx-auto flex max-w-lg items-stretch justify-around">
-        {TABS.map((t) => {
+        {TABS.map((tab) => {
           const active =
-            t.href === "/" ? pathname === "/" : pathname.startsWith(t.href);
-          const Icon = t.icon;
+            tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
+          const Icon = tab.icon;
           return (
-            <li key={t.href} className="flex-1">
+            <li key={tab.href} className="flex-1">
               <Link
-                href={t.href}
+                href={tab.href}
                 aria-current={active ? "page" : undefined}
                 className={`pressable flex flex-col items-center gap-1 pt-2.5 pb-1.5 text-[10px] font-medium tracking-tight transition-colors ${
                   active
@@ -38,7 +40,7 @@ export default function BottomNav() {
                   strokeWidth={active ? 2.4 : 1.9}
                   aria-hidden
                 />
-                {t.label}
+                {t(tab.labelKey)}
               </Link>
             </li>
           );

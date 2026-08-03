@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MapPin, Siren } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { alertIcon, alertLabel } from "@/lib/incident-types";
 import { isAlertActive } from "@/lib/alerts";
@@ -18,6 +19,7 @@ function fmtDate(iso: string) {
 }
 
 export default function VehicleAlerts({ initial }: { initial: LiveAlert[] }) {
+  const t = useTranslations("vehicleAlerts");
   const [supabase] = useState(() => createClient());
   const [alerts, setAlerts] = useState(initial);
 
@@ -39,7 +41,7 @@ export default function VehicleAlerts({ initial }: { initial: LiveAlert[] }) {
     <section>
       <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-red-700 dark:text-red-400">
         <Siren className="h-4 w-4" aria-hidden />
-        Alertas activas ({active.length})
+        {t("activeTitle", { count: active.length })}
       </h2>
       <ul className="flex flex-col gap-2">
         {active.map((a) => {
@@ -73,10 +75,10 @@ export default function VehicleAlerts({ initial }: { initial: LiveAlert[] }) {
               </div>
               <button
                 onClick={() => dismiss(a.id)}
-                aria-label="Descartar alerta"
+                aria-label={t("dismissAria")}
                 className="pressable shrink-0 rounded-md border border-red-200 bg-white/70 px-2 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-white active:bg-red-100 dark:border-red-800 dark:bg-white/10 dark:text-red-300 dark:hover:bg-white/20 dark:active:bg-white/25"
               >
-                Descartar
+                {t("dismiss")}
               </button>
             </li>
           );

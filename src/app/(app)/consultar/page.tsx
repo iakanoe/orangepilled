@@ -1,23 +1,22 @@
+import { getTranslations } from "next-intl/server";
 import PageHeader from "@/components/PageHeader";
 import PatenteLookup from "@/components/PatenteLookup";
 
-export const metadata = { title: "Consultar patente" };
+export async function generateMetadata() {
+  const t = await getTranslations("meta");
+  return { title: t("consultar") };
+}
 
-export default function ConsultarPage() {
+export default async function ConsultarPage() {
+  const t = await getTranslations("consultarPage");
   return (
     <div>
-      <PageHeader
-        title="Consultar patente"
-        subtitle="Historial de reportes de un vehículo ajeno"
-        back={false}
-      />
+      <PageHeader title={t("title")} subtitle={t("subtitle")} back={false} />
 
       <PatenteLookup />
 
       <p className="px-4 text-sm text-gray-500 dark:text-gray-400">
-        Ingresá una patente para ver su informe. Solo se muestra el historial de
-        reportes; los avisos urgentes solo los recibe quien tenga el vehículo
-        registrado.
+        {t("help")}
       </p>
     </div>
   );

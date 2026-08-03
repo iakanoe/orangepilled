@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type Photo = { id: string; url: string };
 
@@ -10,6 +11,7 @@ const MIN_SCALE = 1;
 const MAX_SCALE = 4;
 
 export default function PhotoGallery({ photos }: { photos: Photo[] }) {
+  const t = useTranslations("gallery");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   if (photos.length === 0) return null;
@@ -23,12 +25,12 @@ export default function PhotoGallery({ photos }: { photos: Photo[] }) {
             type="button"
             onClick={() => setOpenIndex(i)}
             className="pressable aspect-square overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700"
-            aria-label={`Ver foto ${i + 1}`}
+            aria-label={t("viewPhoto", { n: i + 1 })}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={p.url}
-              alt={`Foto ${i + 1}`}
+              alt={t("photoAlt", { n: i + 1 })}
               className="h-full w-full object-cover"
             />
           </button>
@@ -58,6 +60,8 @@ function Lightbox({
   onIndexChange: (i: number) => void;
   onClose: () => void;
 }) {
+  const t = useTranslations("gallery");
+  const tc = useTranslations("common");
   const [scale, setScale] = useState(1);
   const [tx, setTx] = useState(0);
   const [ty, setTy] = useState(0);
@@ -163,7 +167,7 @@ function Lightbox({
         <button
           type="button"
           onClick={onClose}
-          aria-label="Cerrar"
+          aria-label={tc("cerrar")}
           className="grid h-9 w-9 place-items-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
         >
           <X className="h-5 w-5" aria-hidden />
@@ -184,7 +188,7 @@ function Lightbox({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={photos[index].url}
-          alt={`Foto ${index + 1}`}
+          alt={t("photoAlt", { n: index + 1 })}
           draggable={false}
           className="absolute inset-0 m-auto max-h-full max-w-full object-contain"
           style={{
@@ -203,7 +207,7 @@ function Lightbox({
               e.stopPropagation();
               onIndexChange(index - 1);
             }}
-            aria-label="Foto anterior"
+            aria-label={t("prev")}
             className="absolute left-2 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
           >
             <ChevronLeft className="h-6 w-6" aria-hidden />
@@ -216,7 +220,7 @@ function Lightbox({
               e.stopPropagation();
               onIndexChange(index + 1);
             }}
-            aria-label="Foto siguiente"
+            aria-label={t("next")}
             className="absolute right-2 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20"
           >
             <ChevronRight className="h-6 w-6" aria-hidden />

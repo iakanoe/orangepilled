@@ -1,6 +1,7 @@
 import Link from "@/components/Link";
 import { notFound, redirect } from "next/navigation";
 import { ChevronRight, MapPin } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import BackButton from "@/components/BackButton";
 import MiniMap from "@/components/MiniMap";
 import PhotoGallery from "@/components/PhotoGallery";
@@ -13,7 +14,10 @@ import {
 } from "@/lib/incident-types";
 import type { Report, MediaRow, Vehicle } from "@/lib/types";
 
-export const metadata = { title: "Reporte" };
+export async function generateMetadata() {
+  const t = await getTranslations("meta");
+  return { title: t("reporte") };
+}
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleString("es-AR", {
@@ -63,6 +67,7 @@ export default async function ReportePage({
   const media = (mediaRes.data ?? []) as MediaRow[];
   const vehicle = vehicleRes.data as Vehicle | null;
   const Icon = incidentIcon(report.tipo);
+  const t = await getTranslations("reportDetail");
 
   return (
     <div>
@@ -83,7 +88,7 @@ export default async function ReportePage({
         {/* Patente */}
         <section className="card p-3">
           <p className="mb-1 text-xs font-medium text-gray-400 dark:text-gray-500">
-            Vehículo
+            {t("vehicle")}
           </p>
           {vehicle ? (
             <Link
@@ -94,7 +99,7 @@ export default async function ReportePage({
                 {formatPatente(report.patente)}
               </span>
               <span className="flex items-center gap-0.5 text-sm text-brand-600">
-                {vehicle.alias || "Ver vehículo"}
+                {vehicle.alias || t("viewVehicle")}
                 <ChevronRight className="h-4 w-4" aria-hidden />
               </span>
             </Link>
@@ -109,11 +114,11 @@ export default async function ReportePage({
         {report.severidad != null && (
           <section className="card p-3">
             <p className="mb-1 text-xs font-medium text-gray-400 dark:text-gray-500">
-              Severidad
+              {t("severity")}
             </p>
             <p className="text-sm font-semibold">
               {SEVERIDAD_LABELS[report.severidad] ??
-                `Severidad ${report.severidad}`}
+                t("severityFallback", { n: report.severidad })}
             </p>
           </section>
         )}
@@ -122,7 +127,7 @@ export default async function ReportePage({
         {report.lat != null && report.lng != null && (
           <section>
             <p className="mb-2 text-xs font-medium text-gray-400 dark:text-gray-500">
-              Ubicación
+              {t("location")}
             </p>
             <MiniMap lat={report.lat} lng={report.lng} />
             {report.direccion && (
@@ -138,7 +143,7 @@ export default async function ReportePage({
         {report.descripcion && (
           <section className="card p-3">
             <p className="mb-1 text-xs font-medium text-gray-400 dark:text-gray-500">
-              Descripción
+              {t("description")}
             </p>
             <p className="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300">
               {report.descripcion}
@@ -150,7 +155,7 @@ export default async function ReportePage({
         {media.length > 0 && (
           <section>
             <p className="mb-2 text-xs font-medium text-gray-400 dark:text-gray-500">
-              Foto(s) ({media.length})
+              {t("photos", { count: media.length })}
             </p>
             <PhotoGallery
               photos={media.map((m) => ({ id: m.id, url: m.url }))}

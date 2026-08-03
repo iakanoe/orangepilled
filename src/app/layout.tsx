@@ -3,8 +3,11 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import NativeTransitions from "@/components/NativeTransitions";
+import { APP_NAME } from "@/config/app";
 
 const sans = Inter({
   subsets: ["latin"],
@@ -17,8 +20,6 @@ const mono = JetBrains_Mono({
   variable: "--font-mono",
   display: "swap",
 });
-
-const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? "Alerta Patente";
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,
@@ -49,14 +50,16 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
   return (
     <html
-      lang="es-AR"
+      lang={locale}
       className={`${sans.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
@@ -68,10 +71,12 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {children}
-        <ServiceWorkerRegister />
-        <NativeTransitions />
-        <Analytics />
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+          <ServiceWorkerRegister />
+          <NativeTransitions />
+          <Analytics />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

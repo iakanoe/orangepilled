@@ -1,0 +1,274 @@
+{
+  "app": {
+    "name": "Alerta Patente",
+    "shortName": "Patente",
+    "description": "Reportá incidentes y recibí avisos en vivo sobre vehículos por patente."
+  },
+  "nav": {
+    "inicio": "Inicio",
+    "vehiculos": "Vehículos",
+    "mapa": "Mapa",
+    "consultar": "Consultar",
+    "avisos": "Avisos",
+    "configuracion": "Configuración",
+    "volver": "Volver"
+  },
+  "common": {
+    "confirmar": "Confirmar",
+    "cancelar": "Cancelar",
+    "continuar": "Continuar",
+    "guardar": "Guardar cambios",
+    "guardando": "Guardando…",
+    "enviar": "Enviar",
+    "cerrar": "Cerrar",
+    "verTodos": "Ver todos",
+    "reintentar": "Reintentar"
+  },
+  "dashboard": {
+    "title": "Estado de mis vehículos",
+    "empty": "Todavía no registraste vehículos.",
+    "addFirst": "Agregar mi primer vehículo",
+    "liveAlerts": "{count, plural, one {# alerta en vivo} other {# alertas en vivo}}"
+  },
+  "push": {
+    "title": "Notificaciones push",
+    "checking": "Comprobando estado…",
+    "unsupported": "No disponibles en este dispositivo.",
+    "deniedShort": "Bloqueadas. Habilitalas en los ajustes del navegador.",
+    "onLong": "Activadas. Te avisamos al reportar tu vehículo.",
+    "offPrompt": "Recibí un aviso al instante cuando reportan tu vehículo.",
+    "on": "Activadas",
+    "activate": "Activar",
+    "deniedLong": "Notificaciones bloqueadas. Habilitalas en los ajustes del navegador para recibir avisos sobre tus vehículos."
+  },
+  "urgent": {
+    "title": "Alertas urgentes",
+    "dismiss": "Descartar",
+    "dismissAria": "Descartar alerta"
+  },
+  "install": {
+    "installed": "¡App instalada!",
+    "installCta": "Instalá {appName}",
+    "installedOpen": "Abrí <b>{appName}</b> desde el ícono en tu pantalla de inicio para usarla como app y recibir avisos.",
+    "iosSteps": "Tocá <b>Compartir</b> y luego <b>Agregar a inicio</b>. Después abrila desde el ícono en tu pantalla de inicio.",
+    "genericHint": "Accedé más rápido y recibí avisos con la app instalada.",
+    "installButton": "Instalar",
+    "installedNotif": "Abrí {appName} desde el ícono en tu pantalla de inicio para activar las notificaciones.",
+    "iosNotifHint": "Instalá la app (Compartir → Agregar a inicio) para recibir avisos cuando reporten tu vehículo.",
+    "androidNotifHint": "Instalá la app para recibir avisos al instante cuando reporten tu vehículo."
+  },
+  "login": {
+    "tagline": "Reportá y recibí avisos sobre patentes.",
+    "emailLabel": "Tu email",
+    "emailPlaceholder": "vos@email.com",
+    "sendCode": "Enviar código",
+    "sending": "Enviando…",
+    "emailHint": "Te llega un email: tocá el enlace o ingresá el código de 6 dígitos.",
+    "codeLabel": "Ingresá el código enviado a {email} (o tocá el enlace del email)",
+    "codePlaceholder": "123456",
+    "verifying": "Verificando…",
+    "enter": "Entrar",
+    "changeEmail": "Cambiar email",
+    "linkError": "El enlace no es válido o ya venció. Pedí un código nuevo."
+  },
+  "vehicleForm": {
+    "patenteLabel": "Patente *",
+    "patentePlaceholder": "AB123CD",
+    "aliasLabel": "Alias",
+    "aliasPlaceholder": "El auto de mamá",
+    "aliasHelp": "Solo vos ves este alias. Podés seguir cualquier patente, esté o no registrada por otra persona.",
+    "invalidPatente": "Patente inválida",
+    "add": "Agregar vehículo",
+    "removeFromAccount": "Quitar de mi cuenta",
+    "removeTitle": "Quitar vehículo",
+    "removeMessage": "¿Quitar este vehículo de tu cuenta? Sus reportes y avisos no se borran; solo dejarás de seguirlo.",
+    "removeConfirm": "Quitar"
+  },
+  "settings": {
+    "title": "Configuración",
+    "sessionAs": "Sesión iniciada como",
+    "aboutTitle": "Sobre la app",
+    "aboutP1": "{appName} es la app de la comunidad para cuidar el barrio entre todos. Avisá cuando pasa algo en tu zona y enterate al instante de lo que reportan los vecinos cerca tuyo.",
+    "aboutP2": "Cargá las patentes de tus vehículos y te avisamos si alguien reporta algo relacionado con ellos, para que puedas reaccionar a tiempo. Podés sumarla a tu pantalla de inicio para abrirla como cualquier otra app.",
+    "signout": "Cerrar sesión"
+  },
+  "meta": {
+    "inicio": "Inicio",
+    "vehiculos": "Mis vehículos",
+    "reportar": "Reportar incidente",
+    "avisar": "Avisar en vivo",
+    "ciudad": "Mapa general",
+    "notificaciones": "Notificaciones",
+    "consultar": "Consultar patente",
+    "reporte": "Reporte",
+    "vehiculo": "Vehículo",
+    "editarVehiculo": "Editar vehículo",
+    "agregarVehiculo": "Agregar vehículo",
+    "offline": "Sin conexión"
+  },
+  "consultarPage": {
+    "title": "Consultar patente",
+    "subtitle": "Historial de reportes de un vehículo ajeno",
+    "help": "Ingresá una patente para ver su informe. Solo se muestra el historial de reportes; los avisos urgentes solo los recibe quien tenga el vehículo registrado."
+  },
+  "vehiclesPage": {
+    "add": "Agregar",
+    "emptyTitle": "Todavía no registraste vehículos.",
+    "emptyBody": "Agregá uno para recibir reportes y avisos.",
+    "emptyCta": "Agregar mi primer vehículo",
+    "liveAlertActive": "Alerta en vivo activa"
+  },
+  "offlinePage": {
+    "title": "Sin conexión",
+    "body": "No pudimos cargar esta página. Los reportes que envíes se guardan y se mandan solos cuando vuelva internet."
+  },
+  "vehicleDetail": {
+    "subtitleMine": "Tu vehículo",
+    "subtitleOther": "Informe del vehículo",
+    "edit": "Editar",
+    "historyMine": "Historial",
+    "historyOther": "Historial de reportes",
+    "statusNone": "Sin reportes recientes",
+    "statusRecent": "{count, plural, one {# reporte en los últimos {days} días} other {# reportes en los últimos {days} días}}",
+    "emptyMine": "Este vehículo todavía no tiene historial.",
+    "emptyOther": "Esta patente todavía no tiene reportes recientes.",
+    "alertBadge": "Alerta",
+    "severityFallback": "Severidad {n}"
+  },
+  "reportDetail": {
+    "vehicle": "Vehículo",
+    "viewVehicle": "Ver vehículo",
+    "severity": "Severidad",
+    "location": "Ubicación",
+    "description": "Descripción",
+    "photos": "Foto(s) ({count})",
+    "severityFallback": "Severidad {n}"
+  },
+  "theme": {
+    "darkMode": "Modo oscuro",
+    "on": "Activado",
+    "off": "Desactivado",
+    "enableLight": "Activar modo claro",
+    "enableDark": "Activar modo oscuro"
+  },
+  "lookup": {
+    "label": "Patente",
+    "placeholder": "AB123CD",
+    "submit": "Consultar",
+    "invalid": "Patente inválida"
+  },
+  "map": {
+    "searchPlaceholder": "Dirección o cruce (ej: Callao y Corrientes)",
+    "search": "Buscar",
+    "useLocation": "Usar mi ubicación",
+    "locationError": "No pudimos obtener tu ubicación.",
+    "hint": "Tocá el mapa o arrastrá el pin para marcar el lugar."
+  },
+  "cityMap": {
+    "recenter": "Centrar en mi ubicación",
+    "noGeolocation": "Tu dispositivo no permite compartir la ubicación.",
+    "permissionDenied": "No tenemos acceso a tu ubicación. Activá los permisos de ubicación para este sitio y volvé a intentarlo.",
+    "locationError": "No pudimos obtener tu ubicación."
+  },
+  "notifications": {
+    "empty": "No tenés notificaciones todavía.",
+    "markAll": "Marcar todo como leído ({count})",
+    "reportBadge": "reporte",
+    "alertBadge": "aviso",
+    "photoAlt": "foto del reporte",
+    "noMedia": "Sin foto ni ubicación."
+  },
+  "vehicleAlerts": {
+    "activeTitle": "Alertas activas ({count})",
+    "dismiss": "Descartar",
+    "dismissAria": "Descartar alerta"
+  },
+  "cityView": {
+    "title": "Mapa general",
+    "subtitle": "Incidentes en la última semana",
+    "countLabel": "incidentes en la última semana",
+    "legendNone": "sin incidentes",
+    "legendMany": "muchos"
+  },
+  "quickActions": {
+    "reportTitle": "Reportar incidente",
+    "reportSubtitle": "Conducta de un vehículo",
+    "alertTitle": "Avisar en vivo",
+    "alertSubtitle": "Problema en un ajeno"
+  },
+  "gallery": {
+    "viewPhoto": "Ver foto {n}",
+    "photoAlt": "Foto {n}",
+    "prev": "Foto anterior",
+    "next": "Foto siguiente"
+  },
+  "mapField": {
+    "loading": "Cargando mapa…"
+  },
+  "wizard": {
+    "titleReport": "Reportar incidente",
+    "titleAlert": "Avisar en vivo",
+    "step": "Paso {current} de {total}",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "sending": "Enviando…",
+    "submitReport": "Enviar reporte",
+    "submitAlert": "Enviar aviso",
+    "errorSend": "Error al enviar",
+    "offline": "Sin conexión. Reintentá cuando tengas internet.",
+    "patenteTitle": "¿Qué patente?",
+    "patenteSubtitle": "Ingresá la patente del vehículo.",
+    "patentePlaceholder": "AB123CD",
+    "patenteInvalid": "Formato inválido. Ej: ABC123 o AB123CD.",
+    "detectPhoto": "Detectar desde una foto",
+    "soon": "Pronto",
+    "soonTitle": "Próximamente",
+    "cuandoTitle": "¿Cuándo sucedió?",
+    "cuandoSubtitle": "No hace falta que sea exacto. Si el incidente duró un rato (por ejemplo, si te siguió manejando mal por toda una avenida), poné una hora estimada dentro de ese momento.",
+    "quickNow": "Ahora",
+    "quick30": "Hace 30 min",
+    "quick60": "Hace 1 h",
+    "quick120": "Hace 2 h",
+    "dateLabel": "Fecha",
+    "hourLabel": "Hora",
+    "hour24": "(24 hs)",
+    "dondeTitle": "¿Dónde sucedió?",
+    "dondeSubtitle": "No hace falta que sea el punto exacto. Si pasó a lo largo de un recorrido, marcá un lugar representativo. Buscá una dirección o un cruce (ej: <b>Callao y Corrientes</b>), tocá el mapa o usá tu ubicación.",
+    "dondeRequired": "Marcá un punto para continuar. La ubicación es obligatoria.",
+    "detallesTitle": "Detalles",
+    "detallesSubtitle": "Elegí el tipo. El resto es opcional.",
+    "typeReport": "Tipo de incidente",
+    "typeAlert": "¿Qué pasa con el vehículo?",
+    "severity": "Severidad",
+    "optional": "(opcional)",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Contá qué pasó…",
+    "photos": "Foto(s)",
+    "photoAlt": "Foto {n}",
+    "photoRemove": "Sacar foto",
+    "photoAdd": "Agregar foto",
+    "photoCount": "{count} de {max} foto(s)",
+    "resultErrorTitle": "No se pudo enviar",
+    "resultRetry": "Volver a intentar",
+    "resultQueuedTitle": "Guardado sin conexión",
+    "resultReportSent": "Reporte enviado",
+    "resultAlertSent": "Aviso enviado",
+    "resultQueuedBody": "Se enviará automáticamente cuando vuelva internet.",
+    "resultNotifiedBody": "El dueño del vehículo fue notificado al instante.",
+    "resultRegisteredBody": "Registrado. El dueño verá el reporte.",
+    "resultNoOwnerBody": "Registrado. Esta patente todavía no tiene dueño en la app.",
+    "resultHome": "Ir al inicio"
+  },
+  "deleteAccount": {
+    "trigger": "Borrar mi cuenta",
+    "title": "Borrar mi cuenta",
+    "warning": "Se eliminarán de forma permanente tu cuenta, tus vehículos, reportes y notificaciones. Esta acción no se puede deshacer.",
+    "confirmTitle": "Confirmá con tu correo",
+    "confirmBody": "Escribí <b>{email}</b> para confirmar el borrado.",
+    "emailPlaceholder": "tu@correo.com",
+    "deleting": "Borrando…",
+    "confirmDelete": "Borrar cuenta definitivamente",
+    "errorFailed": "No se pudo borrar la cuenta",
+    "errorUnexpected": "Error inesperado"
+  }
+}

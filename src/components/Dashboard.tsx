@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ChevronRight, TriangleAlert, Car, Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "@/components/Link";
 import { formatPatente } from "@/lib/patente";
 import UrgentAlerts from "@/components/UrgentAlerts";
@@ -25,6 +26,8 @@ export default function Dashboard({
   alerts: LiveAlert[];
   patentes: string[];
 }) {
+  const t = useTranslations("dashboard");
+  const tc = useTranslations("common");
   // Alerts the user dismissed locally, so both the urgent list and the
   // per-vehicle attention icon drop them immediately (before a server refresh).
   const [dismissed, setDismissed] = useState<Set<string>>(() => new Set());
@@ -66,13 +69,13 @@ export default function Dashboard({
       <section className="px-4">
         <div className="mb-2.5 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400">
-            Estado de mis vehículos
+            {t("title")}
           </h2>
           <Link
             href="/vehiculos"
             className="inline-flex items-center gap-0.5 rounded text-xs font-semibold text-brand-600 transition-colors hover:text-brand-700 active:text-brand-800 dark:hover:text-brand-400"
           >
-            Ver todos
+            {tc("verTodos")}
             <ChevronRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
         </div>
@@ -88,11 +91,11 @@ export default function Dashboard({
               <Car className="h-6 w-6" aria-hidden />
             </span>
             <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
-              Todavía no registraste vehículos.
+              {t("empty")}
             </p>
             <Link href="/vehiculos/nuevo" className="btn btn-primary mt-4">
               <Plus className="h-4 w-4" aria-hidden />
-              Agregar mi primer vehículo
+              {t("addFirst")}
             </Link>
           </div>
         )}
@@ -102,6 +105,7 @@ export default function Dashboard({
 }
 
 function VehicleStatusCard({ s }: { s: VehicleStat }) {
+  const t = useTranslations("dashboard");
   const st = STATUS_STYLES[s.status];
   return (
     <Link
@@ -121,7 +125,7 @@ function VehicleStatusCard({ s }: { s: VehicleStat }) {
           </span>
           {s.active > 0 && (
             <span
-              title={`${s.active} alerta${s.active > 1 ? "s" : ""} en vivo`}
+              title={t("liveAlerts", { count: s.active })}
               className="ml-auto inline-flex shrink-0 items-center gap-0.5 rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-900/40 dark:text-red-300"
             >
               <TriangleAlert className="h-3 w-3" aria-hidden />

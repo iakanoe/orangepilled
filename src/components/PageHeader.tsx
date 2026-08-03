@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { nativeNavigate } from "@/components/NativeTransitions";
 
 export default function PageHeader({
@@ -13,13 +14,14 @@ export default function PageHeader({
   subtitle?: string;
   back?: boolean;
 }) {
+  const t = useTranslations("nav");
   const router = useRouter();
   return (
     <header className="app-bar">
       {back && (
         <button
           onClick={() => nativeNavigate("back", () => router.back())}
-          aria-label="Volver"
+          aria-label={t("volver")}
           className="icon-btn -ml-1"
         >
           <ArrowLeft className="h-5 w-5" aria-hidden />
