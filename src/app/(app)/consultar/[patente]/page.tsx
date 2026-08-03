@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import BackButton from "@/components/BackButton";
+import PullToRefresh from "@/components/PullToRefresh";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { parsePatente, formatPatente } from "@/lib/patente";
 import {
@@ -16,6 +17,10 @@ import {
 import type { Report } from "@/lib/types";
 
 export const metadata = { title: "Informe de patente" };
+
+// Reports are shared data updated from any device, so never serve a stale
+// prerendered copy — always query fresh on the server.
+export const dynamic = "force-dynamic";
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleString("es-AR", {
@@ -85,67 +90,69 @@ export default async function InformePatentePage({
         </span>
       </header>
 
-      <div className="flex flex-col gap-4 p-4">
-        {/* Status — same color code used across the app */}
-        <section
-          className={`flex items-center gap-3 rounded-xl border bg-white p-4 dark:bg-gray-900 ${st.ring}`}
-        >
-          <span className={`h-3.5 w-3.5 shrink-0 rounded-full ${st.dot}`} />
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold">{st.label}</p>
-            <p className="truncate text-xs text-gray-500 dark:text-gray-400">
-              {statusDesc(recent)}
-            </p>
-          </div>
-        </section>
-
-        {/* Reports history */}
-        <section>
-          <h2 className="mb-2 text-sm font-semibold">
-            Historial de reportes ({reports.length})
-          </h2>
-          {reports.length ? (
-            <ul className="flex flex-col gap-2">
-              {reports.map((r) => (
-                <li
-                  key={r.id}
-                  className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900"
-                >
-                  <span className="text-xl">{incidentEmoji(r.tipo)}</span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium">
-                      {incidentLabel(r.tipo)}
-                    </p>
-                    {r.severidad != null && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {SEVERIDAD_LABELS[r.severidad] ??
-                          `Severidad ${r.severidad}`}
-                      </p>
-                    )}
-                    {r.descripcion && (
-                      <p className="truncate text-xs text-gray-500 dark:text-gray-400">
-                        {r.descripcion}
-                      </p>
-                    )}
-                    {r.direccion && (
-                      <p className="mt-0.5 truncate text-xs text-gray-400 dark:text-gray-500">
-                        📍 {r.direccion}
-                      </p>
-                    )}
-                  </div>
-                  <span className="shrink-0 text-[11px] text-gray-400 dark:text-gray-500">
-                    {fmtDate(r.ocurrido_en)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500">
-              Esta patente todavía no tiene reportes.
+      <PullToRefresh>
+        <div className="flex flex-col gap-4 p-4">
+          {/* Status — same color code used across the app */}
+          <section
+            className={`flex items-center gap-3 rounded-xl border bg-white p-4 dark:bg-gray-900 ${st.ring}`}
+          >
+            <span className={`h-3.5 w-3.5 shrink-0 rounded-full ${st.dot}`} />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold">{st.label}</p>
+              <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                {statusDesc(recent)}
+              </p>
             </div>
-          )}
-        </section>
-      </div>
+          </section>
+
+          {/* Reports history */}
+          <section>
+            <h2 className="mb-2 text-sm font-semibold">
+              Historial de reportes ({reports.length})
+            </h2>
+            {reports.length ? (
+              <ul className="flex flex-col gap-2">
+                {reports.map((r) => (
+                  <li
+                    key={r.id}
+                    className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900"
+                  >
+                    <span className="text-xl">{incidentEmoji(r.tipo)}</span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium">
+                        {incidentLabel(r.tipo)}
+                      </p>
+                      {r.severidad != null && (
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {SEVERIDAD_LABELS[r.severidad] ??
+                            `Severidad ${r.severidad}`}
+                        </p>
+                      )}
+                      {r.descripcion && (
+                        <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                          {r.descripcion}
+                        </p>
+                      )}
+                      {r.direccion && (
+                        <p className="mt-0.5 truncate text-xs text-gray-400 dark:text-gray-500">
+                          📍 {r.direccion}
+                        </p>
+                      )}
+                    </div>
+                    <span className="shrink-0 text-[11px] text-gray-400 dark:text-gray-500">
+                      {fmtDate(r.ocurrido_en)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500">
+                Esta patente todavía no tiene reportes.
+              </div>
+            )}
+          </section>
+        </div>
+      </PullToRefresh>
     </>
   );
 }
