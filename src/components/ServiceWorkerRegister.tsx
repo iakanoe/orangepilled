@@ -33,10 +33,30 @@ export default function ServiceWorkerRegister() {
     document.addEventListener("visibilitychange", onVisible);
     flush();
 
+    // A request can be queued by a transient network failure even while the
+    // user stays online and foregrounded — a case where neither `online` nor
+    // `visibilitychange` ever fires. Retry with backoff as soon as the SW tells
+    // us something was queued, and keep a slow periodic flush as a safety net,
+    // so nothing lingers in the outbox unsent.
+    const retryTimers: ReturnType<typeof setTimeout>[] = [];
+    const scheduleRetries = () => {
+      retryTimers.forEach(clearTimeout);
+      retryTimers.length = 0;
+      for (const delay of [2000, 6000, 15000, 30000]) {
+        retryTimers.push(setTimeout(flush, delay));
+      }
+    };
+    const periodic = setInterval(() => {
+      if (document.visibilityState === "visible") flush();
+    }, 30000);
+
     // The SW tells us when a queued report was dropped for good (a terminal
     // error). Surface it instead of losing it silently — any UI can listen for
     // the `outbox-dropped` window event.
     const onMessage = (e: MessageEvent) => {
+      if (e.data?.type === "OUTBOX_QUEUED") {
+        scheduleRetries();
+      }
       if (e.data?.type === "OUTBOX_DROPPED") {
         console.warn("Reporte encolado descartado por el servidor", e.data);
         window.dispatchEvent(
@@ -50,6 +70,8 @@ export default function ServiceWorkerRegister() {
       window.removeEventListener("online", flush);
       document.removeEventListener("visibilitychange", onVisible);
       navigator.serviceWorker.removeEventListener("message", onMessage);
+      retryTimers.forEach(clearTimeout);
+      clearInterval(periodic);
     };
   }, []);
 

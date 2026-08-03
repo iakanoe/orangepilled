@@ -78,7 +78,12 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(req).catch(async () => {
       await outbox.pushRequest({ request: clone });
-      // Tell the client it was accepted for deferred send.
+      // Tell the client it was accepted for deferred send, and that something
+      // is now queued. A request can be queued by a *transient* failure while
+      // the user is still online and foregrounded — where no `online` or
+      // `visibilitychange` event ever fires — so the client schedules a replay
+      // instead of letting it sit in the queue indefinitely.
+      await messageClients({ type: "OUTBOX_QUEUED" });
       return new Response(JSON.stringify({ queued: true, offline: true }), {
         status: 202,
         headers: { "Content-Type": "application/json" },
