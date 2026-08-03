@@ -37,9 +37,16 @@ export default async function ConfiguracionPage() {
           <p className="mb-1 font-medium text-gray-700 dark:text-gray-300">
             Sobre la app
           </p>
+          <p className="mb-2">
+            {process.env.NEXT_PUBLIC_APP_NAME} es la app de la comunidad para
+            cuidar el barrio entre todos. Avisá cuando pasa algo en tu zona y
+            enterate al instante de lo que reportan los vecinos cerca tuyo.
+          </p>
           <p>
-            {process.env.NEXT_PUBLIC_APP_NAME} — reportá incidentes y recibí
-            avisos en vivo sobre vehículos por patente. Instalable como PWA.
+            Cargá las patentes de tus vehículos y te avisamos si alguien
+            reporta algo relacionado con ellos, para que puedas reaccionar a
+            tiempo. Podés sumarla a tu pantalla de inicio para abrirla como
+            cualquier otra app.
           </p>
         </section>
 
