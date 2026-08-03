@@ -34,7 +34,7 @@ export default function ConfirmDialog({
       onClick={busy ? undefined : onCancel}
     >
       <div
-        className="w-full max-w-sm rounded-2xl bg-white p-5 dark:bg-gray-900"
+        className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-pop dark:bg-gray-900"
         onClick={(e) => e.stopPropagation()}
       >
         <h2
@@ -54,10 +54,10 @@ export default function ConfirmDialog({
             type="button"
             onClick={onConfirm}
             disabled={busy}
-            className={`pressable w-full rounded-xl py-3 text-sm font-semibold text-white transition-colors disabled:opacity-50 ${
+            className={`btn w-full text-white ${
               danger
                 ? "bg-red-600 hover:bg-red-700 active:bg-red-800"
-                : "bg-brand-600 hover:bg-brand-700 active:bg-brand-800"
+                : "btn-primary"
             }`}
           >
             {busy ? "…" : confirmLabel}
@@ -66,7 +66,7 @@ export default function ConfirmDialog({
             type="button"
             onClick={onCancel}
             disabled={busy}
-            className="pressable w-full rounded-xl border border-gray-200 py-3 text-sm font-semibold transition-colors hover:bg-gray-50 active:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
+            className="btn btn-outline w-full"
           >
             {cancelLabel}
           </button>

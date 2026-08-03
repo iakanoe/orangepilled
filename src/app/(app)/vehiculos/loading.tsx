@@ -1,16 +1,15 @@
 import Link from "@/components/Link";
+import { Plus } from "lucide-react";
 import { SkeletonCard, SkeletonRow } from "@/components/Skeleton";
 
 export default function Loading() {
   return (
     <>
-      <header className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
-        <h1 className="text-lg font-bold">Mis vehículos</h1>
-        <Link
-          href="/vehiculos/nuevo"
-          className="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white"
-        >
-          + Agregar
+      <header className="app-bar justify-between">
+        <h1 className="app-title">Mis vehículos</h1>
+        <Link href="/vehiculos/nuevo" className="btn btn-primary px-3 py-1.5">
+          <Plus className="h-4 w-4" aria-hidden />
+          Agregar
         </Link>
       </header>
 

@@ -14,7 +14,7 @@ export default function SettingsNotifications() {
 
   if (standalone) {
     return (
-      <section className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+      <section className="card p-4">
         <PushManager variant="settings" />
       </section>
     );
@@ -23,7 +23,7 @@ export default function SettingsNotifications() {
   const appName = process.env.NEXT_PUBLIC_APP_NAME;
 
   return (
-    <section className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+    <section className="card p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-medium">
@@ -40,7 +40,7 @@ export default function SettingsNotifications() {
         {!isIos && !installed && canInstall && (
           <button
             onClick={install}
-            className="pressable shrink-0 self-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
+            className="btn btn-primary shrink-0 self-center px-4 py-2"
           >
             Instalar
           </button>

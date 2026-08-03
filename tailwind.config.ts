@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 export default {
   darkMode: "class",
@@ -9,6 +10,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", ...defaultTheme.fontFamily.sans],
+        mono: ["var(--font-mono)", ...defaultTheme.fontFamily.mono],
+      },
       colors: {
         brand: {
           50: "#fff7ed",
@@ -22,6 +27,10 @@ export default {
           800: "#9a3412",
           900: "#7c2d12",
         },
+      },
+      boxShadow: {
+        card: "0 1px 2px 0 rgb(0 0 0 / 0.04)",
+        pop: "0 8px 30px -12px rgb(0 0 0 / 0.25)",
       },
     },
   },

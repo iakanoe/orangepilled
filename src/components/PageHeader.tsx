@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { nativeNavigate } from "@/components/NativeTransitions";
 
 export default function PageHeader({
@@ -14,20 +15,22 @@ export default function PageHeader({
 }) {
   const router = useRouter();
   return (
-    <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
+    <header className="app-bar">
       {back && (
         <button
           onClick={() => nativeNavigate("back", () => router.back())}
           aria-label="Volver"
-          className="pressable grid h-8 w-8 place-items-center rounded-full text-lg transition-colors hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700"
+          className="icon-btn -ml-1"
         >
-          ←
+          <ArrowLeft className="h-5 w-5" aria-hidden />
         </button>
       )}
-      <div>
-        <h1 className="text-lg font-bold leading-tight">{title}</h1>
+      <div className="min-w-0">
+        <h1 className="app-title truncate">{title}</h1>
         {subtitle && (
-          <p className="text-xs text-gray-500 dark:text-gray-400">{subtitle}</p>
+          <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+            {subtitle}
+          </p>
         )}
       </div>
     </header>

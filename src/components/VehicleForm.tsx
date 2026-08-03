@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
+import { Check } from "lucide-react";
 import { parsePatente, formatPatente } from "@/lib/patente";
 import { nativeNavigate } from "@/components/NativeTransitions";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -65,33 +66,34 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
   return (
     <form onSubmit={submit} className="flex flex-col gap-4 p-4">
       <div>
-        <label className="mb-1 block text-sm font-medium">Patente *</label>
+        <label className="field-label">Patente *</label>
         <input
           value={patente}
           onChange={(e) => setPatente(e.target.value.toUpperCase())}
           placeholder="AB123CD"
-          className={`w-full rounded-lg border px-3 py-2.5 font-mono text-lg tracking-wider outline-none ${
+          className={`input font-mono text-lg tracking-wider ${
             patente && !parsed.ok
-              ? "border-red-400"
-              : "border-gray-300 dark:border-gray-700"
+              ? "border-red-400 focus:border-red-400 focus:ring-red-400/10"
+              : ""
           }`}
         />
         {parsed.ok && (
-          <p className="mt-1 text-xs text-green-600">
-            {formatPatente(patente)} ✓
+          <p className="mt-1.5 inline-flex items-center gap-1 text-xs text-green-600">
+            {formatPatente(patente)}
+            <Check className="h-3.5 w-3.5" aria-hidden />
           </p>
         )}
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium">Alias</label>
+        <label className="field-label">Alias</label>
         <input
           value={alias}
           onChange={(e) => setAlias(e.target.value)}
           placeholder="El auto de mamá"
-          className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-800"
+          className="input"
         />
-        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        <p className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
           Solo vos ves este alias. Podés seguir cualquier patente, esté o no
           registrada por otra persona.
         </p>
@@ -106,7 +108,7 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
       <button
         type="submit"
         disabled={busy || !parsed.ok}
-        className="pressable rounded-xl bg-brand-600 py-3 font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800 disabled:opacity-50"
+        className="btn btn-primary"
       >
         {busy ? "Guardando…" : editing ? "Guardar cambios" : "Agregar vehículo"}
       </button>

@@ -19,7 +19,7 @@ export default function VehicleStatusSummary({
         return (
           <div
             key={status}
-            className={`flex flex-col items-center gap-1 rounded-xl border bg-white p-2 text-center dark:bg-gray-900 ${st.ring}`}
+            className={`flex flex-col items-center gap-1 rounded-lg border bg-white p-2 text-center dark:bg-gray-900 ${st.ring}`}
           >
             <span className={`h-2.5 w-2.5 rounded-full ${st.dot}`} />
             <span className="text-lg font-bold leading-none">

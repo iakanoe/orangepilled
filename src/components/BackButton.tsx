@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { nativeNavigate } from "@/components/NativeTransitions";
 
 // Goes back in history when possible (e.g. came from the dashboard), and
@@ -17,9 +18,9 @@ export default function BackButton({ fallback = "/" }: { fallback?: string }) {
           else router.push(fallback);
         })
       }
-      className="pressable grid h-8 w-8 shrink-0 place-items-center rounded-full text-lg transition-colors hover:bg-gray-100 active:bg-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700"
+      className="icon-btn -ml-1"
     >
-      ←
+      <ArrowLeft className="h-5 w-5" aria-hidden />
     </button>
   );
 }

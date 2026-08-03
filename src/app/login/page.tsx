@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { nativeNavigate } from "@/components/NativeTransitions";
 
@@ -56,8 +57,8 @@ function LoginForm() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-6 p-6">
       <div className="text-center">
-        <div className="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-2xl bg-brand-600 text-3xl">
-          🚗
+        <div className="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-2xl bg-brand-600 text-white">
+          <ShieldCheck className="h-8 w-8" aria-hidden />
         </div>
         <h1 className="text-2xl font-bold">
           {process.env.NEXT_PUBLIC_APP_NAME}
@@ -69,7 +70,7 @@ function LoginForm() {
 
       {step === "email" ? (
         <form onSubmit={sendCode} className="flex flex-col gap-3">
-          <label className="text-sm font-medium" htmlFor="email">
+          <label className="field-label" htmlFor="email">
             Tu email
           </label>
           <input
@@ -80,13 +81,9 @@ function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="vos@email.com"
-            className="rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-900"
+            className="input"
           />
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded-lg bg-brand-600 py-2.5 font-semibold text-white disabled:opacity-60"
-          >
+          <button type="submit" disabled={loading} className="btn btn-primary">
             {loading ? "Enviando…" : "Enviar código"}
           </button>
           <p className="text-center text-xs text-gray-400 dark:text-gray-500">
@@ -95,7 +92,7 @@ function LoginForm() {
         </form>
       ) : (
         <form onSubmit={verify} className="flex flex-col gap-3">
-          <label className="text-sm font-medium" htmlFor="code">
+          <label className="field-label" htmlFor="code">
             Ingresá el código enviado a {email} (o tocá el enlace del email)
           </label>
           <input
@@ -106,13 +103,9 @@ function LoginForm() {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             placeholder="123456"
-            className="rounded-lg border border-gray-300 px-3 py-2.5 text-center text-lg tracking-[0.3em] outline-none focus:border-brand-500 dark:border-gray-700 dark:bg-gray-900"
+            className="input text-center text-lg tracking-[0.3em]"
           />
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded-lg bg-brand-600 py-2.5 font-semibold text-white disabled:opacity-60"
-          >
+          <button type="submit" disabled={loading} className="btn btn-primary">
             {loading ? "Verificando…" : "Entrar"}
           </button>
           <button

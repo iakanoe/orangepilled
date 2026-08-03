@@ -1,5 +1,6 @@
 import Link from "@/components/Link";
 import { notFound } from "next/navigation";
+import { Pencil, MapPin } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import PullToRefresh from "@/components/PullToRefresh";
 import VehicleAlerts from "@/components/VehicleAlerts";
@@ -7,9 +8,9 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { parsePatente, formatPatente } from "@/lib/patente";
 import {
-  incidentEmoji,
+  incidentIcon,
   incidentLabel,
-  alertEmoji,
+  alertIcon,
   alertLabel,
   SEVERIDAD_LABELS,
 } from "@/lib/incident-types";
@@ -143,10 +144,10 @@ export default async function VehiculoPage({
 
   return (
     <>
-      <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
+      <header className="app-bar">
         <BackButton fallback={mine ? "/vehiculos" : "/consultar"} />
         <div className="min-w-0 flex-1">
-          <h1 className="font-mono text-lg font-bold leading-tight tracking-wide">
+          <h1 className="font-mono text-[17px] font-semibold leading-tight tracking-wide">
             {formatPatente(patente)}
           </h1>
           <p className="truncate text-xs text-gray-500 dark:text-gray-400">
@@ -156,13 +157,14 @@ export default async function VehiculoPage({
         {mine ? (
           <Link
             href={`/vehiculos/${patente}/editar`}
-            className="shrink-0 rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:border-gray-700 dark:text-gray-300"
+            className="btn btn-outline shrink-0 px-3 py-1.5"
           >
+            <Pencil className="h-4 w-4" aria-hidden />
             Editar
           </Link>
         ) : (
           <span
-            className={`shrink-0 rounded-full px-2 py-1 text-[11px] font-medium ${st.badge}`}
+            className={`shrink-0 rounded-md px-2 py-1 text-[11px] font-medium ${st.badge}`}
           >
             {st.label}
           </span>
@@ -176,7 +178,7 @@ export default async function VehiculoPage({
 
           {/* Status / scoring — same color code used across the app */}
           <section
-            className={`flex items-center gap-3 rounded-xl border bg-white p-4 dark:bg-gray-900 ${st.ring}`}
+            className={`flex items-center gap-3 rounded-lg border bg-white p-4 dark:bg-gray-900 ${st.ring}`}
           >
             <span className={`h-3.5 w-3.5 shrink-0 rounded-full ${st.dot}`} />
             <div className="min-w-0 flex-1">
@@ -207,7 +209,7 @@ export default async function VehiculoPage({
                 )}
               </ul>
             ) : (
-              <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500">
+              <div className="rounded-lg border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500">
                 {mine
                   ? "Este vehículo todavía no tiene historial."
                   : "Esta patente todavía no tiene reportes recientes."}
@@ -221,9 +223,12 @@ export default async function VehiculoPage({
 }
 
 function ReportRow({ report, linked }: { report: Report; linked: boolean }) {
+  const Icon = incidentIcon(report.tipo);
   const body = (
     <>
-      <span className="text-xl">{incidentEmoji(report.tipo)}</span>
+      <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+        <Icon className="h-[18px] w-[18px]" aria-hidden />
+      </span>
       <div className="min-w-0 flex-1">
         <p className="text-sm font-medium">{incidentLabel(report.tipo)}</p>
         {report.severidad != null && (
@@ -238,8 +243,9 @@ function ReportRow({ report, linked }: { report: Report; linked: boolean }) {
           </p>
         )}
         {report.direccion && (
-          <p className="mt-0.5 truncate text-xs text-gray-400 dark:text-gray-500">
-            📍 {report.direccion}
+          <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-gray-400 dark:text-gray-500">
+            <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+            {report.direccion}
           </p>
         )}
       </div>
@@ -249,7 +255,7 @@ function ReportRow({ report, linked }: { report: Report; linked: boolean }) {
     </>
   );
   const className =
-    "flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900";
+    "flex items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900";
   return (
     <li>
       {linked ? (
@@ -264,13 +270,16 @@ function ReportRow({ report, linked }: { report: Report; linked: boolean }) {
 }
 
 function AlertRow({ alert }: { alert: LiveAlert }) {
+  const Icon = alertIcon(alert.tipo);
   return (
-    <li className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
-      <span className="text-xl opacity-60">{alertEmoji(alert.tipo)}</span>
+    <li className="flex items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
+      <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+        <Icon className="h-[18px] w-[18px]" aria-hidden />
+      </span>
       <div className="min-w-0 flex-1">
         <p className="flex items-center gap-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
           {alertLabel(alert.tipo)}
-          <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+          <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-[10px] font-semibold text-gray-500 dark:bg-gray-800 dark:text-gray-400">
             Alerta
           </span>
         </p>
@@ -280,8 +289,9 @@ function AlertRow({ alert }: { alert: LiveAlert }) {
           </p>
         )}
         {alert.direccion && (
-          <p className="mt-0.5 truncate text-xs text-gray-400 dark:text-gray-500">
-            📍 {alert.direccion}
+          <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-gray-400 dark:text-gray-500">
+            <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+            {alert.direccion}
           </p>
         )}
       </div>

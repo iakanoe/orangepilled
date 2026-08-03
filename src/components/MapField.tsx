@@ -7,7 +7,7 @@ import type { LatLng } from "@/components/MapPicker";
 const MapPicker = dynamic(() => import("@/components/MapPicker"), {
   ssr: false,
   loading: () => (
-    <div className="grid h-64 place-items-center rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-400 dark:border-gray-800 dark:bg-gray-800 dark:text-gray-500">
+    <div className="grid h-64 place-items-center rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-400 dark:border-gray-800 dark:bg-gray-800 dark:text-gray-500">
       Cargando mapa…
     </div>
   ),

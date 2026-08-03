@@ -1,11 +1,12 @@
 import Link from "@/components/Link";
 import { notFound, redirect } from "next/navigation";
+import { ChevronRight, MapPin } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import MiniMap from "@/components/MiniMap";
 import { createClient } from "@/lib/supabase/server";
 import { formatPatente } from "@/lib/patente";
 import {
-  incidentEmoji,
+  incidentIcon,
   incidentLabel,
   SEVERIDAD_LABELS,
 } from "@/lib/incident-types";
@@ -60,15 +61,17 @@ export default async function ReportePage({
 
   const media = (mediaRes.data ?? []) as MediaRow[];
   const vehicle = vehicleRes.data as Vehicle | null;
+  const Icon = incidentIcon(report.tipo);
 
   return (
     <>
-      <header className="flex items-center gap-3 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
+      <header className="app-bar">
         <BackButton fallback="/" />
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+          <Icon className="h-[18px] w-[18px]" aria-hidden />
+        </span>
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-lg font-bold leading-tight">
-            {incidentEmoji(report.tipo)} {incidentLabel(report.tipo)}
-          </h1>
+          <h1 className="app-title truncate">{incidentLabel(report.tipo)}</h1>
           <p className="truncate text-xs text-gray-500 dark:text-gray-400">
             {fmtDate(report.ocurrido_en)}
           </p>
@@ -77,7 +80,7 @@ export default async function ReportePage({
 
       <div className="flex flex-col gap-4 p-4">
         {/* Patente */}
-        <section className="rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
+        <section className="card p-3">
           <p className="mb-1 text-xs font-medium text-gray-400 dark:text-gray-500">
             Vehículo
           </p>
@@ -89,8 +92,9 @@ export default async function ReportePage({
               <span className="font-mono text-lg font-bold tracking-wide">
                 {formatPatente(report.patente)}
               </span>
-              <span className="text-sm text-brand-600">
-                {vehicle.alias || "Ver vehículo"} →
+              <span className="flex items-center gap-0.5 text-sm text-brand-600">
+                {vehicle.alias || "Ver vehículo"}
+                <ChevronRight className="h-4 w-4" aria-hidden />
               </span>
             </Link>
           ) : (
@@ -102,7 +106,7 @@ export default async function ReportePage({
 
         {/* Severidad */}
         {report.severidad != null && (
-          <section className="rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
+          <section className="card p-3">
             <p className="mb-1 text-xs font-medium text-gray-400 dark:text-gray-500">
               Severidad
             </p>
@@ -115,7 +119,7 @@ export default async function ReportePage({
 
         {/* Descripción */}
         {report.descripcion && (
-          <section className="rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
+          <section className="card p-3">
             <p className="mb-1 text-xs font-medium text-gray-400 dark:text-gray-500">
               Descripción
             </p>
@@ -138,7 +142,7 @@ export default async function ReportePage({
                   key={m.id}
                   src={m.url}
                   alt="foto del reporte"
-                  className="w-full rounded-xl object-cover"
+                  className="w-full rounded-lg object-cover"
                 />
               ))}
             </div>
@@ -153,15 +157,16 @@ export default async function ReportePage({
             </p>
             <MiniMap lat={report.lat} lng={report.lng} />
             {report.direccion && (
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                📍 {report.direccion}
+              <p className="mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+                {report.direccion}
               </p>
             )}
           </section>
         )}
 
         {/* Meta */}
-        <section className="rounded-xl border border-gray-200 bg-white p-3 text-xs text-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400">
+        <section className="card p-3 text-xs text-gray-500 dark:text-gray-400">
           <p>Registrado el {fmtDate(report.created_at)}</p>
         </section>
       </div>

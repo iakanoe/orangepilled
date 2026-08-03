@@ -14,6 +14,14 @@ import {
   SEVERIDAD_LABELS,
   type CatalogItem,
 } from "@/lib/incident-types";
+import {
+  X,
+  Camera,
+  MapPin,
+  TriangleAlert,
+  CircleCheck,
+  Download,
+} from "lucide-react";
 
 type Mode = "report" | "alert";
 
@@ -275,9 +283,9 @@ export default function IncidentWizard({
             type="button"
             onClick={onClose}
             aria-label="Cerrar"
-            className="pressable grid h-9 w-9 place-items-center rounded-full text-xl text-gray-500 transition-colors hover:bg-gray-100 active:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:active:bg-gray-700"
+            className="icon-btn -ml-1"
           >
-            ✕
+            <X className="h-5 w-5" aria-hidden />
           </button>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-bold">{title}</p>
@@ -361,7 +369,7 @@ export default function IncidentWizard({
               <button
                 type="button"
                 onClick={back}
-                className="pressable rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold transition-colors hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
+                className="btn btn-outline px-5"
               >
                 Atrás
               </button>
@@ -371,7 +379,7 @@ export default function IncidentWizard({
                 type="button"
                 onClick={submit}
                 disabled={!canProceed || submitting}
-                className="pressable flex-1 rounded-xl bg-brand-600 py-3 font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800 disabled:opacity-50"
+                className="btn btn-primary flex-1"
               >
                 {submitting
                   ? "Enviando…"
@@ -384,7 +392,7 @@ export default function IncidentWizard({
                 type="button"
                 onClick={next}
                 disabled={!canProceed}
-                className="pressable flex-1 rounded-xl bg-brand-600 py-3 font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800 disabled:opacity-50"
+                className="btn btn-primary flex-1"
               >
                 Siguiente
               </button>
@@ -450,7 +458,8 @@ function PatenteStep({
         title="Próximamente"
         className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-gray-300 py-3 text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500"
       >
-        📷 Detectar desde una foto
+        <Camera className="h-4 w-4" aria-hidden />
+        Detectar desde una foto
         <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase dark:bg-gray-800">
           Pronto
         </span>
@@ -587,8 +596,9 @@ function DondeStep({
       <MapField value={pos} onChange={onChange} />
 
       {direccion ? (
-        <p className="rounded-lg bg-green-50 px-3 py-2 text-xs text-green-700 dark:bg-green-950/50 dark:text-green-300">
-          📍 {direccion}
+        <p className="flex items-center gap-1.5 rounded-lg bg-green-50 px-3 py-2 text-xs text-green-700 dark:bg-green-950/50 dark:text-green-300">
+          <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          {direccion}
         </p>
       ) : (
         <p className="text-xs text-gray-400 dark:text-gray-500">
@@ -637,21 +647,28 @@ function DetallesStep({
           {isReport ? "Tipo de incidente" : "¿Qué pasa con el vehículo?"}
         </label>
         <div className="grid grid-cols-2 gap-2">
-          {catalog.map((c) => (
-            <button
-              key={c.value}
-              type="button"
-              onClick={() => setTipo(c.value)}
-              className={`pressable flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors ${
-                tipo === c.value
-                  ? "border-brand-500 bg-brand-100 font-semibold text-brand-800 dark:bg-brand-500/25 dark:text-brand-100"
-                  : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:active:bg-gray-700"
-              }`}
-            >
-              <span className="text-lg">{c.emoji}</span>
-              {c.label}
-            </button>
-          ))}
+          {catalog.map((c) => {
+            const Icon = c.icon;
+            const selected = tipo === c.value;
+            return (
+              <button
+                key={c.value}
+                type="button"
+                onClick={() => setTipo(c.value)}
+                className={`pressable flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors ${
+                  selected
+                    ? "border-brand-500 bg-brand-50 font-semibold text-brand-700 dark:bg-brand-500/15 dark:text-brand-200"
+                    : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:active:bg-gray-700"
+                }`}
+              >
+                <Icon
+                  className={`h-4 w-4 shrink-0 ${selected ? "text-brand-600 dark:text-brand-300" : "text-gray-500 dark:text-gray-400"}`}
+                  aria-hidden
+                />
+                {c.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -668,14 +685,14 @@ function DetallesStep({
                 key={n}
                 type="button"
                 onClick={() => setSeveridad(severidad === n ? 0 : n)}
-                className={`pressable flex-1 rounded-lg border py-2 text-xs transition-colors ${
+                className={`pressable flex-1 rounded-lg border py-2 text-sm font-semibold transition-colors ${
                   severidad >= n && severidad > 0
-                    ? "border-amber-400 bg-amber-50 dark:bg-amber-900/30"
-                    : "border-gray-200 hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
+                    ? "border-amber-400 bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
+                    : "border-gray-200 text-gray-500 hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:active:bg-gray-700"
                 }`}
                 title={SEVERIDAD_LABELS[n]}
               >
-                ⚠️ {n}
+                {n}
               </button>
             ))}
           </div>
@@ -746,18 +763,15 @@ function ResultView({
 }) {
   if (result.kind === "error") {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center dark:border-red-900 dark:bg-red-950/50">
-        <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-red-100 text-3xl dark:bg-red-900/40">
-          ⚠️
+      <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center dark:border-red-900 dark:bg-red-950/50">
+        <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-300">
+          <TriangleAlert className="h-7 w-7" aria-hidden />
         </div>
         <h2 className="text-lg font-bold">No se pudo enviar</h2>
         <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
           {result.msg}
         </p>
-        <button
-          onClick={onRetry}
-          className="pressable mt-5 w-full rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
-        >
+        <button onClick={onRetry} className="btn btn-primary mt-5 w-full">
           Volver a intentar
         </button>
       </div>
@@ -765,9 +779,13 @@ function ResultView({
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 text-center dark:border-gray-800 dark:bg-gray-900">
-      <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-green-100 text-3xl dark:bg-green-900/40">
-        {result.kind === "queued" ? "📥" : "✅"}
+    <div className="rounded-lg border border-gray-200 bg-white p-6 text-center dark:border-gray-800 dark:bg-gray-900">
+      <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-300">
+        {result.kind === "queued" ? (
+          <Download className="h-7 w-7" aria-hidden />
+        ) : (
+          <CircleCheck className="h-7 w-7" aria-hidden />
+        )}
       </div>
       <h2 className="text-lg font-bold">
         {result.kind === "queued"
@@ -786,16 +804,10 @@ function ResultView({
               : "Registrado. Esta patente todavía no tiene dueño en la app."}
       </p>
       <div className="mt-5 flex gap-2">
-        <button
-          onClick={onClose}
-          className="pressable flex-1 rounded-lg border border-gray-300 py-2.5 text-sm font-semibold transition-colors hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
-        >
+        <button onClick={onClose} className="btn btn-outline flex-1">
           Cerrar
         </button>
-        <button
-          onClick={onHome}
-          className="pressable flex-1 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
-        >
+        <button onClick={onHome} className="btn btn-primary flex-1">
           Ir al inicio
         </button>
       </div>

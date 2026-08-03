@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { MapPin } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useDeferredRealtime } from "@/lib/realtime";
 import { formatPatente } from "@/lib/patente";
-import { alertEmoji, alertLabel } from "@/lib/incident-types";
+import { alertIcon, alertLabel } from "@/lib/incident-types";
 import { isAlertActive } from "@/lib/alerts";
 import type { LiveAlert } from "@/lib/types";
 
@@ -97,58 +98,64 @@ export default function UrgentAlerts({
 
   return (
     <section className="px-4">
-      <div className="mb-2 flex items-center gap-2">
+      <div className="mb-2.5 flex items-center gap-2">
         <span className="text-sm font-semibold text-red-700 dark:text-red-400">
           Alertas urgentes
         </span>
-        <span className="rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-medium text-red-700 dark:bg-red-900/40 dark:text-red-300">
+        <span className="rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-900/40 dark:text-red-300">
           {alerts.length}
         </span>
       </div>
       <ul className="flex flex-col gap-2">
-        {alerts.map((a) => (
-          <li
-            key={a.id}
-            className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-900 dark:bg-red-950/40"
-          >
-            <span className="text-xl">{alertEmoji(a.tipo)}</span>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold text-red-800 dark:text-red-200">
-                  {alertLabel(a.tipo)}
-                </p>
-                <span className="shrink-0 text-[11px] text-red-500 dark:text-red-400">
-                  {fmt(a.created_at)}
-                </span>
-              </div>
-              <p className="font-mono text-xs text-red-600 dark:text-red-400">
-                {formatPatente(a.patente)}
-                {aliases[a.patente] && (
-                  <span className="ml-1 font-sans font-medium text-red-700 dark:text-red-300">
-                    · {aliases[a.patente]}
-                  </span>
-                )}
-              </p>
-              {a.descripcion && (
-                <p className="mt-0.5 text-xs text-red-700/80 dark:text-red-300/80">
-                  {a.descripcion}
-                </p>
-              )}
-              {a.direccion && (
-                <p className="mt-0.5 text-[11px] text-red-500 dark:text-red-400">
-                  📍 {a.direccion}
-                </p>
-              )}
-            </div>
-            <button
-              onClick={() => dismiss(a.id)}
-              aria-label="Descartar alerta"
-              className="pressable shrink-0 rounded-full bg-white/70 px-2 py-1 text-xs font-medium text-red-600 ring-1 ring-red-200 transition-colors hover:bg-white active:bg-red-100 dark:bg-white/10 dark:text-red-300 dark:ring-red-800 dark:hover:bg-white/20 dark:active:bg-white/25"
+        {alerts.map((a) => {
+          const Icon = alertIcon(a.tipo);
+          return (
+            <li
+              key={a.id}
+              className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-900/60 dark:bg-red-950/40"
             >
-              Descartar
-            </button>
-          </li>
-        ))}
+              <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-300">
+                <Icon className="h-[18px] w-[18px]" aria-hidden />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold text-red-800 dark:text-red-200">
+                    {alertLabel(a.tipo)}
+                  </p>
+                  <span className="shrink-0 text-[11px] text-red-500 dark:text-red-400">
+                    {fmt(a.created_at)}
+                  </span>
+                </div>
+                <p className="font-mono text-xs text-red-600 dark:text-red-400">
+                  {formatPatente(a.patente)}
+                  {aliases[a.patente] && (
+                    <span className="ml-1 font-sans font-medium text-red-700 dark:text-red-300">
+                      · {aliases[a.patente]}
+                    </span>
+                  )}
+                </p>
+                {a.descripcion && (
+                  <p className="mt-0.5 text-xs text-red-700/80 dark:text-red-300/80">
+                    {a.descripcion}
+                  </p>
+                )}
+                {a.direccion && (
+                  <p className="mt-0.5 flex items-center gap-1 text-[11px] text-red-500 dark:text-red-400">
+                    <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+                    {a.direccion}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={() => dismiss(a.id)}
+                aria-label="Descartar alerta"
+                className="pressable shrink-0 rounded-md border border-red-200 bg-white/70 px-2 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-white active:bg-red-100 dark:border-red-800 dark:bg-white/10 dark:text-red-300 dark:hover:bg-white/20 dark:active:bg-white/25"
+              >
+                Descartar
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

@@ -4,7 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyOwner } from "@/lib/notify";
 import { parsePatente, formatPatente } from "@/lib/patente";
 import { uploadDataUrls } from "@/lib/upload-server";
-import { isAlertTipo, alertLabel, alertEmoji } from "@/lib/incident-types";
+import { isAlertTipo, alertLabel } from "@/lib/incident-types";
 
 // Live alert: someone flags a problem on someone else's vehicle
 // (alarm, flat tyre, blocking exit...). If the plate is registered, the
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
         ownerId,
         origen: "alert",
         origenId: alert.id,
-        title: `${alertEmoji(body.tipo)} Aviso sobre ${formatPatente(normalized)}`,
+        title: `Aviso sobre ${formatPatente(normalized)}`,
         body:
           alertLabel(body.tipo) +
           (body.descripcion ? ` — ${body.descripcion}` : ""),

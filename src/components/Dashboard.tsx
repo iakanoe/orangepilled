@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ChevronRight, TriangleAlert, Car, Plus } from "lucide-react";
 import Link from "@/components/Link";
 import { formatPatente } from "@/lib/patente";
 import UrgentAlerts from "@/components/UrgentAlerts";
@@ -63,13 +64,16 @@ export default function Dashboard({
         }
       />
       <section className="px-4">
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-sm font-semibold">Estado de mis vehículos</h2>
+        <div className="mb-2.5 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+            Estado de mis vehículos
+          </h2>
           <Link
             href="/vehiculos"
-            className="rounded text-xs font-semibold text-brand-600 transition-colors hover:text-brand-700 active:text-brand-800 dark:hover:text-brand-400"
+            className="inline-flex items-center gap-0.5 rounded text-xs font-semibold text-brand-600 transition-colors hover:text-brand-700 active:text-brand-800 dark:hover:text-brand-400"
           >
-            Ver todos ›
+            Ver todos
+            <ChevronRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
         </div>
         {vehicleStats.length ? (
@@ -79,14 +83,16 @@ export default function Dashboard({
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400 dark:border-gray-700 dark:text-gray-500">
-            <p className="mb-2 text-3xl">🚗</p>
-            Todavía no registraste vehículos.
-            <Link
-              href="/vehiculos/nuevo"
-              className="pressable mt-4 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
-            >
-              + Agregar mi primer vehículo
+          <div className="card flex flex-col items-center border-dashed p-8 text-center">
+            <span className="grid h-12 w-12 place-items-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500">
+              <Car className="h-6 w-6" aria-hidden />
+            </span>
+            <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+              Todavía no registraste vehículos.
+            </p>
+            <Link href="/vehiculos/nuevo" className="btn btn-primary mt-4">
+              <Plus className="h-4 w-4" aria-hidden />
+              Agregar mi primer vehículo
             </Link>
           </div>
         )}
@@ -100,25 +106,26 @@ function VehicleStatusCard({ s }: { s: VehicleStat }) {
   return (
     <Link
       href={`/vehiculos/${s.vehicle.patente}`}
-      className={`pressable-card flex items-center gap-3 rounded-xl border bg-white p-3 transition hover:shadow-sm active:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:active:bg-gray-800 ${st.ring}`}
+      className="card-interactive flex items-center gap-3 p-3"
     >
-      <span className={`h-3 w-3 shrink-0 rounded-full ${st.dot}`} />
+      <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${st.dot}`} />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className="font-mono text-sm font-semibold tracking-wide">
             {formatPatente(s.vehicle.patente)}
           </span>
           <span
-            className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium ${st.badge}`}
+            className={`rounded-md px-1.5 py-0.5 text-[10px] font-medium ${st.badge}`}
           >
             {st.label}
           </span>
           {s.active > 0 && (
             <span
               title={`${s.active} alerta${s.active > 1 ? "s" : ""} en vivo`}
-              className="ml-auto inline-flex shrink-0 items-center gap-0.5 rounded-full bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-900/40 dark:text-red-300"
+              className="ml-auto inline-flex shrink-0 items-center gap-0.5 rounded-md bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:bg-red-900/40 dark:text-red-300"
             >
-              ⚠️{s.active > 1 ? ` ${s.active}` : ""}
+              <TriangleAlert className="h-3 w-3" aria-hidden />
+              {s.active > 1 ? s.active : ""}
             </span>
           )}
         </div>
@@ -131,7 +138,10 @@ function VehicleStatusCard({ s }: { s: VehicleStat }) {
           {statusDescription(s)}
         </p>
       </div>
-      <span className="text-gray-300 dark:text-gray-600">›</span>
+      <ChevronRight
+        className="h-4 w-4 shrink-0 text-gray-300 dark:text-gray-600"
+        aria-hidden
+      />
     </Link>
   );
 }

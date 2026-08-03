@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Moon, Sun } from "lucide-react";
 
 type Theme = "light" | "dark";
 
@@ -51,10 +52,17 @@ export default function ThemeToggle() {
         }`}
       >
         <span
-          className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+          className={`grid h-5 w-5 transform place-items-center rounded-full bg-white shadow transition-transform ${
             isDark ? "translate-x-5" : "translate-x-0.5"
           }`}
-        />
+        >
+          {mounted &&
+            (isDark ? (
+              <Moon className="h-3 w-3 text-brand-600" aria-hidden />
+            ) : (
+              <Sun className="h-3 w-3 text-gray-500" aria-hidden />
+            ))}
+        </span>
       </span>
     </button>
   );

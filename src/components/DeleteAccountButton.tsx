@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Trash2 } from "lucide-react";
 import { track } from "@vercel/analytics";
 import { nativeNavigate } from "@/components/NativeTransitions";
 
@@ -51,8 +52,9 @@ export default function DeleteAccountButton({ email }: { email: string }) {
       <button
         type="button"
         onClick={() => setStep("confirm")}
-        className="pressable w-full rounded-xl border border-red-200 py-3 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50 active:bg-red-100 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40 dark:active:bg-red-950/70"
+        className="btn btn-danger w-full"
       >
+        <Trash2 className="h-4 w-4" aria-hidden />
         Borrar mi cuenta
       </button>
 
@@ -64,7 +66,7 @@ export default function DeleteAccountButton({ email }: { email: string }) {
           onClick={close}
         >
           <div
-            className="w-full max-w-sm rounded-2xl bg-white p-5 dark:bg-gray-900"
+            className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-pop dark:bg-gray-900"
             onClick={(e) => e.stopPropagation()}
           >
             {step === "confirm" ? (
@@ -80,14 +82,14 @@ export default function DeleteAccountButton({ email }: { email: string }) {
                   <button
                     type="button"
                     onClick={() => setStep("reconfirm")}
-                    className="pressable w-full rounded-xl bg-red-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-700 active:bg-red-800"
+                    className="btn w-full bg-red-600 text-white hover:bg-red-700 active:bg-red-800"
                   >
                     Continuar
                   </button>
                   <button
                     type="button"
                     onClick={close}
-                    className="pressable w-full rounded-xl border border-gray-200 py-3 text-sm font-semibold transition-colors hover:bg-gray-50 active:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
+                    className="btn btn-outline w-full"
                   >
                     Cancelar
                   </button>
@@ -114,7 +116,7 @@ export default function DeleteAccountButton({ email }: { email: string }) {
                   onChange={(e) => setTyped(e.target.value)}
                   placeholder="tu@correo.com"
                   disabled={loading}
-                  className="mt-3 w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-red-500 dark:border-gray-700 dark:bg-gray-800"
+                  className="input mt-3"
                 />
                 {error && (
                   <p className="mt-2 text-sm text-red-600 dark:text-red-400">
@@ -126,7 +128,7 @@ export default function DeleteAccountButton({ email }: { email: string }) {
                     type="button"
                     onClick={handleDelete}
                     disabled={!emailMatches || loading}
-                    className="pressable w-full rounded-xl bg-red-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-700 active:bg-red-800 disabled:opacity-50"
+                    className="btn w-full bg-red-600 text-white hover:bg-red-700 active:bg-red-800 disabled:opacity-50"
                   >
                     {loading ? "Borrando…" : "Borrar cuenta definitivamente"}
                   </button>
@@ -134,7 +136,7 @@ export default function DeleteAccountButton({ email }: { email: string }) {
                     type="button"
                     onClick={close}
                     disabled={loading}
-                    className="pressable w-full rounded-xl border border-gray-200 py-3 text-sm font-semibold transition-colors hover:bg-gray-50 active:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:hover:bg-gray-800 dark:active:bg-gray-700"
+                    className="btn btn-outline w-full disabled:opacity-50"
                   >
                     Cancelar
                   </button>

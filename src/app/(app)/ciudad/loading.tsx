@@ -4,8 +4,8 @@ export default function Loading() {
   return (
     <div className="-mb-24 flex h-dvh flex-col overflow-hidden">
       {/* Same static header as the loaded view */}
-      <header className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
-        <h1 className="text-lg font-bold leading-tight">Mapa general</h1>
+      <header className="app-bar flex-col !items-start gap-0.5">
+        <h1 className="app-title">Mapa general</h1>
         <p className="text-xs text-gray-500 dark:text-gray-400">
           Incidentes en la última semana
         </p>

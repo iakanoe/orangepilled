@@ -1,5 +1,6 @@
 "use client";
 
+import { CircleCheck, Download, Smartphone } from "lucide-react";
 import { useInstallPrompt } from "@/lib/use-install-prompt";
 
 // Android/desktop: fire the captured beforeinstallprompt.
@@ -15,10 +16,10 @@ export default function InstallPrompt() {
 
   if (installed) {
     return (
-      <div className="mx-4 rounded-xl border border-brand-200 bg-brand-50 p-4 shadow-sm dark:border-brand-900 dark:bg-brand-950">
+      <div className="mx-4 rounded-lg border border-brand-200 bg-brand-50 p-4 dark:border-brand-900/60 dark:bg-brand-950/40">
         <div className="flex items-start gap-3">
-          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-600 text-xl">
-            ✅
+          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-600 text-white">
+            <CircleCheck className="h-5 w-5" aria-hidden />
           </div>
           <div className="flex-1 text-sm">
             <p className="font-semibold">¡App instalada!</p>
@@ -37,10 +38,10 @@ export default function InstallPrompt() {
   }
 
   return (
-    <div className="mx-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+    <div className="mx-4 card p-4">
       <div className="flex items-start gap-3">
-        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-600 text-xl">
-          🚗
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-600 text-white">
+          <Smartphone className="h-5 w-5" aria-hidden />
         </div>
         <div className="flex-1 text-sm">
           <p className="font-semibold">
@@ -61,8 +62,9 @@ export default function InstallPrompt() {
         {!isIos && canInstall && (
           <button
             onClick={install}
-            className="pressable shrink-0 self-center rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
+            className="btn btn-primary shrink-0 self-center px-3 py-1.5"
           >
+            <Download className="h-4 w-4" aria-hidden />
             Instalar
           </button>
         )}

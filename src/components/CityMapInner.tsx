@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { LocateFixed } from "lucide-react";
 import {
   CircleMarker,
   MapContainer,
@@ -111,9 +112,9 @@ export default function CityMapInner() {
         type="button"
         onClick={recenter}
         aria-label="Centrar en mi ubicación"
-        className="absolute bottom-[calc(env(safe-area-inset-bottom,0px)+5.5rem)] right-3 z-[500] grid h-11 w-11 place-items-center rounded-full bg-white text-xl shadow-md ring-1 ring-black/5 active:scale-95 dark:bg-gray-800 dark:ring-white/10"
+        className="absolute bottom-[calc(env(safe-area-inset-bottom,0px)+5.5rem)] right-3 z-[500] grid h-11 w-11 place-items-center rounded-full bg-white text-gray-700 shadow-pop ring-1 ring-black/5 active:scale-95 dark:bg-gray-800 dark:text-gray-200 dark:ring-white/10"
       >
-        📍
+        <LocateFixed className="h-5 w-5" aria-hidden />
       </button>
     </div>
   );

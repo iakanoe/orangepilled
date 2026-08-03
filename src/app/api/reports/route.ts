@@ -4,11 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyOwner } from "@/lib/notify";
 import { parsePatente, formatPatente } from "@/lib/patente";
 import { uploadDataUrls } from "@/lib/upload-server";
-import {
-  isIncidentTipo,
-  incidentLabel,
-  incidentEmoji,
-} from "@/lib/incident-types";
+import { isIncidentTipo, incidentLabel } from "@/lib/incident-types";
 
 // A user can't re-report the same plate for the same incident type within
 // this window — cuts down accidental double-taps and repeat spam.
@@ -130,7 +126,7 @@ export async function POST(request: Request) {
         ownerId,
         origen: "report",
         origenId: report.id,
-        title: `${incidentEmoji(body.tipo)} Reporte sobre ${formatPatente(normalized)}`,
+        title: `Reporte sobre ${formatPatente(normalized)}`,
         body:
           incidentLabel(body.tipo) +
           (body.descripcion ? ` — ${body.descripcion}` : ""),

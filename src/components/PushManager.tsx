@@ -82,7 +82,7 @@ export default function PushManager({
           <button
             onClick={enable}
             disabled={busy}
-            className="pressable shrink-0 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800 disabled:opacity-60"
+            className="btn btn-primary shrink-0 px-4 py-2"
           >
             {busy ? "…" : "Activar"}
           </button>
@@ -98,7 +98,7 @@ export default function PushManager({
 
   if (state === "denied") {
     return (
-      <div className="mx-4 mb-2 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
+      <div className="mx-4 mb-2 card p-3">
         <p className="text-sm text-amber-600 dark:text-amber-400">
           Notificaciones bloqueadas. Habilitalas en los ajustes del navegador
           para recibir avisos sobre tus vehículos.
@@ -108,7 +108,7 @@ export default function PushManager({
   }
 
   return (
-    <div className="mx-4 mb-2 rounded-xl border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-gray-900">
+    <div className="mx-4 mb-2 card p-3">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="font-medium">Notificaciones push</p>
@@ -119,7 +119,7 @@ export default function PushManager({
         <button
           onClick={enable}
           disabled={busy}
-          className="pressable shrink-0 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-700 active:bg-brand-800 disabled:opacity-60"
+          className="btn btn-primary shrink-0 px-4 py-2"
         >
           {busy ? "…" : "Activar"}
         </button>

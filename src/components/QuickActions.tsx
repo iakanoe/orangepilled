@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FileText, Siren } from "lucide-react";
 import IncidentWizard from "@/components/IncidentWizard";
 
 type Mode = "report" | "alert";
@@ -14,23 +15,33 @@ export default function QuickActions() {
         <button
           type="button"
           onClick={() => setOpen("report")}
-          className="pressable-card flex flex-col gap-1 rounded-xl bg-white p-4 text-left shadow-sm ring-1 ring-gray-100 transition hover:shadow-md hover:ring-gray-200 active:bg-gray-50 dark:bg-gray-900 dark:ring-gray-800 dark:hover:ring-gray-700 dark:active:bg-gray-800"
+          className="card-interactive flex flex-col gap-3 p-4 text-left"
         >
-          <span className="text-2xl">📝</span>
-          <span className="font-semibold">Reportar incidente</span>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            Conducta de un vehículo
+          <span className="grid h-10 w-10 place-items-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-400">
+            <FileText className="h-5 w-5" aria-hidden />
+          </span>
+          <span className="flex flex-col gap-0.5">
+            <span className="font-semibold leading-tight">
+              Reportar incidente
+            </span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              Conducta de un vehículo
+            </span>
           </span>
         </button>
         <button
           type="button"
           onClick={() => setOpen("alert")}
-          className="pressable-card flex flex-col gap-1 rounded-xl bg-white p-4 text-left shadow-sm ring-1 ring-gray-100 transition hover:shadow-md hover:ring-gray-200 active:bg-gray-50 dark:bg-gray-900 dark:ring-gray-800 dark:hover:ring-gray-700 dark:active:bg-gray-800"
+          className="card-interactive flex flex-col gap-3 p-4 text-left"
         >
-          <span className="text-2xl">🚨</span>
-          <span className="font-semibold">Avisar en vivo</span>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            Problema en un ajeno
+          <span className="grid h-10 w-10 place-items-center rounded-lg bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-400">
+            <Siren className="h-5 w-5" aria-hidden />
+          </span>
+          <span className="flex flex-col gap-0.5">
+            <span className="font-semibold leading-tight">Avisar en vivo</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              Problema en un ajeno
+            </span>
           </span>
         </button>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { LocateFixed } from "lucide-react";
 import type L from "leaflet";
 import {
   MapContainer,
@@ -100,9 +101,10 @@ export default function MapPicker({ value, onChange }: Props) {
           type="button"
           onClick={locateMe}
           title="Usar mi ubicación"
-          className="pressable rounded-lg bg-brand-600 px-3 text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
+          aria-label="Usar mi ubicación"
+          className="pressable grid place-items-center rounded-lg bg-brand-600 px-3 text-white transition-colors hover:bg-brand-700 active:bg-brand-800"
         >
-          📍
+          <LocateFixed className="h-4 w-4" aria-hidden />
         </button>
       </div>
 
@@ -128,7 +130,7 @@ export default function MapPicker({ value, onChange }: Props) {
         </ul>
       )}
 
-      <div className="h-64 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800">
+      <div className="h-64 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800">
         <MapContainer
           center={[center.lat, center.lng]}
           zoom={value ? 15 : 12}

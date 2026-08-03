@@ -21,6 +21,15 @@ body {
 
 body {
   @apply bg-gray-50 text-gray-900 antialiased dark:bg-gray-950 dark:text-gray-100;
+  font-feature-settings: "cv11", "ss01";
+}
+
+/* Headings carry the app's voice: tight tracking, balanced wrapping. */
+h1,
+h2,
+h3 {
+  @apply tracking-tight;
+  text-wrap: balance;
 }
 
 /* Native-app interaction feel: kill the mobile tap-flash, avoid text selection
@@ -50,17 +59,84 @@ a,
    `.pressable-card` for larger surfaces (a subtler scale reads better on big
    elements). Both fall back gracefully when the user prefers reduced motion. */
 .pressable {
-  @apply transition-transform duration-100 ease-out active:scale-[0.95];
+  @apply transition-transform duration-100 ease-out active:scale-[0.97];
 }
 
 .pressable-card {
-  @apply transition-transform duration-100 ease-out active:scale-[0.985];
+  @apply transition-transform duration-100 ease-out active:scale-[0.99];
 }
 
 @media (prefers-reduced-motion: reduce) {
   .pressable,
   .pressable-card {
     @apply transition-none active:scale-100;
+  }
+}
+
+/* ── Design system ─────────────────────────────────────────────────────
+   A small set of composable primitives so surfaces stay consistent instead
+   of each component reinventing its own borders, radii and paddings. */
+@layer components {
+  /* Sticky top app bar shared by every screen. */
+  .app-bar {
+    @apply sticky top-0 z-30 flex items-center gap-3 border-b border-gray-200/80 bg-white/85 px-4 py-3 backdrop-blur-md dark:border-gray-800/80 dark:bg-gray-950/80;
+  }
+
+  .app-title {
+    @apply text-[17px] font-semibold leading-tight;
+  }
+
+  /* Circular ghost button for app-bar affordances (back, settings…). */
+  .icon-btn {
+    @apply pressable grid h-9 w-9 shrink-0 place-items-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 active:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800 dark:active:bg-gray-700;
+  }
+
+  /* Static content surface. */
+  .card {
+    @apply rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900;
+  }
+
+  /* Tappable surface: border settles into a hairline highlight on press. */
+  .card-interactive {
+    @apply pressable-card rounded-lg border border-gray-200 bg-white transition-colors hover:border-gray-300 active:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:hover:border-gray-700 dark:active:bg-gray-800/60;
+  }
+
+  /* Buttons: one base, a few intents. */
+  .btn {
+    @apply pressable inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800;
+  }
+  .btn-outline {
+    @apply border border-gray-300 text-gray-800 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700;
+  }
+  .btn-ghost {
+    @apply text-gray-700 hover:bg-gray-100 active:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-800 dark:active:bg-gray-700;
+  }
+  .btn-danger {
+    @apply border border-red-200 text-red-600 hover:bg-red-50 active:bg-red-100 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40 dark:active:bg-red-950/70;
+  }
+
+  /* Form primitives. */
+  .field-label {
+    @apply mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300;
+  }
+  .input {
+    @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-gray-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:placeholder:text-gray-500;
+  }
+
+  /* Pill selector used for quick filters / choices. */
+  .chip {
+    @apply pressable rounded-full border border-gray-300 px-3.5 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 dark:active:bg-gray-700;
+  }
+  .chip-active {
+    @apply border-brand-500 bg-brand-500 text-white hover:bg-brand-500 dark:border-brand-500 dark:text-white;
+  }
+
+  /* Small uppercase section eyebrow. */
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400;
   }
 }
 

@@ -1,3 +1,4 @@
+import { LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import SettingsNotifications from "@/components/SettingsNotifications";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -13,25 +14,25 @@ export default async function ConfiguracionPage() {
 
   return (
     <>
-      <header className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
-        <h1 className="text-lg font-bold">Configuración</h1>
+      <header className="app-bar">
+        <h1 className="app-title">Configuración</h1>
       </header>
 
       <div className="flex flex-col gap-4 p-4">
-        <section className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+        <section className="card p-4">
           <p className="text-xs text-gray-500 dark:text-gray-400">
             Sesión iniciada como
           </p>
           <p className="font-medium">{user?.email}</p>
         </section>
 
-        <section className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+        <section className="card p-4">
           <ThemeToggle />
         </section>
 
         <SettingsNotifications />
 
-        <section className="rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400">
+        <section className="card p-4 text-sm text-gray-500 dark:text-gray-400">
           <p className="mb-1 font-medium text-gray-700 dark:text-gray-300">
             Sobre la app
           </p>
@@ -49,10 +50,8 @@ export default async function ConfiguracionPage() {
         </section>
 
         <form action="/auth/signout" method="post">
-          <button
-            type="submit"
-            className="w-full rounded-xl border border-red-200 py-3 text-sm font-semibold text-red-600 dark:border-red-900 dark:text-red-400"
-          >
+          <button type="submit" className="btn btn-danger w-full">
+            <LogOut className="h-4 w-4" aria-hidden />
             Cerrar sesión
           </button>
         </form>

@@ -2,12 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import NotificationList, {
   type NotifItem,
 } from "@/components/NotificationList";
-import {
-  incidentEmoji,
-  incidentLabel,
-  alertEmoji,
-  alertLabel,
-} from "@/lib/incident-types";
+import { incidentLabel, alertLabel } from "@/lib/incident-types";
 import type { NotificationRow, Report, LiveAlert, MediaRow } from "@/lib/types";
 
 export const metadata = { title: "Notificaciones" };
@@ -76,7 +71,7 @@ export default async function NotificacionesPage() {
           leido: n.leido,
           created_at: n.created_at,
           origen: "report",
-          emoji: incidentEmoji(r.tipo),
+          tipo: r.tipo,
           label: incidentLabel(r.tipo),
           patente: r.patente,
           descripcion: r.descripcion,
@@ -93,7 +88,7 @@ export default async function NotificacionesPage() {
         leido: n.leido,
         created_at: n.created_at,
         origen: "alert",
-        emoji: alertEmoji(a.tipo),
+        tipo: a.tipo,
         label: alertLabel(a.tipo),
         patente: a.patente,
         descripcion: a.descripcion,
@@ -107,8 +102,8 @@ export default async function NotificacionesPage() {
 
   return (
     <>
-      <header className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
-        <h1 className="text-lg font-bold">Notificaciones</h1>
+      <header className="app-bar">
+        <h1 className="app-title">Notificaciones</h1>
       </header>
       <NotificationList initial={items} />
     </>

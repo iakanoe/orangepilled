@@ -8,8 +8,8 @@ export default function CityView({ todayCount }: { todayCount: number }) {
     // instead of leaving a strip of empty space above it.
     <div className="-mb-24 flex h-dvh flex-col overflow-hidden">
       {/* Static header — stays visible while the map loads */}
-      <header className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-800 dark:bg-gray-900">
-        <h1 className="text-lg font-bold leading-tight">Mapa general</h1>
+      <header className="app-bar flex-col !items-start gap-0.5">
+        <h1 className="app-title">Mapa general</h1>
         <p className="text-xs text-gray-500 dark:text-gray-400">
           Incidentes en la última semana
         </p>
