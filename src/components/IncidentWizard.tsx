@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useRouter } from "next/navigation";
 import MapField from "@/components/MapField";
 import type { LatLng } from "@/components/MapPicker";
 import { uploadImagesWithFallback } from "@/lib/upload";
@@ -47,6 +48,7 @@ export default function IncidentWizard({
   onClose,
   initialPatente = "",
 }: Props) {
+  const router = useRouter();
   const isReport = mode === "report";
   const catalog: CatalogItem<string>[] = isReport
     ? INCIDENT_TYPES
@@ -197,6 +199,9 @@ export default function IncidentWizard({
           notified: !!data.ownersNotified,
           registered: !!data.vehicleRegistered,
         });
+        // Invalidate the client Router Cache so consultar/vehículos/reportes
+        // reflect the new report on the next navigation instead of stale data.
+        router.refresh();
       } else {
         setResult({ kind: "error", msg: data.error ?? "Error al enviar" });
       }
