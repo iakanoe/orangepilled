@@ -4,4 +4,3 @@ mover TODAS las constantes tipo umbrales de cantidades de incidentes, ventanas d
 mover TODOS los nombres de los iconos de lucide a algun CMS o al menos algun archivo separado para poder cambiarlos de manera centralizada, si se puede.
 quiero convertir al proyecto en una app mobile con react native, aparte de la PWA.
 para adjuntar fotos en reportes/avisos aparece el "choose file" default del browser. hacer un espacio rectangular tipo "+" que cuando tocás te abra el selector, y que si ya está adjuntada la foto muestre el thumbnail. que tenga también una cruz para sacar la imagen.
-cuando vuelvo de algun modal y toco el boton de "atrás" arriba a laizquierda en el header, vuelve al modal (ejemplo vehiculos/patente -> (editar) -> modal editar -> (guardar) -> vehiculos/patente -> (back) -> vuelve a modal editar)

@@ -42,10 +42,15 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
       return;
     }
     track(editing ? "vehicle_updated" : "vehicle_added");
-    // After editing go back to the vehicle summary; after creating, to the list.
-    nativeNavigate("forward", () =>
-      router.push(editing ? `/vehiculos/${res.patente}` : "/vehiculos"),
-    );
+    // The launcher (vehicle detail for edit, list for create) is the previous
+    // history entry, and revalidatePath already refreshed it — so pop back to
+    // it instead of pushing/replacing, which would leave a duplicate entry that
+    // makes the header back button appear to do nothing.
+    const target = editing ? `/vehiculos/${res.patente}` : "/vehiculos";
+    nativeNavigate("back", () => {
+      if (window.history.length > 1) router.back();
+      else router.replace(target);
+    });
   }
 
   async function remove() {
@@ -60,7 +65,8 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
       return;
     }
     track("vehicle_removed");
-    nativeNavigate("back", () => router.push("/vehiculos"));
+    // `replace` so back can't return to the deleted vehicle's form.
+    nativeNavigate("back", () => router.replace("/vehiculos"));
   }
 
   return (

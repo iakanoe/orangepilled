@@ -25,7 +25,9 @@ export default function IncidentModalRoute({
       initialPatente={initialPatente}
       onClose={() => {
         setOpen(false);
-        nativeNavigate("back", () => router.push("/"));
+        // `replace` drops /reportar|/avisar from history so back (or the swipe
+        // gesture) doesn't reopen this modal.
+        nativeNavigate("back", () => router.replace("/"));
       }}
     />
   );
