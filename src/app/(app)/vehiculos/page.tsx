@@ -27,7 +27,7 @@ function VehiclesListSkeleton() {
 
 export default function VehiculosPage() {
   return (
-    <>
+    <div>
       <header className="app-bar justify-between">
         <h1 className="app-title">Mis vehículos</h1>
         <Link href="/vehiculos/nuevo" className="btn btn-primary px-3 py-1.5">
@@ -39,7 +39,7 @@ export default function VehiculosPage() {
       <Suspense fallback={<VehiclesListSkeleton />}>
         <VehiclesList />
       </Suspense>
-    </>
+    </div>
   );
 }
 

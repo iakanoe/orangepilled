@@ -13,7 +13,7 @@ export default async function ConfiguracionPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <>
+    <div>
       <header className="app-bar">
         <h1 className="app-title">Configuración</h1>
       </header>
@@ -58,6 +58,6 @@ export default async function ConfiguracionPage() {
 
         {user?.email && <DeleteAccountButton email={user.email} />}
       </div>
-    </>
+    </div>
   );
 }

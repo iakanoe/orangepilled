@@ -65,7 +65,7 @@ export default async function ReportePage({
   const Icon = incidentIcon(report.tipo);
 
   return (
-    <>
+    <div>
       <header className="app-bar">
         <BackButton fallback="/" />
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300">
@@ -158,6 +158,6 @@ export default async function ReportePage({
           </section>
         )}
       </div>
-    </>
+    </div>
   );
 }

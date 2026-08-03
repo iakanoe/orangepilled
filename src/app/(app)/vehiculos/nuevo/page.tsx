@@ -13,9 +13,9 @@ export default async function NuevoVehiculoPage() {
   if (!user) redirect("/login");
 
   return (
-    <>
+    <div>
       <PageHeader title="Agregar vehículo" />
       <VehicleForm />
-    </>
+    </div>
   );
 }

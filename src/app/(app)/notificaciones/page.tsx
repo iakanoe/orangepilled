@@ -101,11 +101,11 @@ export default async function NotificacionesPage() {
     .filter((x): x is NotifItem => x !== null);
 
   return (
-    <>
+    <div>
       <header className="app-bar">
         <h1 className="app-title">Notificaciones</h1>
       </header>
       <NotificationList initial={items} />
-    </>
+    </div>
   );
 }

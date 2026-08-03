@@ -5,7 +5,7 @@ export const metadata = { title: "Consultar patente" };
 
 export default function ConsultarPage() {
   return (
-    <>
+    <div>
       <PageHeader
         title="Consultar patente"
         subtitle="Historial de reportes de un vehículo ajeno"
@@ -19,6 +19,6 @@ export default function ConsultarPage() {
         reportes; los avisos urgentes solo los recibe quien tenga el vehículo
         registrado.
       </p>
-    </>
+    </div>
   );
 }

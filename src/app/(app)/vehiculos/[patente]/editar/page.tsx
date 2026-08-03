@@ -31,9 +31,9 @@ export default async function EditarVehiculoPage({
   if (!vehicle) notFound();
 
   return (
-    <>
+    <div>
       <PageHeader title="Editar vehículo" />
       <VehicleForm initial={vehicle as Vehicle} />
-    </>
+    </div>
   );
 }

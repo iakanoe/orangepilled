@@ -3,7 +3,7 @@ import { Skeleton, SkeletonCard } from "@/components/Skeleton";
 
 export default function Loading() {
   return (
-    <>
+    <div>
       <header className="app-bar">
         <BackButton fallback="/vehiculos" />
         <div className="min-w-0 flex-1">
@@ -19,6 +19,6 @@ export default function Loading() {
         <SkeletonCard />
         <SkeletonCard />
       </div>
-    </>
+    </div>
   );
 }

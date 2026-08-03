@@ -68,7 +68,7 @@ function DashboardSkeleton() {
 
 export default function HomePage() {
   return (
-    <>
+    <div>
       <header className="app-bar justify-between">
         <div className="flex min-w-0 items-center gap-2.5">
           <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand-600 text-white">
@@ -98,6 +98,6 @@ export default function HomePage() {
           <DashboardData />
         </Suspense>
       </PullToRefresh>
-    </>
+    </div>
   );
 }

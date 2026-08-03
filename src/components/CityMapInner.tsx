@@ -55,6 +55,33 @@ function patchHeatCanvasReadback() {
   } as typeof HTMLCanvasElement.prototype.getContext;
 }
 
+// Leaflet.heat queues `_redraw` on requestAnimationFrame. If the layer is
+// removed (navigation/unmount) before that frame runs, Leaflet has already set
+// `_map` to null and `_redraw` throws on `getSize`. Guard the prototype so
+// stale frames become no-ops.
+let heatRedrawPatched = false;
+function patchHeatRedrawGuard() {
+  if (heatRedrawPatched) return;
+  interface HeatProto {
+    _map: unknown;
+    _redraw: () => void;
+    redraw: () => unknown;
+  }
+  const ctor = (L as unknown as { HeatLayer?: { prototype: HeatProto } })
+    .HeatLayer;
+  if (!ctor) return;
+  heatRedrawPatched = true;
+  const proto = ctor.prototype;
+  const originalRedraw = proto._redraw;
+  proto._redraw = function (this: HeatProto) {
+    if (this._map) originalRedraw.call(this);
+  };
+  const originalSchedule = proto.redraw;
+  proto.redraw = function (this: HeatProto) {
+    return this._map ? originalSchedule.call(this) : this;
+  };
+}
+
 export default function CityMapInner() {
   const mapRef = useRef<LeafletMap | null>(null);
   const [pos, setPos] = useState<LatLng | null>(null);
@@ -175,6 +202,7 @@ function HeatLayer() {
   const [bounds, setBounds] = useState<Bounds | null>(null);
   const reqId = useRef(0);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const alive = useRef(true);
 
   const refresh = useCallback(async () => {
     const b = map.getBounds();
@@ -197,7 +225,7 @@ function HeatLayer() {
       .lte("lng", padded.east)
       .limit(10000);
 
-    if (id !== reqId.current) return; // a newer request already ran
+    if (id !== reqId.current || !alive.current) return; // stale or unmounted
     const pts = (data ?? []) as { lat: number; lng: number }[];
     const heatPoints = pts.map(
       (p) => [p.lat, p.lng, 1] as [number, number, number],
@@ -205,6 +233,7 @@ function HeatLayer() {
 
     if (!layerRef.current) {
       patchHeatCanvasReadback();
+      patchHeatRedrawGuard();
       layerRef.current = L.heatLayer(heatPoints, {
         radius: 28,
         blur: 24,
@@ -225,8 +254,10 @@ function HeatLayer() {
   useMapEvents({ moveend: schedule, zoomend: schedule });
 
   useEffect(() => {
+    alive.current = true;
     refresh();
     return () => {
+      alive.current = false;
       if (timer.current) clearTimeout(timer.current);
       if (layerRef.current) {
         layerRef.current.remove();

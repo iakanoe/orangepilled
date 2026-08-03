@@ -143,7 +143,7 @@ export default async function VehiculoPage({
     : "Informe del vehículo";
 
   return (
-    <>
+    <div>
       <header className="app-bar">
         <BackButton fallback={mine ? "/vehiculos" : "/consultar"} />
         <div className="min-w-0 flex-1">
@@ -218,7 +218,7 @@ export default async function VehiculoPage({
           </section>
         </div>
       </PullToRefresh>
-    </>
+    </div>
   );
 }
 
