@@ -2,4 +2,4 @@ cambiar TODO el código a inglés. usar la palabra "domain" para "patente". el c
 mover TODOS los copies a algun CMS o al menos algun archivo separado para poder cambiarlos de manera centralizada (y para futura localización?)
 mover TODAS las constantes tipo umbrales de cantidades de incidentes, ventanas de días, etc a algun CMS o al menos a algun archivo separado para poder cambiarlos de manera centralizada.
 quiero convertir al proyecto en una app mobile con react native, aparte de la PWA.
-quiero cambiar toda la UI para que sea menos AI-coded
+quiero reworkear toda la UI para que sea menos AI-coded

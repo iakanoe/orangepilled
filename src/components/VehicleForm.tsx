@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { track } from "@vercel/analytics";
 import { parsePatente, formatPatente } from "@/lib/patente";
 import { nativeNavigate } from "@/components/NativeTransitions";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -39,6 +40,7 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
       setError(res.error);
       return;
     }
+    track(editing ? "vehicle_updated" : "vehicle_added");
     // After editing go back to the vehicle summary; after creating, to the list.
     nativeNavigate("forward", () =>
       router.push(editing ? `/vehiculos/${res.patente}` : "/vehiculos"),
@@ -56,6 +58,7 @@ export default function VehicleForm({ initial }: { initial?: Vehicle }) {
       setError(res.error);
       return;
     }
+    track("vehicle_removed");
     nativeNavigate("back", () => router.push("/vehiculos"));
   }
 

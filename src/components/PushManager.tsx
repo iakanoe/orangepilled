@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { track } from "@vercel/analytics";
 import { pushSupported, subscribeToPush } from "@/lib/push-client";
 
 type State = "loading" | "unsupported" | "denied" | "off" | "on";
@@ -41,6 +42,7 @@ export default function PushManager({
     setBusy(true);
     try {
       await subscribeToPush();
+      track("push_enabled", { variant });
       setState("on");
     } catch (e) {
       setState(Notification.permission === "denied" ? "denied" : "off");

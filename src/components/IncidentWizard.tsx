@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
+import { track } from "@vercel/analytics";
 import MapField from "@/components/MapField";
 import type { LatLng } from "@/components/MapPicker";
 import { uploadImagesWithFallback } from "@/lib/upload";
@@ -211,8 +212,15 @@ export default function IncidentWizard({
       const data = await res.json().catch(() => ({}));
 
       if (res.status === 202 && data.queued) {
+        track("incident_queued", { mode });
         setResult({ kind: "queued" });
       } else if (res.ok) {
+        track("incident_submitted", {
+          mode,
+          notified: !!data.ownersNotified,
+          registered: !!data.vehicleRegistered,
+          withPhotos: files.length > 0,
+        });
         setResult({
           kind: "ok",
           notified: !!data.ownersNotified,
@@ -222,6 +230,7 @@ export default function IncidentWizard({
         // reflect the new report on the next navigation instead of stale data.
         router.refresh();
       } else {
+        track("incident_error", { mode, status: res.status });
         setResult({ kind: "error", msg: data.error ?? "Error al enviar" });
       }
     } catch {
@@ -233,6 +242,7 @@ export default function IncidentWizard({
         typeof navigator !== "undefined" &&
         navigator.serviceWorker?.controller
       ) {
+        track("incident_queued", { mode });
         setResult({ kind: "queued" });
       } else {
         setResult({

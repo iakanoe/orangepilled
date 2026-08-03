@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { track } from "@vercel/analytics";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -56,6 +57,7 @@ export function useInstallPrompt() {
     if (!deferred) return;
     await deferred.prompt();
     const choice = await deferred.userChoice;
+    track("app_install_prompt", { outcome: choice.outcome });
     // `appinstalled` also flips `installed`, but set it here too for the case
     // where the event doesn't fire on some browsers.
     if (choice.outcome === "accepted") setInstalled(true);

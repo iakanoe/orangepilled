@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { track } from "@vercel/analytics";
 import { parsePatente, formatPatente } from "@/lib/patente";
 import { nativeNavigate } from "@/components/NativeTransitions";
 
@@ -16,6 +17,7 @@ export default function PatenteLookup({ initial = "" }: { initial?: string }) {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!parsed.ok) return;
+    track("patente_lookup");
     nativeNavigate("forward", () =>
       router.push(`/vehiculos/${encodeURIComponent(parsed.normalized)}`),
     );
