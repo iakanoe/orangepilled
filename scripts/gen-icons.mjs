@@ -33,7 +33,7 @@ async function main() {
         width: size,
         height: size,
         channels: 4,
-        background: { r: 29, g: 78, b: 216, alpha: 1 }, // brand-600
+        background: { r: 234, g: 88, b: 12, alpha: 1 }, // brand-600
       },
     })
       .composite([{ input: resized, top: pad, left: pad }])
@@ -42,10 +42,16 @@ async function main() {
   }
 
   // Apple touch icon
-  await sharp(svg).resize(180, 180).png().toFile(join(outDir, "apple-touch-icon.png"));
+  await sharp(svg)
+    .resize(180, 180)
+    .png()
+    .toFile(join(outDir, "apple-touch-icon.png"));
 
   // Favicon (32)
-  await sharp(svg).resize(32, 32).png().toFile(join(root, "public", "favicon.ico"));
+  await sharp(svg)
+    .resize(32, 32)
+    .png()
+    .toFile(join(root, "public", "favicon.ico"));
 
   console.log(`Generated ${sizes.length + 3} icons in public/icons/`);
 }

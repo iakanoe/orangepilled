@@ -30,7 +30,7 @@ export function TipoBarChart({ data }: { data: NamedCount[] }) {
           tick={{ fontSize: 11 }}
         />
         <Tooltip cursor={{ fill: "#f3f4f6" }} />
-        <Bar dataKey="value" fill="#2563eb" radius={[0, 4, 4, 0]} />
+        <Bar dataKey="value" fill="#ea580c" radius={[0, 4, 4, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -48,7 +48,7 @@ export function TimelineChart({ data }: { data: NamedCount[] }) {
         <Line
           type="monotone"
           dataKey="value"
-          stroke="#2563eb"
+          stroke="#ea580c"
           strokeWidth={2}
           dot={false}
         />

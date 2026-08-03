@@ -4,5 +4,4 @@ mover TODAS las constantes tipo umbrales de cantidades de incidentes, ventanas d
 quiero agregar un prompt para instalar la app en la zona de configuración. y sacar toda la parte de notificaciones hasta que la app no esté instalada.
 quiero que al instalar la PWA se abra directamente la app como PWA o al menos que se deje un cartel explicando cómo hacerlo.
 quiero convertir al proyecto en una app mobile con react native, aparte de la PWA.
-en la PWA en android el color de la status bar se me pone azul y no naranja como el branding... arreglar.
 quiero cambiar toda la UI para que sea menos AI-coded

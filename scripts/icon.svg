@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#1d4ed8"/>
+  <rect width="512" height="512" rx="96" fill="#ea580c"/>
   <!-- license plate -->
   <rect x="106" y="196" width="300" height="120" rx="18" fill="#ffffff"/>
-  <rect x="106" y="196" width="300" height="30" rx="18" fill="#1e40af"/>
+  <rect x="106" y="196" width="300" height="30" rx="18" fill="#c2410c"/>
   <text x="256" y="292" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="700"
         text-anchor="middle" fill="#111827" letter-spacing="6">AB123CD</text>
   <!-- alert ping -->
