@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
@@ -21,6 +21,7 @@ import {
   TriangleAlert,
   CircleCheck,
   Download,
+  Plus,
 } from "lucide-react";
 
 type Mode = "report" | "alert";
@@ -725,22 +726,97 @@ function DetallesStep({
           Foto(s){" "}
           <span className="text-gray-400 dark:text-gray-500">(opcional)</span>
         </label>
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          capture="environment"
-          onChange={(e) =>
-            setFiles(Array.from(e.target.files ?? []).slice(0, 5))
-          }
-          className="block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-brand-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-brand-700 dark:text-gray-400 dark:file:bg-brand-900/40 dark:file:text-brand-300"
-        />
-        {files.length > 0 && (
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            {files.length} archivo(s)
-          </p>
+        <PhotoPicker files={files} setFiles={setFiles} />
+      </div>
+    </div>
+  );
+}
+
+const MAX_PHOTOS = 5;
+
+function PhotoPicker({
+  files,
+  setFiles,
+}: {
+  files: File[];
+  setFiles: (v: File[]) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [urls, setUrls] = useState<string[]>([]);
+
+  useEffect(() => {
+    const next = files.map((f) => URL.createObjectURL(f));
+    setUrls(next);
+    return () => {
+      next.forEach((u) => URL.revokeObjectURL(u));
+    };
+  }, [files]);
+
+  const addFiles = (list: FileList | null) => {
+    if (!list) return;
+    const incoming = Array.from(list);
+    setFiles([...files, ...incoming].slice(0, MAX_PHOTOS));
+  };
+
+  const removeAt = (i: number) => {
+    setFiles(files.filter((_, idx) => idx !== i));
+  };
+
+  return (
+    <div>
+      <div className="flex flex-wrap gap-2">
+        {files.map((file, i) => (
+          <div
+            key={`${file.name}-${i}`}
+            className="relative h-20 w-20 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={urls[i]}
+              alt={`Foto ${i + 1}`}
+              className="h-full w-full object-cover"
+            />
+            <button
+              type="button"
+              onClick={() => removeAt(i)}
+              aria-label="Sacar foto"
+              className="absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80"
+            >
+              <X className="h-3.5 w-3.5" aria-hidden />
+            </button>
+          </div>
+        ))}
+
+        {files.length < MAX_PHOTOS && (
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            aria-label="Agregar foto"
+            className="pressable grid h-20 w-20 place-items-center rounded-lg border-2 border-dashed border-gray-300 text-gray-400 transition-colors hover:border-brand-400 hover:text-brand-500 dark:border-gray-600 dark:text-gray-500 dark:hover:border-brand-500 dark:hover:text-brand-300"
+          >
+            <Plus className="h-6 w-6" aria-hidden />
+          </button>
         )}
       </div>
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        capture="environment"
+        onChange={(e) => {
+          addFiles(e.target.files);
+          e.target.value = "";
+        }}
+        className="hidden"
+      />
+
+      {files.length > 0 && (
+        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          {files.length} de {MAX_PHOTOS} foto(s)
+        </p>
+      )}
     </div>
   );
 }

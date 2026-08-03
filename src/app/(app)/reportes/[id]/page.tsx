@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { ChevronRight, MapPin } from "lucide-react";
 import BackButton from "@/components/BackButton";
 import MiniMap from "@/components/MiniMap";
+import PhotoGallery from "@/components/PhotoGallery";
 import { createClient } from "@/lib/supabase/server";
 import { formatPatente } from "@/lib/patente";
 import {
@@ -117,6 +118,22 @@ export default async function ReportePage({
           </section>
         )}
 
+        {/* Ubicación */}
+        {report.lat != null && report.lng != null && (
+          <section>
+            <p className="mb-2 text-xs font-medium text-gray-400 dark:text-gray-500">
+              Ubicación
+            </p>
+            <MiniMap lat={report.lat} lng={report.lng} />
+            {report.direccion && (
+              <p className="mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+                {report.direccion}
+              </p>
+            )}
+          </section>
+        )}
+
         {/* Descripción */}
         {report.descripcion && (
           <section className="card p-3">
@@ -135,40 +152,11 @@ export default async function ReportePage({
             <p className="mb-2 text-xs font-medium text-gray-400 dark:text-gray-500">
               Foto(s) ({media.length})
             </p>
-            <div className="flex flex-col gap-2">
-              {media.map((m) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={m.id}
-                  src={m.url}
-                  alt="foto del reporte"
-                  className="w-full rounded-lg object-cover"
-                />
-              ))}
-            </div>
+            <PhotoGallery
+              photos={media.map((m) => ({ id: m.id, url: m.url }))}
+            />
           </section>
         )}
-
-        {/* Ubicación */}
-        {report.lat != null && report.lng != null && (
-          <section>
-            <p className="mb-2 text-xs font-medium text-gray-400 dark:text-gray-500">
-              Ubicación
-            </p>
-            <MiniMap lat={report.lat} lng={report.lng} />
-            {report.direccion && (
-              <p className="mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                <MapPin className="h-3 w-3 shrink-0" aria-hidden />
-                {report.direccion}
-              </p>
-            )}
-          </section>
-        )}
-
-        {/* Meta */}
-        <section className="card p-3 text-xs text-gray-500 dark:text-gray-400">
-          <p>Registrado el {fmtDate(report.created_at)}</p>
-        </section>
       </div>
     </>
   );
