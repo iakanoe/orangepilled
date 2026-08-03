@@ -2,20 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { parsePatente, formatPatente } from "@/lib/patente";
 import { nativeNavigate } from "@/components/NativeTransitions";
+import { saveVehicle, deleteVehicle } from "@/app/(app)/vehiculos/actions";
 import type { Vehicle } from "@/lib/types";
 
-export default function VehicleForm({
-  ownerId,
-  initial,
-}: {
-  ownerId: string;
-  initial?: Vehicle;
-}) {
+export default function VehicleForm({ initial }: { initial?: Vehicle }) {
   const router = useRouter();
-  const supabase = createClient();
   const editing = !!initial;
 
   const [patente, setPatente] = useState(initial?.patente ?? "");
@@ -31,30 +24,23 @@ export default function VehicleForm({
     setBusy(true);
     setError(null);
 
-    const row = {
-      owner_id: ownerId,
+    // Server Action: mutates via RLS and revalidates the list/dashboard so the
+    // client Router Cache no longer serves a stale list after navigating.
+    const res = await saveVehicle({
+      id: initial?.id,
       patente: parsed.normalized,
-      alias: alias || null,
-    };
+      alias,
+    });
 
-    const { error } = editing
-      ? await supabase.from("vehicles").update(row).eq("id", initial!.id)
-      : await supabase.from("vehicles").insert(row);
-
-    setBusy(false);
-    if (error) {
-      setError(
-        error.code === "23505"
-          ? "Ya agregaste esta patente a tu cuenta."
-          : error.message,
-      );
+    if (!res.ok) {
+      setBusy(false);
+      setError(res.error);
       return;
     }
     // After editing go back to the vehicle summary; after creating, to the list.
     nativeNavigate("forward", () =>
-      router.push(editing ? `/vehiculos/${initial!.id}` : "/vehiculos"),
+      router.push(editing ? `/vehiculos/${res.patente}` : "/vehiculos"),
     );
-    router.refresh();
   }
 
   async function remove() {
@@ -66,9 +52,14 @@ export default function VehicleForm({
     )
       return;
     setBusy(true);
-    await supabase.from("vehicles").delete().eq("id", initial.id);
+    setError(null);
+    const res = await deleteVehicle(initial.id);
+    if (!res.ok) {
+      setBusy(false);
+      setError(res.error);
+      return;
+    }
     nativeNavigate("back", () => router.push("/vehiculos"));
-    router.refresh();
   }
 
   return (

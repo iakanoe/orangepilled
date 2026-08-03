@@ -83,7 +83,7 @@ export default async function ReportePage({
           </p>
           {vehicle ? (
             <Link
-              href={`/vehiculos/${vehicle.id}`}
+              href={`/vehiculos/${report.patente}`}
               className="flex items-center justify-between"
             >
               <span className="font-mono text-lg font-bold tracking-wide">

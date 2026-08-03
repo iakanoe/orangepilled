@@ -99,7 +99,7 @@ function VehicleStatusCard({ s }: { s: VehicleStat }) {
   const st = STATUS_STYLES[s.status];
   return (
     <Link
-      href={`/vehiculos/${s.vehicle.id}`}
+      href={`/vehiculos/${s.vehicle.patente}`}
       className={`pressable-card flex items-center gap-3 rounded-xl border bg-white p-3 transition hover:shadow-sm active:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:active:bg-gray-800 ${st.ring}`}
     >
       <span className={`h-3 w-3 shrink-0 rounded-full ${st.dot}`} />

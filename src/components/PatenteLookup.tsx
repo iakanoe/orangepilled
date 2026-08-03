@@ -6,8 +6,8 @@ import { parsePatente, formatPatente } from "@/lib/patente";
 import { nativeNavigate } from "@/components/NativeTransitions";
 
 // Search box for looking up the report history of any plate (not just your
-// own vehicles). Navigates to /consultar?patente=<normalized>; the page
-// itself does the privileged, reports-only read.
+// own vehicles). Navigates to /vehiculos/<normalized>; that page decides
+// whether it's the user's vehicle or a privileged, reports-only lookup.
 export default function PatenteLookup({ initial = "" }: { initial?: string }) {
   const router = useRouter();
   const [patente, setPatente] = useState(initial);
@@ -17,7 +17,7 @@ export default function PatenteLookup({ initial = "" }: { initial?: string }) {
     e.preventDefault();
     if (!parsed.ok) return;
     nativeNavigate("forward", () =>
-      router.push(`/consultar/${encodeURIComponent(parsed.normalized)}`),
+      router.push(`/vehiculos/${encodeURIComponent(parsed.normalized)}`),
     );
   }
 

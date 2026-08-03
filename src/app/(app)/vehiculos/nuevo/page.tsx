@@ -15,7 +15,7 @@ export default async function NuevoVehiculoPage() {
   return (
     <>
       <PageHeader title="Agregar vehículo" />
-      <VehicleForm ownerId={user.id} />
+      <VehicleForm />
     </>
   );
 }

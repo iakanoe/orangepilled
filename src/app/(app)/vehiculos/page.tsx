@@ -75,7 +75,7 @@ export default async function VehiculosPage() {
             {list.map((v) => (
               <li key={v.id}>
                 <Link
-                  href={`/vehiculos/${v.id}`}
+                  href={`/vehiculos/${v.patente}`}
                   className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                 >
                   <span
