@@ -12,6 +12,16 @@ export default function PushManager({
 }) {
   const [state, setState] = useState<State>("loading");
   const [busy, setBusy] = useState(false);
+  // Notifications are only offered once the app is installed as a PWA.
+  const [standalone, setStandalone] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setStandalone(
+      window.matchMedia("(display-mode: standalone)").matches ||
+        (window.navigator as unknown as { standalone?: boolean }).standalone ===
+          true,
+    );
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -39,6 +49,9 @@ export default function PushManager({
       setBusy(false);
     }
   }
+
+  // Hide entirely until the app is installed as a PWA.
+  if (standalone === null || !standalone) return null;
 
   // Settings variant: always render a status row so the surrounding card is
   // never empty (used in the configuración page).

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import PushManager from "@/components/PushManager";
+import SettingsNotifications from "@/components/SettingsNotifications";
 import ThemeToggle from "@/components/ThemeToggle";
 import DeleteAccountButton from "@/components/DeleteAccountButton";
 
@@ -29,9 +29,7 @@ export default async function ConfiguracionPage() {
           <ThemeToggle />
         </section>
 
-        <section className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
-          <PushManager variant="settings" />
-        </section>
+        <SettingsNotifications />
 
         <section className="rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400">
           <p className="mb-1 font-medium text-gray-700 dark:text-gray-300">
@@ -43,10 +41,10 @@ export default async function ConfiguracionPage() {
             enterate al instante de lo que reportan los vecinos cerca tuyo.
           </p>
           <p>
-            Cargá las patentes de tus vehículos y te avisamos si alguien
-            reporta algo relacionado con ellos, para que puedas reaccionar a
-            tiempo. Podés sumarla a tu pantalla de inicio para abrirla como
-            cualquier otra app.
+            Cargá las patentes de tus vehículos y te avisamos si alguien reporta
+            algo relacionado con ellos, para que puedas reaccionar a tiempo.
+            Podés sumarla a tu pantalla de inicio para abrirla como cualquier
+            otra app.
           </p>
         </section>
 
