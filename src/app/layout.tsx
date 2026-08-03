@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
@@ -50,6 +51,7 @@ export default function RootLayout({
         {children}
         <ServiceWorkerRegister />
         <NativeTransitions />
+        <Analytics />
       </body>
     </html>
   );
