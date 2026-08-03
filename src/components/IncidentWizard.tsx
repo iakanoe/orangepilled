@@ -97,6 +97,25 @@ export default function IncidentWizard({
     };
   }, [open]);
 
+  // On mobile, the on-screen keyboard doesn't shrink 100dvh, so the footer
+  // (with the Siguiente button) ends up hidden behind it. Track the visual
+  // viewport height and size the modal to it so the footer stays visible.
+  const [viewportH, setViewportH] = useState<number | null>(null);
+  useEffect(() => {
+    if (!open) return;
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => setViewportH(vv.height);
+    update();
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+      setViewportH(null);
+    };
+  }, [open]);
+
   // Reset transient state whenever the modal is (re)opened.
   useEffect(() => {
     if (!open) return;
@@ -237,6 +256,7 @@ export default function IncidentWizard({
     >
       <div
         className="mx-auto flex h-[100dvh] w-full max-w-lg flex-col bg-white dark:bg-gray-900"
+        style={viewportH ? { height: `${viewportH}px` } : undefined}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
